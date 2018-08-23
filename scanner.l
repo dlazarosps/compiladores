@@ -5,6 +5,7 @@
 %{
 	#include "tokens.h"
 	int lineNumber = 1;
+	int running = 1;  
 %}
 
 
@@ -49,32 +50,39 @@
 "%>%" 	{return TK_OC_FORWARD_PIPE;}
 "%|%" 	{return TK_OC_BASH_PIPE;}
 
-[,;:()\[\]{}+-|?*/<>=!&%#^.$] 	{return yytext[0];}
+[\,\;\:\(\)\[\]\{\}\+\-\|\?\*\/\<\>\=\!\&\%\#\^\.\$] {return yytext[0];}
 [0-9]+				{return TK_LIT_INT;}
-[0-9]+\.[0-9]+			{return TK_LIT_FLOAT;}
-
-% { /* TODO  TK_LIT_TRUE TK_LIT_FALSE */  }
+[0-9]*\.[0-9]+			{return TK_LIT_FLOAT;}
+[0-9]*\.[0-9]+(e|E)(\+|\-)?[0-9]+	{return TK_LIT_FLOAT;} /*notação científica*/
+"false"				{return TK_LIT_FALSE;}
+"true"				{return TK_LIT_TRUE;}
 
 \'.\'				{return TK_LIT_CHAR;}
 \"(\\.|[^"])*\" 		{return TK_LIT_STRING;}
 
-[a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+ {return TK_IDENTIFIER;}
+[a-zA-Z_][a-zA-Z0-9_]* {return TK_IDENTIFICADOR;}
 
-[ \t] 
+[ \t] {}
 [\n]    {lineNumber++;}
 
-"//".*
-"/*"    {BEGIN(COMMENT);}
-. 	{return TOKEN_ERROR;}
+"//".* {}
 
-<COMMENT>"*/" {BEGIN(INITIAL);}
-<COMMENT>"\n" {lineNumber++;}
-<COMMENT>.   
+"/*"         BEGIN(COMMENT);
+
+<COMMENT>[^*\n]*        /* eat anything that's not a '*' */
+<COMMENT>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<COMMENT>\n             {lineNumber++;}
+<COMMENT>"*"+"/"        BEGIN(INITIAL);
+
+. 			{return TOKEN_ERRO;} 
 
 %%
 
-
-int getLineNumber(void){
+int get_line_number(void){
     return lineNumber;
 }
 
+int yywrap(){ 
+    running = 0;  
+    return 1; 
+}
