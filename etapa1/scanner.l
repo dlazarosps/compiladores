@@ -1,5 +1,5 @@
 /* 
-	ETAPA 1 - TRABALHO DE COMPILADORES
+	ETAPA 1 - TRABALHO DE COMPILADORES - Grupo Rho
 */
 
 %{
@@ -28,16 +28,16 @@
 "return" 	{return TK_PR_RETURN;}
 "const" 	{return TK_PR_CONST;}
 "static" 	{return TK_PR_STATIC;} 
-"foreach"   	{return TK_PR_FOREACH;}
+"foreach"   {return TK_PR_FOREACH;}
 "for"   	{return TK_PR_FOR;}
 "switch"  	{return TK_PR_SWITCH;}
 "case"  	{return TK_PR_CASE;}
 "break"  	{return TK_PR_BREAK;}
-"continue"  	{return TK_PR_CONTINUE;}
+"continue"  {return TK_PR_CONTINUE;}
 "class"  	{return TK_PR_CLASS;}
 "private"  	{return TK_PR_PRIVATE;}
 "public"  	{return TK_PR_PUBLIC;}
-"protected"  	{return TK_PR_PROTECTED;}
+"protected" {return TK_PR_PROTECTED;}
 
 "<=" 	{return TK_OC_LE;}
 ">=" 	{return TK_OC_GE;}
@@ -50,17 +50,16 @@
 "%>%" 	{return TK_OC_FORWARD_PIPE;}
 "%|%" 	{return TK_OC_BASH_PIPE;}
 
-[\,\;\:\(\)\[\]\{\}\+\-\|\?\*\/\<\>\=\!\&\%\#\^\.\$] {return yytext[0];}
-[0-9]+				{return TK_LIT_INT;}
-[0-9]*\.[0-9]+			{return TK_LIT_FLOAT;}
-[0-9]*\.[0-9]+(e|E)(\+|\-)?[0-9]+	{return TK_LIT_FLOAT;} /*notação científica*/
-"false"				{return TK_LIT_FALSE;}
-"true"				{return TK_LIT_TRUE;}
+[\,\;\:\(\)\[\]\{\}\+\-\|\?\*\/\<\>\=\!\&\%\#\^\.\$] 	{return yytext[0];}
+[0-9]+													{return TK_LIT_INT;}
+[0-9]*\.[0-9]+											{return TK_LIT_FLOAT;}
+[0-9]*\.[0-9]+(e|E)(\+|\-)?[0-9]+						{return TK_LIT_FLOAT;} /*notação científica*/
+"false"													{return TK_LIT_FALSE;}
+"true"													{return TK_LIT_TRUE;}
+\'.\'						{return TK_LIT_CHAR;}
+\"(\\.|[^"])*\" 			{return TK_LIT_STRING;}
 
-\'.\'				{return TK_LIT_CHAR;}
-\"(\\.|[^"])*\" 		{return TK_LIT_STRING;}
-
-[a-zA-Z_][a-zA-Z0-9_]* {return TK_IDENTIFICADOR;}
+[a-zA-Z_][a-zA-Z0-9_]* 		{return TK_IDENTIFICADOR;}
 
 [ \t] {}
 [\n]    {lineNumber++;}
@@ -69,12 +68,12 @@
 
 "/*"         BEGIN(COMMENT);
 
-<COMMENT>[^*\n]*        /* eat anything that's not a '*' */
-<COMMENT>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<COMMENT>[^*\n]*        /* consome tudo diferente de '*' */
+<COMMENT>"*"+[^*/\n]*   /* consome '*' não seguidos de '/' */
 <COMMENT>\n             {lineNumber++;}
 <COMMENT>"*"+"/"        BEGIN(INITIAL);
 
-. 			{return TOKEN_ERRO;} 
+. {return TOKEN_ERRO;} 
 
 %%
 
