@@ -1,0 +1,16 @@
+int var; 
+float xis;
+/* apdokwapokawf
+faw fawokf ** //
+daw
+dawd*/
+
+while ( 2 == var)
+
+
+
+
+
+{ xis = xis + var;
+teste = "a
+a" }

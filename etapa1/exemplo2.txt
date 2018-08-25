@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main()
+{
+    printf("\""); // 1
+
+    printf("\n");
+
+    printf(""); // 2
+
+    printf("\n");
+
+    printf("linha1\
+    linha2"); // 3
+
+    printf("\n");
+
+    printf("linha1"
+    "linha2"); // 4
+
+    printf("\n");
+
+    printf("\"""""linha1\
+    linha2"
+    "linha3"); // 5
+
+    return 0;
+}
