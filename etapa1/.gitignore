@@ -1,3 +1,4 @@
 *.o
+etapa*
 lex.yy.c
 !.gitignore
