@@ -76,14 +76,13 @@ decGlobal: optStatic varGlobal ';';
 varGlobal: TK_IDENTIFICADOR  tipo | varVetor tipo;
 varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT ']';
 
-tipo:  TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING | TK_PR_CLASS; 
+tipo:  TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING | TK_IDENTIFICADOR; 
 
 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';';
 
 listaTipo: campoTipo | campoTipo ':' listaTipo;
 campoTipo: encaps tipo TK_IDENTIFICADOR;
 encaps:  TK_PR_PROTECTED | TK_PR_PRIVATE | TK_PR_PUBLIC | ;
-
 
 decFunc: cabecalhoFun corpoFun ';';
 cabecalhoFun: optStatic tipo TK_IDENTIFICADOR listaFun;
@@ -92,17 +91,70 @@ parmsFun: parms | parms ',' parmsFun;
 parms: optConst tipo TK_IDENTIFICADOR;
 
 corpoFun: cmdBlock;
-cmdBlock: "{" cmdSimples "}";
-cmdSimples: decVar | cmdAtr | inout | callFun | shift | rbcc | fluxo | pipes |;
+cmdBlock: '{' cmdSimples '}' ';';
+cmdSimples: decVar | cmdAtr | cmdIO | callFun | shift | rbcc | fluxo | pipes | ;
 decVar: defaultVar ';' | initVar;
 defaultVar: optStatic optConst tipo TK_IDENTIFICADOR;
 initVar: defaultVar '<=' valueVar ';';
 valueVar: TK_IDENTIFICADOR | literal;
 
-literal: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_CHAR | TK_LIT_STRING | litBool;
+literal: literalNum | literalChar | litBool;
+literalNum: TK_LIT_INT | TK_LIT_FLOAT;
+literalChar: TK_LIT_CHAR | TK_LIT_STRING;
 litBool: TK_LIT_FALSE | TK_LIT_TRUE;
 
-cmdAtr: {/* TODO */};
+cmdAtr: atrVar | atrVet | atrClass | atrVetClass;
+atrVar: TK_IDENTIFICADOR '=' expr;
+atrVet: TK_IDENTIFICADOR '[' expr ']' '=' expr;
+atrClass: TK_IDENTIFICADOR '$' TK_IDENTIFICADOR '=' expr;
+atrVetClass: TK_IDENTIFICADOR '[' expr ']' '$' TK_IDENTIFICADOR '=' expr;
+
+cmdIO: cmdin | cmdout;
+cmdin: TK_PR_INPUT expr;
+cmdout: TK_PR_OUTPUT listaOut;
+listaOut: expr | expr ',' listaOut;
+
+callFun: {/*TO DO */ };
+
+shift: shiftVar | shiftVet | shiftClass | shiftVetClass;
+opShift:  TK_OC_SL | TK_OC_SR;
+shiftVar: TK_IDENTIFICADOR opShift TK_LIT_INT;
+shiftVet: TK_IDENTIFICADOR '[' expr ']' opShift TK_LIT_INT;
+shiftClass: TK_IDENTIFICADOR '$' TK_IDENTIFICADOR opShift TK_LIT_INT;
+shiftVetClass: TK_IDENTIFICADOR '[' expr ']' '$' TK_IDENTIFICADOR opShift TK_LIT_INT;
+
+rbcc: TK_PR_RETURN expr ';' | TK_PR_CONTINUE ';' | TK_PR_BREAK ';' | TK_PR_CASE TK_LIT_INT ':';
+
+fluxo: ifst | foreach | for | while | dowhile | switch;
+bloco: "{" cmdSimples "}";
+
+stmt: bloco | ifst {/* shift reduce conflict */};
+ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt | TK_PR_IF '(' expr ')' TK_PR_THEN stmt TK_PR_ELSE stmt;
+
+foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaForeach ')' bloco;
+listaForeach: expr | expr ',' listaForeach;
+
+for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
+listaFor: cmdSimples2 | cmdSimples2 ',' listaFor {/*TODO CMDSIMPLES2 não pode ter ';' no final nem comandos com ',' */};
+
+while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco;
+dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
+
+switch: TK_PR_SWITCH '(' expr ')' bloco;
+
+pipes: {/*TO DO */ };
+
+expr: id | literal | callFun | unario | binario | ternario | wpipe | expr | '(' expr ')';
+id: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' expr ']';
+
+unop: '+' | '-' | '!' | '&' | '*' | '?' | '#'; 
+biop: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | oprel;
+oprel: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR | TK_OC_SL |  TK_OC_BASH_PIPE | TK_OC_FORWARD_PIPE; 
+unario: unop expr;
+binario: expr biop expr;
+ternario: expr '?' expr ':' expr; 
+
+wpipes: {/*TO DO */ };
 
 %%
 
