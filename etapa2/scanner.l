@@ -1,13 +1,11 @@
-/* 
-	ETAPA 1 - TRABALHO DE COMPILADORES - Grupo Rho
-*/
+/* ETAPA 2 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 %{
 	#include "y.tab.h"
 	int lineNumber = 1;
-	int running = 1;  
 %}
 
+%option noyywrap
 
 %x COMMENT
 
@@ -79,9 +77,4 @@
 
 int get_line_number(void){
     return lineNumber;
-}
-
-int yywrap(){ 
-    running = 0;  
-    return 1; 
 }
