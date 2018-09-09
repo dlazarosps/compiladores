@@ -34,6 +34,6 @@ lex.yy.c: scanner.l
 # 	cat exemplo2.txt | ./etapa2
 
 clean:
-	rm -rf *.o lex.yy.c y.tab.c y.tab.h y.output etapa2
+	rm -rf *.o lex.yy.c y.tab.c y.tab.h y.output parser.output parser.tab.c parser.tab.h etapa2
 	sleep 1
 	clear
