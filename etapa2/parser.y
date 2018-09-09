@@ -67,7 +67,7 @@ void yyerror (char const *s);
 
 programa: elemento;
 
-elemento: decGlobal | decTipo | decFunc | elemento | ;
+elemento: decGlobal | decTipo | decFunc | ;
 
 optStatic: TK_PR_STATIC | ;
 optConst: TK_PR_CONST | ;
@@ -76,7 +76,7 @@ decGlobal: optStatic varGlobal ';';
 varGlobal: TK_IDENTIFICADOR  tipo | varVetor tipo;
 varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT ']';
 
-tipo:  TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING | TK_IDENTIFICADOR; 
+tipo:  TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING | TK_IDENTIFICADOR;
 
 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';';
 
@@ -91,11 +91,12 @@ parmsFun: parms | parms ',' parmsFun;
 parms: optConst tipo TK_IDENTIFICADOR;
 
 corpoFun: cmdBlock;
-cmdBlock: '{' cmdSimples '}' ';';
-cmdSimples: decVar | cmdAtr | cmdIO | callFun | shift | rbcc | fluxo | pipes | ;
-decVar: defaultVar ';' | initVar;
+cmdBlock: '{' cmdPontoVirgula '}' ';';
+cmdPontoVirgula: cmdSimples ';' | ;
+cmdSimples: decVar | cmdAtr | cmdIO | callFun | shift | rbcc | fluxo | pipes;
+decVar: defaultVar | initVar;
 defaultVar: optStatic optConst tipo TK_IDENTIFICADOR;
-initVar: defaultVar '<=' valueVar ';';
+initVar: defaultVar "<=" valueVar;
 valueVar: TK_IDENTIFICADOR | literal;
 
 literal: literalNum | literalChar | litBool;
@@ -114,7 +115,9 @@ cmdin: TK_PR_INPUT expr;
 cmdout: TK_PR_OUTPUT listaOut;
 listaOut: expr | expr ',' listaOut;
 
-callFun: {/*TO DO */ };
+callFun: TK_IDENTIFICADOR '(' listaCallFun ')';
+listaCallFun: exprCallFun | exprCallFun ',' listaCallFun;
+exprCallFun: expr | '.';
 
 shift: shiftVar | shiftVet | shiftClass | shiftVetClass;
 opShift:  TK_OC_SL | TK_OC_SR;
@@ -135,26 +138,28 @@ foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaForeach ')' bloco;
 listaForeach: expr | expr ',' listaForeach;
 
 for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
-listaFor: cmdSimples2 | cmdSimples2 ',' listaFor {/*TODO CMDSIMPLES2 não pode ter ';' no final nem comandos com ',' */};
+listaFor: cmdSimples | cmdSimples ',' listaFor;
 
 while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco;
 dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
 
 switch: TK_PR_SWITCH '(' expr ')' bloco;
 
-pipes: {/*TO DO */ };
+pipes: callFun pipeOp pipeList;
+pipeList: callFun | callFun pipeOp pipeList;
+pipeOp: "%>%" | "%|%";
 
-expr: id | literal | callFun | unario | binario | ternario | wpipe | expr | '(' expr ')';
+expr: id | literal | callFun | unario | binario | ternario | wpipes | expr | '(' expr ')';
 id: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' expr ']';
 
-unop: '+' | '-' | '!' | '&' | '*' | '?' | '#'; 
+unop: '+' | '-' | '!' | '&' | '*' | '?' | '#';
 biop: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | oprel;
-oprel: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR | TK_OC_SL |  TK_OC_BASH_PIPE | TK_OC_FORWARD_PIPE; 
+oprel: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR | TK_OC_SL;
 unario: unop expr;
 binario: expr biop expr;
-ternario: expr '?' expr ':' expr; 
+ternario: expr '?' expr ':' expr;
 
-wpipes: {/*TO DO */ };
+wpipes: pipes;
 
 %%
 
