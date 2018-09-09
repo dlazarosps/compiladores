@@ -1,0 +1,1333 @@
+Terminals unused in grammar
+
+   TK_PR_IF
+   TK_PR_THEN
+   TK_PR_ELSE
+   TK_PR_WHILE
+   TK_PR_DO
+   TK_PR_RETURN
+   TK_PR_FOREACH
+   TK_PR_FOR
+   TK_PR_SWITCH
+   TK_PR_CASE
+   TK_PR_BREAK
+   TK_PR_CONTINUE
+   TK_OC_LE
+   TK_OC_GE
+   TK_OC_EQ
+   TK_OC_NE
+   TK_OC_AND
+   TK_OC_OR
+   TK_OC_SL
+   TK_OC_SR
+   TK_OC_FORWARD_PIPE
+   TK_OC_BASH_PIPE
+   TOKEN_ERRO
+   '<'
+   '>'
+   '!'
+   TK_OC_LGE
+   TK_OC_
+   '+'
+   '-'
+   '*'
+   '/'
+
+
+State 24 conflicts: 1 shift/reduce
+State 69 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 programa: elemento
+
+    2 elemento: decFunc elemento
+    3         | decGlobal elemento
+    4         | decTipo elemento
+    5         | %empty
+
+    6 optStatic: TK_PR_STATIC
+    7          | %empty
+
+    8 optConst: TK_PR_CONST
+    9         | %empty
+
+   10 tipo: TK_PR_INT
+   11     | TK_PR_FLOAT
+   12     | TK_PR_BOOL
+   13     | TK_PR_CHAR
+   14     | TK_PR_STRING
+   15     | TK_IDENTIFICADOR
+
+   16 decGlobal: optStatic varGlobal ';'
+
+   17 varGlobal: TK_IDENTIFICADOR tipo
+   18          | varVetor tipo
+
+   19 varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT ']'
+
+   20 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';'
+
+   21 listaTipo: campoTipo
+   22          | campoTipo ':' listaTipo
+
+   23 campoTipo: encaps tipo TK_IDENTIFICADOR
+
+   24 encaps: TK_PR_PROTECTED
+   25       | TK_PR_PRIVATE
+   26       | TK_PR_PUBLIC
+   27       | %empty
+
+   28 decFunc: cabecalhoFun corpoFun ';'
+
+   29 cabecalhoFun: optStatic tipo TK_IDENTIFICADOR listaFun
+
+   30 listaFun: '(' paramsFun ')'
+
+   31 paramsFun: params
+   32          | params ',' paramsFun
+
+   33 params: optConst tipo TK_IDENTIFICADOR
+
+   34 corpoFun: cmdBlock
+
+   35 cmdBlock: '{' listaComandos '}' ';'
+
+   36 listaComandos: cmdSimples ';' listaComandos
+   37              | %empty
+
+   38 cmdSimples: decVar
+   39           | cmdAtr
+   40           | cmdIO
+
+   41 decVar: defaultVar
+   42       | initVar
+
+   43 defaultVar: optStatic optConst tipo TK_IDENTIFICADOR
+
+   44 initVar: defaultVar "<=" valueVar
+
+   45 valueVar: id
+   46         | literal
+
+   47 literal: literalNum
+   48        | literalChar
+   49        | litBool
+
+   50 literalNum: TK_LIT_INT
+   51           | TK_LIT_FLOAT
+
+   52 literalChar: TK_LIT_CHAR
+   53            | TK_LIT_STRING
+
+   54 litBool: TK_LIT_FALSE
+   55        | TK_LIT_TRUE
+
+   56 cmdAtr: atrVar
+   57       | atrClass
+
+   58 atrVar: id '=' expr
+
+   59 atrClass: id '$' TK_IDENTIFICADOR '=' expr
+
+   60 cmdIO: cmdin
+   61      | cmdout
+
+   62 cmdin: TK_PR_INPUT expr
+
+   63 cmdout: TK_PR_OUTPUT listaOut
+
+   64 listaOut: expr
+   65         | expr ',' listaOut
+
+   66 expr: id
+   67     | '(' expr ')'
+
+   68 id: TK_IDENTIFICADOR
+   69   | TK_IDENTIFICADOR '[' expr ']'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33)
+'$' (36) 59
+'(' (40) 30 67
+')' (41) 30 67
+'*' (42)
+'+' (43)
+',' (44) 32 65
+'-' (45)
+'/' (47)
+':' (58) 22
+';' (59) 16 20 28 35 36
+'<' (60)
+'=' (61) 58 59
+'>' (62)
+'[' (91) 19 20 69
+']' (93) 19 20 69
+'{' (123) 35
+'}' (125) 35
+error (256)
+TK_PR_INT (258) 10
+TK_PR_FLOAT (259) 11
+TK_PR_BOOL (260) 12
+TK_PR_CHAR (261) 13
+TK_PR_STRING (262) 14
+TK_PR_IF (263)
+TK_PR_THEN (264)
+TK_PR_ELSE (265)
+TK_PR_WHILE (266)
+TK_PR_DO (267)
+TK_PR_INPUT (268) 62
+TK_PR_OUTPUT (269) 63
+TK_PR_RETURN (270)
+TK_PR_CONST (271) 8
+TK_PR_STATIC (272) 6
+TK_PR_FOREACH (273)
+TK_PR_FOR (274)
+TK_PR_SWITCH (275)
+TK_PR_CASE (276)
+TK_PR_BREAK (277)
+TK_PR_CONTINUE (278)
+TK_PR_CLASS (279) 20
+TK_PR_PRIVATE (280) 25
+TK_PR_PUBLIC (281) 26
+TK_PR_PROTECTED (282) 24
+TK_OC_LE (283)
+TK_OC_GE (284)
+TK_OC_EQ (285)
+TK_OC_NE (286)
+TK_OC_AND (287)
+TK_OC_OR (288)
+TK_OC_SL (289)
+TK_OC_SR (290)
+TK_OC_FORWARD_PIPE (291)
+TK_OC_BASH_PIPE (292)
+TK_LIT_INT (293) 19 50
+TK_LIT_FLOAT (294) 51
+TK_LIT_FALSE (295) 54
+TK_LIT_TRUE (296) 55
+TK_LIT_CHAR (297) 52
+TK_LIT_STRING (298) 53
+TK_IDENTIFICADOR (299) 15 17 19 20 23 29 33 43 59 68 69
+TOKEN_ERRO (300)
+TK_OC_LGE (301)
+TK_OC_ (302)
+"<=" (303) 44
+
+
+Nonterminals, with rules where they appear
+
+$accept (67)
+    on left: 0
+programa (68)
+    on left: 1, on right: 0
+elemento (69)
+    on left: 2 3 4 5, on right: 1 2 3 4
+optStatic (70)
+    on left: 6 7, on right: 16 29 43
+optConst (71)
+    on left: 8 9, on right: 33 43
+tipo (72)
+    on left: 10 11 12 13 14 15, on right: 17 18 23 29 33 43
+decGlobal (73)
+    on left: 16, on right: 3
+varGlobal (74)
+    on left: 17 18, on right: 16
+varVetor (75)
+    on left: 19, on right: 18
+decTipo (76)
+    on left: 20, on right: 4
+listaTipo (77)
+    on left: 21 22, on right: 20 22
+campoTipo (78)
+    on left: 23, on right: 21 22
+encaps (79)
+    on left: 24 25 26 27, on right: 23
+decFunc (80)
+    on left: 28, on right: 2
+cabecalhoFun (81)
+    on left: 29, on right: 28
+listaFun (82)
+    on left: 30, on right: 29
+paramsFun (83)
+    on left: 31 32, on right: 30 32
+params (84)
+    on left: 33, on right: 31 32
+corpoFun (85)
+    on left: 34, on right: 28
+cmdBlock (86)
+    on left: 35, on right: 34
+listaComandos (87)
+    on left: 36 37, on right: 35 36
+cmdSimples (88)
+    on left: 38 39 40, on right: 36
+decVar (89)
+    on left: 41 42, on right: 38
+defaultVar (90)
+    on left: 43, on right: 41 44
+initVar (91)
+    on left: 44, on right: 42
+valueVar (92)
+    on left: 45 46, on right: 44
+literal (93)
+    on left: 47 48 49, on right: 46
+literalNum (94)
+    on left: 50 51, on right: 47
+literalChar (95)
+    on left: 52 53, on right: 48
+litBool (96)
+    on left: 54 55, on right: 49
+cmdAtr (97)
+    on left: 56 57, on right: 39
+atrVar (98)
+    on left: 58, on right: 56
+atrClass (99)
+    on left: 59, on right: 57
+cmdIO (100)
+    on left: 60 61, on right: 40
+cmdin (101)
+    on left: 62, on right: 60
+cmdout (102)
+    on left: 63, on right: 61
+listaOut (103)
+    on left: 64 65, on right: 63 65
+expr (104)
+    on left: 66 67, on right: 58 59 62 64 65 67 69
+id (105)
+    on left: 68 69, on right: 45 58 59 66
+
+
+State 0
+
+    0 $accept: . programa $end
+
+    TK_PR_STATIC  shift, and go to state 1
+    TK_PR_CLASS   shift, and go to state 2
+
+    $end      reduce using rule 5 (elemento)
+    $default  reduce using rule 7 (optStatic)
+
+    programa      go to state 3
+    elemento      go to state 4
+    optStatic     go to state 5
+    decGlobal     go to state 6
+    decTipo       go to state 7
+    decFunc       go to state 8
+    cabecalhoFun  go to state 9
+
+
+State 1
+
+    6 optStatic: TK_PR_STATIC .
+
+    $default  reduce using rule 6 (optStatic)
+
+
+State 2
+
+   20 decTipo: TK_PR_CLASS . TK_IDENTIFICADOR '[' listaTipo ']' ';'
+
+    TK_IDENTIFICADOR  shift, and go to state 10
+
+
+State 3
+
+    0 $accept: programa . $end
+
+    $end  shift, and go to state 11
+
+
+State 4
+
+    1 programa: elemento .
+
+    $default  reduce using rule 1 (programa)
+
+
+State 5
+
+   16 decGlobal: optStatic . varGlobal ';'
+   29 cabecalhoFun: optStatic . tipo TK_IDENTIFICADOR listaFun
+
+    TK_PR_INT         shift, and go to state 12
+    TK_PR_FLOAT       shift, and go to state 13
+    TK_PR_BOOL        shift, and go to state 14
+    TK_PR_CHAR        shift, and go to state 15
+    TK_PR_STRING      shift, and go to state 16
+    TK_IDENTIFICADOR  shift, and go to state 17
+
+    tipo       go to state 18
+    varGlobal  go to state 19
+    varVetor   go to state 20
+
+
+State 6
+
+    3 elemento: decGlobal . elemento
+
+    TK_PR_STATIC  shift, and go to state 1
+    TK_PR_CLASS   shift, and go to state 2
+
+    $end      reduce using rule 5 (elemento)
+    $default  reduce using rule 7 (optStatic)
+
+    elemento      go to state 21
+    optStatic     go to state 5
+    decGlobal     go to state 6
+    decTipo       go to state 7
+    decFunc       go to state 8
+    cabecalhoFun  go to state 9
+
+
+State 7
+
+    4 elemento: decTipo . elemento
+
+    TK_PR_STATIC  shift, and go to state 1
+    TK_PR_CLASS   shift, and go to state 2
+
+    $end      reduce using rule 5 (elemento)
+    $default  reduce using rule 7 (optStatic)
+
+    elemento      go to state 22
+    optStatic     go to state 5
+    decGlobal     go to state 6
+    decTipo       go to state 7
+    decFunc       go to state 8
+    cabecalhoFun  go to state 9
+
+
+State 8
+
+    2 elemento: decFunc . elemento
+
+    TK_PR_STATIC  shift, and go to state 1
+    TK_PR_CLASS   shift, and go to state 2
+
+    $end      reduce using rule 5 (elemento)
+    $default  reduce using rule 7 (optStatic)
+
+    elemento      go to state 23
+    optStatic     go to state 5
+    decGlobal     go to state 6
+    decTipo       go to state 7
+    decFunc       go to state 8
+    cabecalhoFun  go to state 9
+
+
+State 9
+
+   28 decFunc: cabecalhoFun . corpoFun ';'
+
+    '{'  shift, and go to state 24
+
+    corpoFun  go to state 25
+    cmdBlock  go to state 26
+
+
+State 10
+
+   20 decTipo: TK_PR_CLASS TK_IDENTIFICADOR . '[' listaTipo ']' ';'
+
+    '['  shift, and go to state 27
+
+
+State 11
+
+    0 $accept: programa $end .
+
+    $default  accept
+
+
+State 12
+
+   10 tipo: TK_PR_INT .
+
+    $default  reduce using rule 10 (tipo)
+
+
+State 13
+
+   11 tipo: TK_PR_FLOAT .
+
+    $default  reduce using rule 11 (tipo)
+
+
+State 14
+
+   12 tipo: TK_PR_BOOL .
+
+    $default  reduce using rule 12 (tipo)
+
+
+State 15
+
+   13 tipo: TK_PR_CHAR .
+
+    $default  reduce using rule 13 (tipo)
+
+
+State 16
+
+   14 tipo: TK_PR_STRING .
+
+    $default  reduce using rule 14 (tipo)
+
+
+State 17
+
+   15 tipo: TK_IDENTIFICADOR .
+   17 varGlobal: TK_IDENTIFICADOR . tipo
+   19 varVetor: TK_IDENTIFICADOR . '[' TK_LIT_INT ']'
+
+    TK_PR_INT     shift, and go to state 12
+    TK_PR_FLOAT   shift, and go to state 13
+    TK_PR_BOOL    shift, and go to state 14
+    TK_PR_CHAR    shift, and go to state 15
+    TK_PR_STRING  shift, and go to state 16
+    '['           shift, and go to state 29
+
+    $default  reduce using rule 15 (tipo)
+
+    tipo  go to state 30
+
+
+State 18
+
+   29 cabecalhoFun: optStatic tipo . TK_IDENTIFICADOR listaFun
+
+    TK_IDENTIFICADOR  shift, and go to state 31
+
+
+State 19
+
+   16 decGlobal: optStatic varGlobal . ';'
+
+    ';'  shift, and go to state 32
+
+
+State 20
+
+   18 varGlobal: varVetor . tipo
+
+    TK_PR_INT         shift, and go to state 12
+    TK_PR_FLOAT       shift, and go to state 13
+    TK_PR_BOOL        shift, and go to state 14
+    TK_PR_CHAR        shift, and go to state 15
+    TK_PR_STRING      shift, and go to state 16
+    TK_IDENTIFICADOR  shift, and go to state 28
+
+    tipo  go to state 33
+
+
+State 21
+
+    3 elemento: decGlobal elemento .
+
+    $default  reduce using rule 3 (elemento)
+
+
+State 22
+
+    4 elemento: decTipo elemento .
+
+    $default  reduce using rule 4 (elemento)
+
+
+State 23
+
+    2 elemento: decFunc elemento .
+
+    $default  reduce using rule 2 (elemento)
+
+
+State 24
+
+   35 cmdBlock: '{' . listaComandos '}' ';'
+
+    TK_PR_INPUT       shift, and go to state 34
+    TK_PR_OUTPUT      shift, and go to state 35
+    TK_PR_STATIC      shift, and go to state 1
+    TK_IDENTIFICADOR  shift, and go to state 36
+
+    TK_IDENTIFICADOR  [reduce using rule 7 (optStatic)]
+    '}'               reduce using rule 37 (listaComandos)
+    $default          reduce using rule 7 (optStatic)
+
+    optStatic      go to state 37
+    listaComandos  go to state 38
+    cmdSimples     go to state 39
+    decVar         go to state 40
+    defaultVar     go to state 41
+    initVar        go to state 42
+    cmdAtr         go to state 43
+    atrVar         go to state 44
+    atrClass       go to state 45
+    cmdIO          go to state 46
+    cmdin          go to state 47
+    cmdout         go to state 48
+    id             go to state 49
+
+
+State 25
+
+   28 decFunc: cabecalhoFun corpoFun . ';'
+
+    ';'  shift, and go to state 50
+
+
+State 26
+
+   34 corpoFun: cmdBlock .
+
+    $default  reduce using rule 34 (corpoFun)
+
+
+State 27
+
+   20 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' . listaTipo ']' ';'
+
+    TK_PR_PRIVATE    shift, and go to state 51
+    TK_PR_PUBLIC     shift, and go to state 52
+    TK_PR_PROTECTED  shift, and go to state 53
+
+    $default  reduce using rule 27 (encaps)
+
+    listaTipo  go to state 54
+    campoTipo  go to state 55
+    encaps     go to state 56
+
+
+State 28
+
+   15 tipo: TK_IDENTIFICADOR .
+
+    $default  reduce using rule 15 (tipo)
+
+
+State 29
+
+   19 varVetor: TK_IDENTIFICADOR '[' . TK_LIT_INT ']'
+
+    TK_LIT_INT  shift, and go to state 57
+
+
+State 30
+
+   17 varGlobal: TK_IDENTIFICADOR tipo .
+
+    $default  reduce using rule 17 (varGlobal)
+
+
+State 31
+
+   29 cabecalhoFun: optStatic tipo TK_IDENTIFICADOR . listaFun
+
+    '('  shift, and go to state 58
+
+    listaFun  go to state 59
+
+
+State 32
+
+   16 decGlobal: optStatic varGlobal ';' .
+
+    $default  reduce using rule 16 (decGlobal)
+
+
+State 33
+
+   18 varGlobal: varVetor tipo .
+
+    $default  reduce using rule 18 (varGlobal)
+
+
+State 34
+
+   62 cmdin: TK_PR_INPUT . expr
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    expr  go to state 61
+    id    go to state 62
+
+
+State 35
+
+   63 cmdout: TK_PR_OUTPUT . listaOut
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    listaOut  go to state 63
+    expr      go to state 64
+    id        go to state 62
+
+
+State 36
+
+   68 id: TK_IDENTIFICADOR .
+   69   | TK_IDENTIFICADOR . '[' expr ']'
+
+    '['  shift, and go to state 65
+
+    $default  reduce using rule 68 (id)
+
+
+State 37
+
+   43 defaultVar: optStatic . optConst tipo TK_IDENTIFICADOR
+
+    TK_PR_CONST  shift, and go to state 66
+
+    $default  reduce using rule 9 (optConst)
+
+    optConst  go to state 67
+
+
+State 38
+
+   35 cmdBlock: '{' listaComandos . '}' ';'
+
+    '}'  shift, and go to state 68
+
+
+State 39
+
+   36 listaComandos: cmdSimples . ';' listaComandos
+
+    ';'  shift, and go to state 69
+
+
+State 40
+
+   38 cmdSimples: decVar .
+
+    $default  reduce using rule 38 (cmdSimples)
+
+
+State 41
+
+   41 decVar: defaultVar .
+   44 initVar: defaultVar . "<=" valueVar
+
+    "<="  shift, and go to state 70
+
+    $default  reduce using rule 41 (decVar)
+
+
+State 42
+
+   42 decVar: initVar .
+
+    $default  reduce using rule 42 (decVar)
+
+
+State 43
+
+   39 cmdSimples: cmdAtr .
+
+    $default  reduce using rule 39 (cmdSimples)
+
+
+State 44
+
+   56 cmdAtr: atrVar .
+
+    $default  reduce using rule 56 (cmdAtr)
+
+
+State 45
+
+   57 cmdAtr: atrClass .
+
+    $default  reduce using rule 57 (cmdAtr)
+
+
+State 46
+
+   40 cmdSimples: cmdIO .
+
+    $default  reduce using rule 40 (cmdSimples)
+
+
+State 47
+
+   60 cmdIO: cmdin .
+
+    $default  reduce using rule 60 (cmdIO)
+
+
+State 48
+
+   61 cmdIO: cmdout .
+
+    $default  reduce using rule 61 (cmdIO)
+
+
+State 49
+
+   58 atrVar: id . '=' expr
+   59 atrClass: id . '$' TK_IDENTIFICADOR '=' expr
+
+    '='  shift, and go to state 71
+    '$'  shift, and go to state 72
+
+
+State 50
+
+   28 decFunc: cabecalhoFun corpoFun ';' .
+
+    $default  reduce using rule 28 (decFunc)
+
+
+State 51
+
+   25 encaps: TK_PR_PRIVATE .
+
+    $default  reduce using rule 25 (encaps)
+
+
+State 52
+
+   26 encaps: TK_PR_PUBLIC .
+
+    $default  reduce using rule 26 (encaps)
+
+
+State 53
+
+   24 encaps: TK_PR_PROTECTED .
+
+    $default  reduce using rule 24 (encaps)
+
+
+State 54
+
+   20 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo . ']' ';'
+
+    ']'  shift, and go to state 73
+
+
+State 55
+
+   21 listaTipo: campoTipo .
+   22          | campoTipo . ':' listaTipo
+
+    ':'  shift, and go to state 74
+
+    $default  reduce using rule 21 (listaTipo)
+
+
+State 56
+
+   23 campoTipo: encaps . tipo TK_IDENTIFICADOR
+
+    TK_PR_INT         shift, and go to state 12
+    TK_PR_FLOAT       shift, and go to state 13
+    TK_PR_BOOL        shift, and go to state 14
+    TK_PR_CHAR        shift, and go to state 15
+    TK_PR_STRING      shift, and go to state 16
+    TK_IDENTIFICADOR  shift, and go to state 28
+
+    tipo  go to state 75
+
+
+State 57
+
+   19 varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT . ']'
+
+    ']'  shift, and go to state 76
+
+
+State 58
+
+   30 listaFun: '(' . paramsFun ')'
+
+    TK_PR_CONST  shift, and go to state 66
+
+    $default  reduce using rule 9 (optConst)
+
+    optConst   go to state 77
+    paramsFun  go to state 78
+    params     go to state 79
+
+
+State 59
+
+   29 cabecalhoFun: optStatic tipo TK_IDENTIFICADOR listaFun .
+
+    $default  reduce using rule 29 (cabecalhoFun)
+
+
+State 60
+
+   67 expr: '(' . expr ')'
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    expr  go to state 80
+    id    go to state 62
+
+
+State 61
+
+   62 cmdin: TK_PR_INPUT expr .
+
+    $default  reduce using rule 62 (cmdin)
+
+
+State 62
+
+   66 expr: id .
+
+    $default  reduce using rule 66 (expr)
+
+
+State 63
+
+   63 cmdout: TK_PR_OUTPUT listaOut .
+
+    $default  reduce using rule 63 (cmdout)
+
+
+State 64
+
+   64 listaOut: expr .
+   65         | expr . ',' listaOut
+
+    ','  shift, and go to state 81
+
+    $default  reduce using rule 64 (listaOut)
+
+
+State 65
+
+   69 id: TK_IDENTIFICADOR '[' . expr ']'
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    expr  go to state 82
+    id    go to state 62
+
+
+State 66
+
+    8 optConst: TK_PR_CONST .
+
+    $default  reduce using rule 8 (optConst)
+
+
+State 67
+
+   43 defaultVar: optStatic optConst . tipo TK_IDENTIFICADOR
+
+    TK_PR_INT         shift, and go to state 12
+    TK_PR_FLOAT       shift, and go to state 13
+    TK_PR_BOOL        shift, and go to state 14
+    TK_PR_CHAR        shift, and go to state 15
+    TK_PR_STRING      shift, and go to state 16
+    TK_IDENTIFICADOR  shift, and go to state 28
+
+    tipo  go to state 83
+
+
+State 68
+
+   35 cmdBlock: '{' listaComandos '}' . ';'
+
+    ';'  shift, and go to state 84
+
+
+State 69
+
+   36 listaComandos: cmdSimples ';' . listaComandos
+
+    TK_PR_INPUT       shift, and go to state 34
+    TK_PR_OUTPUT      shift, and go to state 35
+    TK_PR_STATIC      shift, and go to state 1
+    TK_IDENTIFICADOR  shift, and go to state 36
+
+    TK_IDENTIFICADOR  [reduce using rule 7 (optStatic)]
+    '}'               reduce using rule 37 (listaComandos)
+    $default          reduce using rule 7 (optStatic)
+
+    optStatic      go to state 37
+    listaComandos  go to state 85
+    cmdSimples     go to state 39
+    decVar         go to state 40
+    defaultVar     go to state 41
+    initVar        go to state 42
+    cmdAtr         go to state 43
+    atrVar         go to state 44
+    atrClass       go to state 45
+    cmdIO          go to state 46
+    cmdin          go to state 47
+    cmdout         go to state 48
+    id             go to state 49
+
+
+State 70
+
+   44 initVar: defaultVar "<=" . valueVar
+
+    TK_LIT_INT        shift, and go to state 86
+    TK_LIT_FLOAT      shift, and go to state 87
+    TK_LIT_FALSE      shift, and go to state 88
+    TK_LIT_TRUE       shift, and go to state 89
+    TK_LIT_CHAR       shift, and go to state 90
+    TK_LIT_STRING     shift, and go to state 91
+    TK_IDENTIFICADOR  shift, and go to state 36
+
+    valueVar     go to state 92
+    literal      go to state 93
+    literalNum   go to state 94
+    literalChar  go to state 95
+    litBool      go to state 96
+    id           go to state 97
+
+
+State 71
+
+   58 atrVar: id '=' . expr
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    expr  go to state 98
+    id    go to state 62
+
+
+State 72
+
+   59 atrClass: id '$' . TK_IDENTIFICADOR '=' expr
+
+    TK_IDENTIFICADOR  shift, and go to state 99
+
+
+State 73
+
+   20 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' . ';'
+
+    ';'  shift, and go to state 100
+
+
+State 74
+
+   22 listaTipo: campoTipo ':' . listaTipo
+
+    TK_PR_PRIVATE    shift, and go to state 51
+    TK_PR_PUBLIC     shift, and go to state 52
+    TK_PR_PROTECTED  shift, and go to state 53
+
+    $default  reduce using rule 27 (encaps)
+
+    listaTipo  go to state 101
+    campoTipo  go to state 55
+    encaps     go to state 56
+
+
+State 75
+
+   23 campoTipo: encaps tipo . TK_IDENTIFICADOR
+
+    TK_IDENTIFICADOR  shift, and go to state 102
+
+
+State 76
+
+   19 varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT ']' .
+
+    $default  reduce using rule 19 (varVetor)
+
+
+State 77
+
+   33 params: optConst . tipo TK_IDENTIFICADOR
+
+    TK_PR_INT         shift, and go to state 12
+    TK_PR_FLOAT       shift, and go to state 13
+    TK_PR_BOOL        shift, and go to state 14
+    TK_PR_CHAR        shift, and go to state 15
+    TK_PR_STRING      shift, and go to state 16
+    TK_IDENTIFICADOR  shift, and go to state 28
+
+    tipo  go to state 103
+
+
+State 78
+
+   30 listaFun: '(' paramsFun . ')'
+
+    ')'  shift, and go to state 104
+
+
+State 79
+
+   31 paramsFun: params .
+   32          | params . ',' paramsFun
+
+    ','  shift, and go to state 105
+
+    $default  reduce using rule 31 (paramsFun)
+
+
+State 80
+
+   67 expr: '(' expr . ')'
+
+    ')'  shift, and go to state 106
+
+
+State 81
+
+   65 listaOut: expr ',' . listaOut
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    listaOut  go to state 107
+    expr      go to state 64
+    id        go to state 62
+
+
+State 82
+
+   69 id: TK_IDENTIFICADOR '[' expr . ']'
+
+    ']'  shift, and go to state 108
+
+
+State 83
+
+   43 defaultVar: optStatic optConst tipo . TK_IDENTIFICADOR
+
+    TK_IDENTIFICADOR  shift, and go to state 109
+
+
+State 84
+
+   35 cmdBlock: '{' listaComandos '}' ';' .
+
+    $default  reduce using rule 35 (cmdBlock)
+
+
+State 85
+
+   36 listaComandos: cmdSimples ';' listaComandos .
+
+    $default  reduce using rule 36 (listaComandos)
+
+
+State 86
+
+   50 literalNum: TK_LIT_INT .
+
+    $default  reduce using rule 50 (literalNum)
+
+
+State 87
+
+   51 literalNum: TK_LIT_FLOAT .
+
+    $default  reduce using rule 51 (literalNum)
+
+
+State 88
+
+   54 litBool: TK_LIT_FALSE .
+
+    $default  reduce using rule 54 (litBool)
+
+
+State 89
+
+   55 litBool: TK_LIT_TRUE .
+
+    $default  reduce using rule 55 (litBool)
+
+
+State 90
+
+   52 literalChar: TK_LIT_CHAR .
+
+    $default  reduce using rule 52 (literalChar)
+
+
+State 91
+
+   53 literalChar: TK_LIT_STRING .
+
+    $default  reduce using rule 53 (literalChar)
+
+
+State 92
+
+   44 initVar: defaultVar "<=" valueVar .
+
+    $default  reduce using rule 44 (initVar)
+
+
+State 93
+
+   46 valueVar: literal .
+
+    $default  reduce using rule 46 (valueVar)
+
+
+State 94
+
+   47 literal: literalNum .
+
+    $default  reduce using rule 47 (literal)
+
+
+State 95
+
+   48 literal: literalChar .
+
+    $default  reduce using rule 48 (literal)
+
+
+State 96
+
+   49 literal: litBool .
+
+    $default  reduce using rule 49 (literal)
+
+
+State 97
+
+   45 valueVar: id .
+
+    $default  reduce using rule 45 (valueVar)
+
+
+State 98
+
+   58 atrVar: id '=' expr .
+
+    $default  reduce using rule 58 (atrVar)
+
+
+State 99
+
+   59 atrClass: id '$' TK_IDENTIFICADOR . '=' expr
+
+    '='  shift, and go to state 110
+
+
+State 100
+
+   20 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';' .
+
+    $default  reduce using rule 20 (decTipo)
+
+
+State 101
+
+   22 listaTipo: campoTipo ':' listaTipo .
+
+    $default  reduce using rule 22 (listaTipo)
+
+
+State 102
+
+   23 campoTipo: encaps tipo TK_IDENTIFICADOR .
+
+    $default  reduce using rule 23 (campoTipo)
+
+
+State 103
+
+   33 params: optConst tipo . TK_IDENTIFICADOR
+
+    TK_IDENTIFICADOR  shift, and go to state 111
+
+
+State 104
+
+   30 listaFun: '(' paramsFun ')' .
+
+    $default  reduce using rule 30 (listaFun)
+
+
+State 105
+
+   32 paramsFun: params ',' . paramsFun
+
+    TK_PR_CONST  shift, and go to state 66
+
+    $default  reduce using rule 9 (optConst)
+
+    optConst   go to state 77
+    paramsFun  go to state 112
+    params     go to state 79
+
+
+State 106
+
+   67 expr: '(' expr ')' .
+
+    $default  reduce using rule 67 (expr)
+
+
+State 107
+
+   65 listaOut: expr ',' listaOut .
+
+    $default  reduce using rule 65 (listaOut)
+
+
+State 108
+
+   69 id: TK_IDENTIFICADOR '[' expr ']' .
+
+    $default  reduce using rule 69 (id)
+
+
+State 109
+
+   43 defaultVar: optStatic optConst tipo TK_IDENTIFICADOR .
+
+    $default  reduce using rule 43 (defaultVar)
+
+
+State 110
+
+   59 atrClass: id '$' TK_IDENTIFICADOR '=' . expr
+
+    TK_IDENTIFICADOR  shift, and go to state 36
+    '('               shift, and go to state 60
+
+    expr  go to state 113
+    id    go to state 62
+
+
+State 111
+
+   33 params: optConst tipo TK_IDENTIFICADOR .
+
+    $default  reduce using rule 33 (params)
+
+
+State 112
+
+   32 paramsFun: params ',' paramsFun .
+
+    $default  reduce using rule 32 (paramsFun)
+
+
+State 113
+
+   59 atrClass: id '$' TK_IDENTIFICADOR '=' expr .
+
+    $default  reduce using rule 59 (atrClass)
