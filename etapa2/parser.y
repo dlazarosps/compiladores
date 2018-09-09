@@ -56,11 +56,11 @@ void yyerror (char const *s);
 %right '['']'
 %right '('')'
 
-//resolve conflito de instanciar var global com tipo criado pelo usuário
+//TODO ainda não consegui resolver isso
 %nonassoc TK_IDENTIFICADOR
 
-//%left ':'
-//%left ','
+%nonassoc ':'
+%nonassoc ','
 
 %%
 
@@ -121,7 +121,7 @@ cabecalhoFun: optStatic tipo TK_IDENTIFICADOR listaFun;
 listaFun: '(' paramsFun ')';
 
 paramsFun: params
-		| params ',' paramsFun;
+	   	 | params ',' paramsFun;
 
 params: optConst tipo TK_IDENTIFICADOR;
 
@@ -130,7 +130,7 @@ corpoFun: cmdBlock;
 cmdBlock: '{' listaComandos '}' ';';
 
 listaComandos: cmdSimples ';' listaComandos
-			   | %empty;
+			 | %empty;
 
 cmdSimples: decVar
 		  | cmdAtr
@@ -145,38 +145,16 @@ cmdSimples: decVar
  * Comando de declaração de variáveis
  */
 
-decVar: defaultVar
-	  | initVar;
+decVar: optStatic optConst tipo TK_IDENTIFICADOR decVarAtr;
 
-defaultVar: optStatic optConst tipo TK_IDENTIFICADOR;
-
-initVar: defaultVar "<=" valueVar;
-
-valueVar: id | literal;
-
-literal: literalNum
-	   | literalChar
-	   | litBool;
-
-literalNum: TK_LIT_INT
-		  | TK_LIT_FLOAT;
-
-literalChar: TK_LIT_CHAR
-		   | TK_LIT_STRING;
-
-litBool: TK_LIT_FALSE
-	   | TK_LIT_TRUE;
+decVarAtr: "<=" expr
+		  | %empty;
 
 /*
  * Comando de atribuição
  */
 
-cmdAtr: atrVar
- 	  | atrClass;
-
-atrVar: id '=' expr;
-
-atrClass: id '$' TK_IDENTIFICADOR '=' expr;
+cmdAtr: variable '=' expr;
 
 /*
  * Comando de I/O
@@ -196,18 +174,22 @@ listaOut: expr
  * Expressão
  */
 
-expr: id;
+expr: variable
 	| literal
 	//| callFun
 	//| unario
 	//| binario
 	//| ternario
 	//| wpipes
-	//| expr
 	| '(' expr ')';
 
-id: TK_IDENTIFICADOR
-  | TK_IDENTIFICADOR '[' expr ']';
+variable: TK_IDENTIFICADOR variableIndex variableAttribute;
+
+variableIndex: '[' expr ']'
+			 | %empty;
+
+variableAttribute: '$' variable
+			 | %empty;
 /*
 unop: '+' | '-' | '!' | '&' | '*' | '?' | '#';
 biop: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | oprel;
@@ -217,6 +199,23 @@ binario: expr biop expr;
 ternario: expr '?' expr ':' expr;
 */
 //wpipes: pipes;
+
+/*
+ * Literais
+ */
+
+literal: literalNum
+	   | literalChar
+	   | litBool;
+
+literalNum: TK_LIT_INT
+		  | TK_LIT_FLOAT;
+
+literalChar: TK_LIT_CHAR
+		   | TK_LIT_STRING;
+
+litBool: TK_LIT_FALSE
+	   | TK_LIT_TRUE;
 
 %%
 
