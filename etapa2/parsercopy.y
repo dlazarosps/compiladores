@@ -134,7 +134,7 @@ decVar: defaultVar | initVar;
 
 defaultVar: optStatic optConst tipo TK_IDENTIFICADOR;
 
-initVar: defaultVar "<=" valueVar;
+initVar: defaultVar TK_OC_LE valueVar;
 
 valueVar: TK_IDENTIFICADOR | literal;
 
@@ -187,16 +187,16 @@ shift: shiftVar
 	 | shiftClass
 	 | shiftVetClass;
 
-opShift:  TK_OC_SL
+shiftOp:  TK_OC_SL
 		| TK_OC_SR;
 
-shiftVar: TK_IDENTIFICADOR opShift TK_LIT_INT;
+shiftVar: TK_IDENTIFICADOR shiftOp TK_LIT_INT;
 
-shiftVet: TK_IDENTIFICADOR '[' expr ']' opShift TK_LIT_INT;
+shiftVet: TK_IDENTIFICADOR '[' expr ']' shiftOp TK_LIT_INT;
 
-shiftClass: TK_IDENTIFICADOR '$' TK_IDENTIFICADOR opShift TK_LIT_INT;
+shiftClass: TK_IDENTIFICADOR '$' TK_IDENTIFICADOR shiftOp TK_LIT_INT;
 
-shiftVetClass: TK_IDENTIFICADOR '[' expr ']' '$' TK_IDENTIFICADOR opShift TK_LIT_INT;
+shiftVetClass: TK_IDENTIFICADOR '[' expr ']' '$' TK_IDENTIFICADOR shiftOp TK_LIT_INT;
 
 rbcc: TK_PR_RETURN expr ';'
 	| TK_PR_CONTINUE ';'
@@ -236,8 +236,8 @@ pipes: callFun pipeOp pipeList;
 pipeList: callFun
 		| callFun pipeOp pipeList;
 
-pipeOp: "%>%"
-	  | "%|%";
+pipeOp: TK_OC_FORWARD_PIPE
+	  | TK_OC_BASH_PIPE;
 
 expr: id
 	| literal
@@ -252,11 +252,11 @@ expr: id
 id: TK_IDENTIFICADOR
   | TK_IDENTIFICADOR '[' expr ']';
 
-unop: '+' | '-' | '!' | '&' | '*' | '?' | '#';
-biop: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | oprel;
-oprel: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR | TK_OC_SL;
-unario: unop expr;
-binario: expr biop expr;
+unOp: '+' | '-' | '!' | '&' | '*' | '?' | '#';
+biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | relOp;
+relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR | TK_OC_SL;
+unario: unOp expr;
+binario: expr biOp expr;
 ternario: expr '?' expr ':' expr;
 
 wpipes: pipes;
