@@ -16,7 +16,7 @@ y.tab.o: y.tab.c
 		gcc -c y.tab.c
 
 y.tab.c: parser.y
-	bison -d parser.y
+	bison -d -v parser.y
 
 # FLEX
 lex.yy.o: lex.yy.c
