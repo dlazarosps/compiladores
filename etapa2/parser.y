@@ -261,8 +261,13 @@ dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
  * Comando switch
  */
 
-//TODO botar o case dentro do switch
-switch: TK_PR_SWITCH '(' expr ')' bloco;
+switch: TK_PR_SWITCH '(' expr ')' blocoSwitch;
+
+blocoSwitch: '{' listaComandosSwitch '}';
+
+listaComandosSwitch: cmdSimples ';' listaComandosSwitch
+			 	   | TK_PR_CASE TK_LIT_INT ':' listaComandosSwitch
+				   | %empty;
 
 /*
  * Comando pipe

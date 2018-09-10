@@ -19,4 +19,11 @@ int FUNCAO_1(int VAR_1, const float VAR_2) {
     GLOBAL_2[0] = 1 + 2 + 5 + 'a' + true;
 
     GLOBAL_2[0] = (1 + (- 1) * 7 + (8 / 4));
+
+    switch(1+7) {
+        case 1:
+            break;
+        case 4:
+            break;
+    }
 };
