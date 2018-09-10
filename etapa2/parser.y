@@ -253,7 +253,8 @@ pipeOp: TK_OC_FORWARD_PIPE
 
 expr: variable
 	| literal
-	//| callFun
+	| exprFuncCall
+	| exprPipe
 	| unario
 	//  | binario
 	// | ternario
@@ -268,8 +269,16 @@ expr: variable
 	ponto é	válido ou não.
 */
 
+/*
+ * Lista de expressões (para parâmetros de chamadas de função)
+ */
+
 listaExpr: expr
 		 | expr ',' listaExpr;
+
+/*
+ * Acesso a variáveis
+ */
 
 variable: TK_IDENTIFICADOR variableIndex variableAttribute;
 
@@ -278,6 +287,18 @@ variableIndex: '[' expr ']'
 
 variableAttribute: '$' variable
 			 | %empty;
+
+/*
+ * Expressão de chamada de função
+ */
+
+exprFuncCall: cmdFuncCall;
+
+/*
+ * Expressão pipe
+ */
+
+exprPipe: cmdPipe;
 
 /*
 * Operadores Expressões
@@ -293,8 +314,6 @@ relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR;
 binario: expr biOp expr;
 ternario: expr '?' expr ':' expr;
  */
-
-//wpipes: pipes;
 
 /*
  * Literais
