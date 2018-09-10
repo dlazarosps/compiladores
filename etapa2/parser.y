@@ -3,6 +3,7 @@
 #include <stdlib.h>
 int yylex(void);
 int yyerror (char const *s);
+extern int get_line_number();
 %}
 
 %token TK_PR_INT
@@ -144,14 +145,17 @@ cmdBlock: '{' listaComandos '}';
 listaComandos: cmdSimples ';' listaComandos
 			 | %empty;
 
-cmdSimples: cmdDecVar
-		  | cmdAtr
-		  | cmdFuncCall
-		  | cmdIO
-		  | shift
-		  | rbc
-		  | fluxo
-		  | cmdPipe;
+
+cmdSimplesFor: cmdDecVar
+		| cmdAtr
+		| shift
+		| rbc
+		| fluxo;
+
+cmdSimples: cmdSimplesFor
+		| cmdFuncCall
+		| cmdIO
+		| cmdPipe;
 
 /*
  * Comando de declaração de variáveis
@@ -213,7 +217,7 @@ rbc: TK_PR_RETURN expr
 
  fluxo: ifst
 	  | foreach
-	  //| for
+	  | for
 	  | while
 	  | dowhile
 	  | switch;
@@ -240,16 +244,10 @@ foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco;
  * Comando for
  */
 
-//for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
+for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
 
-/*
- * TODO Nas duas listas dentro do for, não podem aparecer comandos simples que
- * contenham vírgulas ou o comando case. A única construção de seleção é o
- * switch-case, seguindo o seguinte padrão:
- * TODO listaFor está dando conflito com listaExpr
-*/
-//listaFor: cmdSimples
-//		| listaFor ',' cmdSimples;
+listaFor: cmdSimplesFor
+	|  cmdSimplesFor ',' listaFor;
 
 /*
  * Comando while e do while
@@ -299,7 +297,6 @@ expr: variable
 listaExprOrEmpty: listaExpr
 				| %empty;
 
-//TODO listaExpr está dando conflito shift/reduce com listaFor
 listaExpr: expr
 		 | listaExpr ',' expr;
 

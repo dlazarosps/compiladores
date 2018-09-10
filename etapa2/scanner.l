@@ -1,7 +1,7 @@
 /* ETAPA 2 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 %{
-	#include "y.tab.h"
+	#include "parser.tab.h"
 	int lineNumber = 1;
 %}
 

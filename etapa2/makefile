@@ -1,8 +1,11 @@
 # MAKEFILE ETAPA 2
 all: etapa2
 
-etapa2: y.tab.o lex.yy.o main.o
-	gcc y.tab.o lex.yy.o main.o -o etapa2
+etapa2: parser.tab.o lex.yy.o main.o
+	gcc parser.tab.o lex.yy.o main.o -o etapa2
+
+# etapa2: y.tab.o lex.yy.o main.o
+# 	gcc y.tab.o lex.yy.o main.o -o etapa2
 
 main.o: main.c
 	gcc -c main.c
@@ -14,11 +17,16 @@ lex.yy.c: scanner.l
 	flex scanner.l
 
 # BISON
-y.tab.o: y.tab.c
-		gcc -c y.tab.c
-y.tab.c: parser.y
-	bison -d -v parser.y -o y.tab.c
-	# bison -d -r solved parser.y
+parser.tab.o: parser.tab.c
+		gcc -c parser.tab.c
+parser.tab.c: parser.y
+	bison -d -v parser.y
+
+# y.tab.o: y.tab.c
+# 		gcc -c y.tab.c
+# y.tab.c: parser.y
+# 	bison -d -v parser.y -o y.tab.c
+
 
 # Testes
 teste1: etapa2
