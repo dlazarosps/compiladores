@@ -1,0 +1,22 @@
+class MEU_TIPO [protected int ATTR_1:public float ATTR_2:char ATTR_3];
+
+static GLOBAL_1 int;
+GLOBAL_2[1] float;
+static GLOBAL_3[2] MEU_TIPO;
+GLOBAL_4 char;
+
+int FUNCAO_1(int VAR_1, const float VAR_2) {
+    const int VAR_3 <= 1;
+    static char VAR_4;
+    static const float VAR_5 <= 1.5;
+    MEU_TIPO VAR_5;
+
+    VAR_4 = 'a';
+
+    GLOBAL_3[1]$ATTR_2 = 2.3;
+    GLOBAL_3[1+1]$ATTR_2 = 2.5;
+
+    GLOBAL_2[0] = 1 + 2 + 5 + 'a' + true;
+
+    GLOBAL_2[0] = (1 + (- 1) * 7 + (8 / 4));
+};

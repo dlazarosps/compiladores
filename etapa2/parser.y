@@ -1,6 +1,8 @@
 %{
+#include <stdio.h>
+#include <stdlib.h>
 int yylex(void);
-void yyerror (char const *s);
+int yyerror (char const *s);
 %}
 
 %token TK_PR_INT
@@ -50,11 +52,12 @@ void yyerror (char const *s);
 // precedencia de operadores
 
 //TODO associativide a direita '&' e '*' ponteiro
+%left '&' '?' '%' '|' '^'
 %left '<' '>' '!' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '+' '-'
 %left '*' '/' TK_OC_SL TK_OC_SR
-%right '['']'
-%right '('')'
+%right '[' ']'
+%right '(' ')'
 
 //ambiguidade IF ELSE
 %nonassoc TK_PR_THEN
@@ -62,6 +65,10 @@ void yyerror (char const *s);
 
 //resolve conflito do tipo definido por usuário
 %nonassoc TK_IDENTIFICADOR
+
+%left UNARY_OP
+%left BINARY_OP
+%left TERNARY_OP
 
 %%
 
@@ -103,7 +110,7 @@ varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT ']';
 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';';
 
 listaTipo: campoTipo
- 		 | campoTipo ':' listaTipo;
+ 		 | listaTipo ':' campoTipo;
 
 campoTipo: encaps tipo TK_IDENTIFICADOR;
 
@@ -112,6 +119,7 @@ encaps:  TK_PR_PROTECTED
  	   | TK_PR_PUBLIC
  	   | %empty;
 
+
 /*
  * Declaração de funções
  */
@@ -119,16 +127,19 @@ decFunc: cabecalhoFun corpoFun ';';
 
 cabecalhoFun: optStatic tipo TK_IDENTIFICADOR listaFun;
 
-listaFun: '(' paramsFun ')';
+listaFun: '(' paramsFunOrEmpty ')';
+
+paramsFunOrEmpty: paramsFun
+				| %empty;
 
 paramsFun: params
-	   	 | params ',' paramsFun;
+	   	 | paramsFun ',' params;
 
 params: optConst tipo TK_IDENTIFICADOR;
 
 corpoFun: cmdBlock;
 
-cmdBlock: '{' listaComandos '}' ';';
+cmdBlock: '{' listaComandos '}';
 
 listaComandos: cmdSimples ';' listaComandos
 			 | %empty;
@@ -138,7 +149,7 @@ cmdSimples: cmdDecVar
 		  | cmdFuncCall
 		  | cmdIO
 		  | shift
-		  | rbcc
+		  | rbc
 		  | fluxo
 		  | cmdPipe;
 
@@ -153,20 +164,20 @@ cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
 
 decVar: tipo TK_IDENTIFICADOR optInit;
 
-optInit: "<=" expr
+optInit: TK_OC_LE expr
  	   | %empty;
 
 /*
  * Comando de atribuição
  */
 
-cmdAtr: TK_IDENTIFICADOR '=' expr;
+cmdAtr: variable '=' expr;
 
 /*
  * Comando de chamada de função
  */
 
-cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')';
+cmdFuncCall: TK_IDENTIFICADOR '(' listaExprOrEmpty ')';
 
 /*
  * Comando de I/O
@@ -192,10 +203,9 @@ shiftOp:  TK_OC_SL
 * Comandos Return Break Continue Case
 */
 
-rbcc: TK_PR_RETURN expr ';'
-	| TK_PR_BREAK ';'
-	| TK_PR_CONTINUE ';'
-	| TK_PR_CASE TK_LIT_INT ':';
+rbc: TK_PR_RETURN expr
+	| TK_PR_BREAK
+	| TK_PR_CONTINUE;
 
 /*
  * Fluxo de Controle
@@ -203,12 +213,16 @@ rbcc: TK_PR_RETURN expr ';'
 
  fluxo: ifst
 	  | foreach
-	//  | for
-	 | while
-	 | dowhile
-	 | switch;
+	  //| for
+	  | while
+	  | dowhile
+	  | switch;
 
 bloco: "{" listaComandos "}";
+
+/*
+ * Comando if
+ */
 
 stmt: bloco
 	| ifst;
@@ -216,23 +230,40 @@ stmt: bloco
 ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
 	| TK_PR_IF '(' expr ')' TK_PR_THEN stmt TK_PR_ELSE stmt;
 
-foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaForeach ')' bloco;
+/*
+ * Comando foreach
+ */
 
-listaForeach: expr
-			| expr ',' listaForeach;
+foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco;
 
 /*
-for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
+ * Comando for
+ */
 
-//problema da listaFor com comandos terminados em ';'
-listaFor: cmdSimples
-		| cmdSimples ',' listaFor;
+//for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
+
+/*
+ * TODO Nas duas listas dentro do for, não podem aparecer comandos simples que
+ * contenham vírgulas ou o comando case. A única construção de seleção é o
+ * switch-case, seguindo o seguinte padrão:
+ * TODO listaFor está dando conflito com listaExpr
 */
+//listaFor: cmdSimples
+//		| listaFor ',' cmdSimples;
+
+/*
+ * Comando while e do while
+ */
 
 while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco;
 
 dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
 
+/*
+ * Comando switch
+ */
+
+//TODO botar o case dentro do switch
 switch: TK_PR_SWITCH '(' expr ')' bloco;
 
 /*
@@ -256,25 +287,21 @@ expr: variable
 	| exprFuncCall
 	| exprPipe
 	| unario
-	//  | binario
-	// | ternario
-	//| wpipes
+	| binario
+	| ternario
 	| '(' expr ')'
 	| '.';
 
 /*
-	'.' foi adicionado como expressão retirar ambiguidade da lista de expressões
-	entre chamadas de função normal e pipe. TODO estudar um jeito de separar as
-	duas coisas, ou então deixar para a próxima etapa de análise cuidar se o
-	ponto é	válido ou não.
-*/
-
-/*
- * Lista de expressões (para parâmetros de chamadas de função)
+ * Lista de expressões (para parâmetros de chamadas de função, etc)
  */
 
+listaExprOrEmpty: listaExpr
+				| %empty;
+
+//TODO listaExpr está dando conflito shift/reduce com listaFor
 listaExpr: expr
-		 | expr ',' listaExpr;
+		 | listaExpr ',' expr;
 
 /*
  * Acesso a variáveis
@@ -305,15 +332,15 @@ exprPipe: cmdPipe;
 */
 
 unOp: '+' | '-' | '!' | '&' | '*' | '?' | '#';
-unario: unOp expr;
 
-/*
-//conflito de precedencia dos operadores
+unario: unOp expr %prec UNARY_OP;
+
 biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | relOp;
 relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR;
-binario: expr biOp expr;
-ternario: expr '?' expr ':' expr;
- */
+
+binario: expr biOp expr %prec BINARY_OP;
+
+ternario: expr '?' expr ':' expr  %prec TERNARY_OP;
 
 /*
  * Literais

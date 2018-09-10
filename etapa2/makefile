@@ -17,13 +17,13 @@ lex.yy.c: scanner.l
 y.tab.o: y.tab.c
 		gcc -c y.tab.c
 y.tab.c: parser.y
-	bison -d -v parser.y
+	bison -d -v parser.y -o y.tab.c
 	# bison -d -r solved parser.y
 
 # Testes
-# teste1: etapa2
-# 	clear
-# 	cat exemplo.txt | ./etapa2
+teste1: etapa2
+	clear
+	cat teste1.txt | ./etapa2
 
 # teste2: etapa2
 # 	clear
