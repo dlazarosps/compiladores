@@ -50,7 +50,7 @@ void yyerror (char const *s);
 // precedencia de operadores
 
 //TODO associativide a direita '&' e '*' ponteiro
-%left '<' '>' '!' TK_OC_LE TK_OC_LGE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR TK_OC_
+%left '<' '>' '!' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '+' '-'
 %left '*' '/' TK_OC_SL TK_OC_SR
 %right '['']'

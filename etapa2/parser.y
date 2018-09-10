@@ -50,15 +50,18 @@ void yyerror (char const *s);
 // precedencia de operadores
 
 //TODO associativide a direita '&' e '*' ponteiro
-%left '<' '>' '!' TK_OC_LE TK_OC_LGE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR TK_OC_
+%left '<' '>' '!' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '+' '-'
 %left '*' '/' TK_OC_SL TK_OC_SR
 %right '['']'
 %right '('')'
 
+//ambiguidade IF ELSE
+%nonassoc TK_PR_THEN
+%nonassoc TK_PR_ELSE
+
 //TODO ainda não consegui resolver isso
 %nonassoc TK_IDENTIFICADOR
-
 %nonassoc ':'
 %nonassoc ','
 
@@ -82,7 +85,7 @@ optConst: TK_PR_CONST
  	 | TK_PR_BOOL
  	 | TK_PR_CHAR
  	 | TK_PR_STRING
- 	 | TK_IDENTIFICADOR;
+ ; //	 | TK_IDENTIFICADOR;
 
 /*
  * Declaração de variáveis globais
@@ -136,11 +139,12 @@ cmdSimples: decVar
 		  | cmdAtr
 		  | cmdIO
 		  //| callFun
-		  //| shift
-		  //| rbcc
-		  //| fluxo
+		  | shift
+		  | rbcc
+		  | fluxo
 		  //| pipes;
 ;
+
 /*
  * Comando de declaração de variáveis
  */
@@ -171,15 +175,72 @@ listaOut: expr
 		| expr ',' listaOut;
 
 /*
+*  Comando Shift
+*/
+
+shift: variable shiftOp TK_LIT_INT;
+
+shiftOp:  TK_OC_SL
+		| TK_OC_SR;
+
+/*
+* Comandos Return Break Continue Case
+*/
+
+rbcc: TK_PR_RETURN expr ';'
+	| TK_PR_BREAK ';'
+	| TK_PR_CONTINUE ';'
+	| TK_PR_CASE TK_LIT_INT ':';
+
+/*
+ * Fluxo de Controle
+ */
+
+ fluxo: ifst
+	  | foreach
+	//  | for
+	 | while
+	 | dowhile
+	 | switch;
+
+bloco: "{" listaComandos "}";
+
+stmt: bloco 
+	| ifst;
+
+ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
+	| TK_PR_IF '(' expr ')' TK_PR_THEN stmt TK_PR_ELSE stmt;
+
+foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaForeach ')' bloco;
+
+listaForeach: expr
+			| expr ',' listaForeach;
+
+/*
+for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
+
+//problema da listaFor com comandos terminados em ';'
+listaFor: cmdSimples
+		| cmdSimples ',' listaFor;
+*/
+
+while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco;
+
+dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
+
+switch: TK_PR_SWITCH '(' expr ')' bloco;
+
+
+/*
  * Expressão
  */
 
 expr: variable
 	| literal
 	//| callFun
-	//| unario
-	//| binario
-	//| ternario
+	| unario
+	//  | binario
+	// | ternario
 	//| wpipes
 	| '(' expr ')';
 
@@ -190,14 +251,22 @@ variableIndex: '[' expr ']'
 
 variableAttribute: '$' variable
 			 | %empty;
+
 /*
-unop: '+' | '-' | '!' | '&' | '*' | '?' | '#';
-biop: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | oprel;
-oprel: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR | TK_OC_SL;
-unario: unop expr;
-binario: expr biop expr;
-ternario: expr '?' expr ':' expr;
+* Operadores Expressões
 */
+
+unOp: '+' | '-' | '!' | '&' | '*' | '?' | '#';
+unario: unOp expr;
+
+/* 
+//conflito de precedencia dos operadores
+biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | relOp;
+relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR;
+binario: expr biOp expr;
+ternario: expr '?' expr ':' expr;
+ */
+
 //wpipes: pipes;
 
 /*
