@@ -60,10 +60,8 @@ void yyerror (char const *s);
 %nonassoc TK_PR_THEN
 %nonassoc TK_PR_ELSE
 
-//TODO ainda não consegui resolver isso
+//resolve conflito do tipo definido por usuário
 %nonassoc TK_IDENTIFICADOR
-%nonassoc ':'
-%nonassoc ','
 
 %%
 
@@ -85,7 +83,7 @@ optConst: TK_PR_CONST
  	 | TK_PR_BOOL
  	 | TK_PR_CHAR
  	 | TK_PR_STRING
- ; //	 | TK_IDENTIFICADOR;
+ 	 | TK_IDENTIFICADOR;
 
 /*
  * Declaração de variáveis globais
@@ -135,30 +133,40 @@ cmdBlock: '{' listaComandos '}' ';';
 listaComandos: cmdSimples ';' listaComandos
 			 | %empty;
 
-cmdSimples: decVar
+cmdSimples: cmdDecVar
 		  | cmdAtr
+		  | cmdFuncCall
 		  | cmdIO
-		  //| callFun
 		  | shift
 		  | rbcc
 		  | fluxo
-		  //| pipes;
-;
+		  | cmdPipe;
 
 /*
  * Comando de declaração de variáveis
  */
 
-decVar: optStatic optConst tipo TK_IDENTIFICADOR decVarAtr;
+cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
+ 	 	 | TK_PR_STATIC decVar
+ 		 | TK_PR_CONST decVar
+		 | decVar;
 
-decVarAtr: "<=" expr
-		  | %empty;
+decVar: tipo TK_IDENTIFICADOR optInit;
+
+optInit: "<=" expr
+ 	   | %empty;
 
 /*
  * Comando de atribuição
  */
 
-cmdAtr: variable '=' expr;
+cmdAtr: TK_IDENTIFICADOR '=' expr;
+
+/*
+ * Comando de chamada de função
+ */
+
+cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')';
 
 /*
  * Comando de I/O
@@ -169,10 +177,7 @@ cmdIO: cmdin
 
 cmdin: TK_PR_INPUT expr;
 
-cmdout: TK_PR_OUTPUT listaOut;
-
-listaOut: expr
-		| expr ',' listaOut;
+cmdout: TK_PR_OUTPUT listaExpr;
 
 /*
 *  Comando Shift
@@ -205,7 +210,7 @@ rbcc: TK_PR_RETURN expr ';'
 
 bloco: "{" listaComandos "}";
 
-stmt: bloco 
+stmt: bloco
 	| ifst;
 
 ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
@@ -230,6 +235,30 @@ dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
 
 switch: TK_PR_SWITCH '(' expr ')' bloco;
 
+/*
+ * Comando pipe
+ */
+
+//TODO incluir '.' nas expressões do pipe, jeito que está agora está ambíguo
+cmdPipe: cmdFuncCall pipeOp pipeList;
+
+pipeList: cmdFuncCall
+		| cmdFuncCall pipeOp pipeList;
+
+pipeOp: TK_OC_FORWARD_PIPE
+	  | TK_OC_BASH_PIPE;
+
+/*
+ * Lista de expressões para chamada de função do pipe
+ */
+
+/*pipeFuncCall: TK_IDENTIFICADOR '(' pipeFuncParams ')';
+
+pipeFuncParams: pipeParam ',' pipeFuncParams
+			  | pipeParam;
+
+pipeParam: '.'
+		 | expr;*/
 
 /*
  * Expressão
@@ -242,7 +271,18 @@ expr: variable
 	//  | binario
 	// | ternario
 	//| wpipes
-	| '(' expr ')';
+	| '(' expr ')'
+	| '.';
+
+/*
+	'.' foi adicionado como expressão retirar ambiguidade da lista de expressões
+	entre chamadas de função normal e pipe. TODO estudar um jeito de separar as
+	duas coisas, ou então deixar para a próxima etapa de análise cuidar se o
+	ponto é	válido ou não.
+*/
+
+listaExpr: expr
+		 | expr ',' listaExpr;
 
 variable: TK_IDENTIFICADOR variableIndex variableAttribute;
 
@@ -259,7 +299,7 @@ variableAttribute: '$' variable
 unOp: '+' | '-' | '!' | '&' | '*' | '?' | '#';
 unario: unOp expr;
 
-/* 
+/*
 //conflito de precedencia dos operadores
 biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | relOp;
 relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR;
