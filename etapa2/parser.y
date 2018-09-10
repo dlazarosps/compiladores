@@ -239,7 +239,6 @@ switch: TK_PR_SWITCH '(' expr ')' bloco;
  * Comando pipe
  */
 
-//TODO incluir '.' nas expressões do pipe, jeito que está agora está ambíguo
 cmdPipe: cmdFuncCall pipeOp pipeList;
 
 pipeList: cmdFuncCall
@@ -247,18 +246,6 @@ pipeList: cmdFuncCall
 
 pipeOp: TK_OC_FORWARD_PIPE
 	  | TK_OC_BASH_PIPE;
-
-/*
- * Lista de expressões para chamada de função do pipe
- */
-
-/*pipeFuncCall: TK_IDENTIFICADOR '(' pipeFuncParams ')';
-
-pipeFuncParams: pipeParam ',' pipeFuncParams
-			  | pipeParam;
-
-pipeParam: '.'
-		 | expr;*/
 
 /*
  * Expressão
