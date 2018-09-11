@@ -138,24 +138,35 @@ paramsFun: params
 
 params: optConst tipo TK_IDENTIFICADOR;
 
-corpoFun: cmdBlock;
+corpoFun: bloco;
 
-cmdBlock: '{' listaComandos '}';
+bloco: '{' listaComandos '}';
 
-listaComandos: cmdSimples ';' listaComandos
+listaComandos: listaComandos cmdsTerminadosPontoVirgula ';'
+			 | listaComandos cmdsTerminadosBloco
 			 | %empty;
 
+cmdsTerminadosPontoVirgula: cmdDecVar
+						  | cmdAtr
+						  | cmdFuncCall
+						  | cmdIO
+						  | cmdPipe
+						  | shift
+						  | rbc
+						  | dowhile;
+
+
+cmdsTerminadosBloco: ifst
+				   | foreach
+				   | for
+				   | while
+				   | switch;
 
 cmdSimplesFor: cmdDecVar
 		| cmdAtr
 		| shift
 		| rbc
 		| fluxo;
-
-cmdSimples: cmdSimplesFor
-		| cmdFuncCall
-		| cmdIO
-		| cmdPipe;
 
 /*
  * Comando de declaração de variáveis
@@ -222,8 +233,6 @@ rbc: TK_PR_RETURN expr
 	  | dowhile
 	  | switch;
 
-bloco: "{" listaComandos "}";
-
 /*
  * Comando if
  */
@@ -265,10 +274,10 @@ switch: TK_PR_SWITCH '(' expr ')' blocoSwitch;
 
 blocoSwitch: '{' listaComandosSwitch '}';
 
-listaComandosSwitch: cmdSimples ';' listaComandosSwitch
-			 	   | TK_PR_CASE TK_LIT_INT ':' listaComandosSwitch
-				   | %empty;
-
+listaComandosSwitch: listaComandosSwitch cmdsTerminadosPontoVirgula ';'
+			 	   | listaComandosSwitch cmdsTerminadosBloco
+				   | listaComandosSwitch TK_PR_CASE TK_LIT_INT ':'
+			       | %empty;
 /*
  * Comando pipe
  */

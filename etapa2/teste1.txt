@@ -26,4 +26,12 @@ int FUNCAO_1(int VAR_1, const float VAR_2) {
         case 4:
             break;
     }
+
+    while(1+1) do {
+
+    }
+
+    do {
+
+    } while(1);
 };
