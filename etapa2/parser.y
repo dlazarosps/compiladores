@@ -6,6 +6,8 @@ int yyerror (char const *s);
 extern int get_line_number();
 %}
 
+%define parse.error verbose
+
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_BOOL
@@ -373,6 +375,6 @@ litBool: TK_LIT_FALSE
 %%
 
 int yyerror(char const *s){
-	fprintf(stderr,"[ERRO] Houve erro na linha %d: %s\n",get_line_number(), s); //printa msg padrão de erro seguido do número da linha e parametro (s)
+	fprintf(stderr,"[ERRO] on line %d: %s\n",get_line_number(), s); //printa msg padrão de erro seguido do número da linha e parametro (s)
 	exit(3); // terminar o programa normalmente
 }
