@@ -33,6 +33,11 @@ teste1: etapa2
 	clear
 	cat teste1.txt | ./etapa2
 
+# Teste
+teste: etapa2
+	clear
+	cat $(FILE) | ./etapa2
+
 # Compacta para envio
 targz: 
 	tar cvzf etapa2.tgz main.c parser.y makefile scanner.l

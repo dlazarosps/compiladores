@@ -82,9 +82,6 @@ elemento: decFunc elemento
 		| decTipo elemento
 		| %empty;
 
-optStatic: TK_PR_STATIC
-		 | %empty;
-
 optConst: TK_PR_CONST
 		| %empty;
 
@@ -99,12 +96,12 @@ optConst: TK_PR_CONST
  * Declaração de variáveis globais
  */
 
-decGlobal: optStatic varGlobal ';';
+decGlobal: varGlobal TK_PR_STATIC tipo ';' | varGlobal tipo ';';
 
-varGlobal: TK_IDENTIFICADOR tipo
- 		 | varVetor tipo;
+varGlobal: TK_IDENTIFICADOR varGlobalIndex;
 
-varVetor: TK_IDENTIFICADOR '[' TK_LIT_INT ']';
+varGlobalIndex: '[' TK_LIT_INT ']'
+			 | %empty;
 
 /*
  * Declaração de tipos
@@ -126,9 +123,10 @@ encaps:  TK_PR_PROTECTED
 /*
  * Declaração de funções
  */
-decFunc: cabecalhoFun corpoFun ';';
+decFunc: cabecalhoFun corpoFun;
 
-cabecalhoFun: optStatic tipo TK_IDENTIFICADOR listaFun;
+cabecalhoFun: TK_PR_STATIC tipo TK_IDENTIFICADOR listaFun
+| tipo TK_IDENTIFICADOR listaFun;
 
 listaFun: '(' paramsFunOrEmpty ')';
 
