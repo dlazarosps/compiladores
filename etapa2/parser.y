@@ -85,23 +85,26 @@ elemento: decFunc elemento
 optConst: TK_PR_CONST
 		| %empty;
 
- tipo: TK_PR_INT
+ tipoSimples: TK_PR_INT
  	 | TK_PR_FLOAT
  	 | TK_PR_BOOL
  	 | TK_PR_CHAR
- 	 | TK_PR_STRING
- 	 | TK_IDENTIFICADOR;
+ 	 | TK_PR_STRING;
+
+ tipo: tipoSimples
+	| TK_IDENTIFICADOR;
 
 /*
  * Declaração de variáveis globais
  */
 
-decGlobal: varGlobal TK_PR_STATIC tipo ';' | varGlobal tipo ';';
+decGlobal: varGlobal TK_PR_STATIC tipo ';' 
+		 | varGlobal tipo ';';
 
 varGlobal: TK_IDENTIFICADOR varGlobalIndex;
 
-varGlobalIndex: '[' TK_LIT_INT ']'
-			 | %empty;
+varGlobalIndex: %empty
+			 | '[' TK_LIT_INT ']';
 
 /*
  * Declaração de tipos
@@ -177,7 +180,7 @@ cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
  		 | TK_PR_CONST decVar
 		 | decVar;
 
-decVar: tipo TK_IDENTIFICADOR optInit;
+decVar: tipoSimples TK_IDENTIFICADOR optInit;
 
 optInit: TK_OC_LE expr
  	   | %empty;
@@ -346,7 +349,7 @@ unOp: '+' | '-' | '!' | '&' | '*' | '?' | '#';
 
 unario: unOp expr %prec UNARY_OP;
 
-biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | relOp;
+biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | '<' | '>' | relOp;
 relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR;
 
 binario: expr biOp expr %prec BINARY_OP;
