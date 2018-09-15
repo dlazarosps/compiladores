@@ -67,7 +67,7 @@ extern int get_line_number();
 %nonassoc TK_PR_ELSE
 
 //resolve conflito do tipo definido por usuário
-%nonassoc TK_IDENTIFICADOR
+%right TK_IDENTIFICADOR
 
 %left UNARY_OP
 %left BINARY_OP
@@ -92,19 +92,16 @@ optConst: TK_PR_CONST
  	 | TK_PR_STRING;
 
  tipo: tipoSimples
-	| TK_IDENTIFICADOR;
+	 | TK_IDENTIFICADOR;
 
 /*
  * Declaração de variáveis globais
  */
 
-decGlobal: varGlobal TK_PR_STATIC tipo ';' 
-		 | varGlobal tipo ';';
-
-varGlobal: TK_IDENTIFICADOR varGlobalIndex;
-
-varGlobalIndex: %empty
-			 | '[' TK_LIT_INT ']';
+decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';' 
+		 | TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';' 
+		 | TK_IDENTIFICADOR tipo ';'
+		 | TK_IDENTIFICADOR'[' TK_LIT_INT ']' tipo ';';
 
 /*
  * Declaração de tipos
@@ -141,9 +138,10 @@ paramsFun: params
 
 params: optConst tipo TK_IDENTIFICADOR;
 
-corpoFun: bloco;
+corpoFun: blocoFun;
 
-bloco: '{' listaComandos '}';
+blocoFun: '{' listaComandos '}';
+bloco: blocoFun ';';
 
 listaComandos: listaComandos cmdsTerminadosPontoVirgula ';'
 			 | listaComandos cmdsTerminadosBloco
