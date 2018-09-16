@@ -54,7 +54,6 @@ extern int get_line_number();
 
 // precedencia de operadores
 
-//TODO associativide a direita '&' e '*' ponteiro
 %left '&' '?' '%' '|' '^'
 %left '<' '>' '!' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '+' '-'
@@ -98,8 +97,8 @@ optConst: TK_PR_CONST
  * Declaração de variáveis globais
  */
 
-decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';' 
-		 | TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';' 
+decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
+		 | TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
 		 | TK_IDENTIFICADOR tipo ';'
 		 | TK_IDENTIFICADOR'[' TK_LIT_INT ']' tipo ';';
 
@@ -112,7 +111,7 @@ decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';';
 listaTipo: campoTipo
  		 | listaTipo ':' campoTipo;
 
-campoTipo: encaps tipo TK_IDENTIFICADOR;
+campoTipo: encaps tipoSimples TK_IDENTIFICADOR;
 
 encaps:  TK_PR_PROTECTED
  	   | TK_PR_PRIVATE
@@ -138,13 +137,12 @@ paramsFun: params
 
 params: optConst tipo TK_IDENTIFICADOR;
 
-corpoFun: blocoFun;
+corpoFun: bloco;
 
-blocoFun: '{' listaComandos '}';
-bloco: blocoFun ';';
+bloco: '{' listaComandos '}';
 
 listaComandos: listaComandos cmdsTerminadosPontoVirgula ';'
-			 | listaComandos cmdsTerminadosBloco
+			 | listaComandos cmdsTerminadosDoisPontos ':'
 			 | %empty;
 
 cmdsTerminadosPontoVirgula: cmdDecVar
@@ -154,20 +152,27 @@ cmdsTerminadosPontoVirgula: cmdDecVar
 						  | cmdPipe
 						  | shift
 						  | rbc
-						  | dowhile;
+						  | dowhile
+						  | cmdBloco
+						  | ifst;
+						  | foreach
+	   				   	  | for
+	   				   	  | while
+	   				   	  | switch;
 
-
-cmdsTerminadosBloco: ifst
-				   | foreach
-				   | for
-				   | while
-				   | switch;
+cmdsTerminadosDoisPontos: cmdCase;
 
 cmdSimplesFor: cmdDecVar
 		| cmdAtr
 		| shift
 		| rbc
 		| fluxo;
+
+/*
+ * Comando simples de bloco
+ */
+
+cmdBloco: bloco;
 
 /*
  * Comando de declaração de variáveis
@@ -178,7 +183,7 @@ cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
  		 | TK_PR_CONST decVar
 		 | decVar;
 
-decVar: tipoSimples TK_IDENTIFICADOR optInit;
+decVar: tipo TK_IDENTIFICADOR optInit;
 
 optInit: TK_OC_LE expr
  	   | %empty;
@@ -271,14 +276,8 @@ dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
  * Comando switch
  */
 
-switch: TK_PR_SWITCH '(' expr ')' blocoSwitch;
+switch: TK_PR_SWITCH '(' expr ')' bloco;
 
-blocoSwitch: '{' listaComandosSwitch '}';
-
-listaComandosSwitch: listaComandosSwitch cmdsTerminadosPontoVirgula ';'
-			 	   | listaComandosSwitch cmdsTerminadosBloco
-				   | listaComandosSwitch TK_PR_CASE TK_LIT_INT ':'
-			       | %empty;
 /*
  * Comando pipe
  */
@@ -290,6 +289,12 @@ pipeList: cmdFuncCall
 
 pipeOp: TK_OC_FORWARD_PIPE
 	  | TK_OC_BASH_PIPE;
+
+/*
+ * Comando case
+ */
+
+cmdCase: TK_PR_CASE TK_LIT_INT;
 
 /*
  * Expressão
