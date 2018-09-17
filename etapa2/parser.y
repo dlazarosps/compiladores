@@ -124,8 +124,10 @@ encaps:  TK_PR_PROTECTED
  */
 decFunc: cabecalhoFun corpoFun;
 
-cabecalhoFun: TK_PR_STATIC tipo TK_IDENTIFICADOR listaFun
-| tipo TK_IDENTIFICADOR listaFun;
+cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
+			| tipo TK_IDENTIFICADOR listaFun;
+			| TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+			| TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun;
 
 listaFun: '(' paramsFunOrEmpty ')';
 
@@ -183,7 +185,8 @@ cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
  		 | TK_PR_CONST decVar
 		 | decVar;
 
-decVar: tipo TK_IDENTIFICADOR optInit;
+decVar: tipoSimples TK_IDENTIFICADOR optInit
+	  | TK_IDENTIFICADOR TK_IDENTIFICADOR
 
 optInit: TK_OC_LE expr
  	   | %empty;
@@ -215,7 +218,7 @@ cmdout: TK_PR_OUTPUT listaExpr;
 *  Comando Shift
 */
 
-shift: variable shiftOp TK_LIT_INT;
+shift: variable shiftOp expr;
 
 shiftOp:  TK_OC_SL
 		| TK_OC_SR;
