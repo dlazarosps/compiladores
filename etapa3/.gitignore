@@ -1,0 +1,10 @@
+*.o
+etapa*
+lex.yy.c
+parser.output
+parser.tab.c
+parser.tab.h
+y.output
+y.tab.c
+y.tab.h
+!.gitignore
