@@ -1,12 +1,29 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#define TIPO_PALAVRA_RESERVADA 0
+#define TIPO_CARACTER_ESPECIAL 1
+#define TIPO_OPERADOR_COMPOSTO 2
+#define TIPO_IDENTIFICADOR 3
+#define TIPO_LITERAL 4
 int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();
+void descompila (void *arvore) {}
+void libera (void *arvore) {}
+
+typedef struct st_tipo_valor_lexico {
+    int linha;
+    int tipo;
+    void *valor;
+} tipo_valor_lexico;
 %}
 
 %define parse.error verbose
+
+%union {
+    tipo_valor_lexico valor_lexico;
+}
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
@@ -99,7 +116,7 @@ optConst: TK_PR_CONST
 
 decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
 		 | TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
-		 | TK_IDENTIFICADOR tipo ';'
+		 | TK_IDENTIFICADOR tipo ';' {printf("int linha %d\n", $<valor_lexico>2.linha);}
 		 | TK_IDENTIFICADOR'[' TK_LIT_INT ']' tipo ';';
 
 /*

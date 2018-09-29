@@ -1,8 +1,28 @@
 /* ETAPA 3 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 %{
+	typedef struct st_tipo_valor_lexico {
+	    int linha;
+	    int tipo;
+	    void *valor;
+	} tipo_valor_lexico;
+
 	#include "parser.tab.h"
+	#define TIPO_PALAVRA_RESERVADA 0
+	#define TIPO_CARACTER_ESPECIAL 1
+	#define TIPO_OPERADOR_COMPOSTO 2
+	#define TIPO_IDENTIFICADOR 3
+	#define TIPO_LITERAL 4
 	int lineNumber = 1;
+	extern int get_line_number();
+
+	tipo_valor_lexico PalavraReservada() {
+		tipo_valor_lexico retorno;
+		retorno.linha = get_line_number();
+		retorno.tipo = TIPO_PALAVRA_RESERVADA;
+		retorno.valor = "ab";
+		return retorno;
+	}
 %}
 
 %option noyywrap
@@ -11,7 +31,7 @@
 
 %%
 
-"int"		{return TK_PR_INT;}
+"int"		{yylval.valor_lexico = PalavraReservada(); printf("int linha %d\n", yylval.valor_lexico.linha); return TK_PR_INT;}
 "float" 	{return TK_PR_FLOAT;}
 "bool"  	{return TK_PR_BOOL;}
 "char" 		{return TK_PR_CHAR;}
