@@ -1,12 +1,7 @@
 /* ETAPA 3 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 %{
-	typedef struct st_tipo_valor_lexico {
-	    int linha;
-	    int tipo;
-	    void *valor;
-	} tipo_valor_lexico;
-
+	#include "valor_lexico.h"
 	#include "parser.tab.h"
 	#define TIPO_PALAVRA_RESERVADA 0
 	#define TIPO_CARACTER_ESPECIAL 1
@@ -15,14 +10,6 @@
 	#define TIPO_LITERAL 4
 	int lineNumber = 1;
 	extern int get_line_number();
-
-	tipo_valor_lexico PalavraReservada() {
-		tipo_valor_lexico retorno;
-		retorno.linha = get_line_number();
-		retorno.tipo = TIPO_PALAVRA_RESERVADA;
-		retorno.valor = "ab";
-		return retorno;
-	}
 %}
 
 %option noyywrap

@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "valor_lexico.h"
 #define TIPO_PALAVRA_RESERVADA 0
 #define TIPO_CARACTER_ESPECIAL 1
 #define TIPO_OPERADOR_COMPOSTO 2
@@ -11,12 +12,6 @@ int yyerror (char const *s);
 extern int get_line_number();
 void descompila (void *arvore) {}
 void libera (void *arvore) {}
-
-typedef struct st_tipo_valor_lexico {
-    int linha;
-    int tipo;
-    void *valor;
-} tipo_valor_lexico;
 %}
 
 %define parse.error verbose
@@ -62,7 +57,7 @@ typedef struct st_tipo_valor_lexico {
 %token TK_OC_BASH_PIPE
 %token TOKEN_ERRO
 
-/* 
+/*
  * TIPOS (E1)
  * 	1 - resv 	- Palavras Reservado
  *	2 - espc 	- Caracteres Especiais
@@ -84,7 +79,7 @@ typedef struct st_tipo_valor_lexico {
 	char 		charValue;
 	char* 		stringValue;
 	AST_node 	ast; //struct arvore (?)
-} 
+}
 //Tokens com tipo (lit)
 %token<lit> TK_LIT_INT
 %token<lit> TK_LIT_FLOAT
@@ -101,7 +96,6 @@ typedef struct st_tipo_valor_lexico {
 %type<ast> tipoSimples
 %type<ast> tipo
 %type<ast> decGlobal
-%type<ast> decTipo
 %type<ast> decTipo
 %type<ast> listaTipo
 %type<ast> campoTipo
@@ -180,160 +174,193 @@ typedef struct st_tipo_valor_lexico {
 
 %%
 
-programa: elemento;
+programa
+    : elemento;
 
-elemento: decFunc elemento
-		| decGlobal elemento
-		| decTipo elemento
-		| %empty;
+elemento
+    : decFunc elemento
+	| decGlobal elemento
+	| decTipo elemento
+	| %empty;
 
-optConst: TK_PR_CONST
-		| %empty;
+optConst
+    : TK_PR_CONST
+	| %empty;
 
- tipoSimples: TK_PR_INT
- 	 | TK_PR_FLOAT
- 	 | TK_PR_BOOL
- 	 | TK_PR_CHAR
- 	 | TK_PR_STRING;
+tipoSimples
+    : TK_PR_INT
+ 	| TK_PR_FLOAT
+ 	| TK_PR_BOOL
+ 	| TK_PR_CHAR
+ 	| TK_PR_STRING;
 
- tipo: tipoSimples
-	 | TK_IDENTIFICADOR;
+ tipo
+    : tipoSimples
+	| TK_IDENTIFICADOR;
 
 /*
  * Declaração de variáveis globais
  */
 
-decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
-		 | TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
-		 | TK_IDENTIFICADOR tipo ';' {printf("int linha %d\n", $<valor_lexico>2.linha);}
-		 | TK_IDENTIFICADOR'[' TK_LIT_INT ']' tipo ';';
+decGlobal
+    : TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
+	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
+	| TK_IDENTIFICADOR tipo ';' {printf("int linha %d\n", $<valor_lexico>2.linha);}
+	| TK_IDENTIFICADOR'[' TK_LIT_INT ']' tipo ';';
 
 /*
  * Declaração de tipos
  */
 
-decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';';
+decTipo
+    : TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';';
 
-listaTipo: campoTipo
- 		 | listaTipo ':' campoTipo;
+listaTipo
+    : campoTipo
+ 	| listaTipo ':' campoTipo;
 
-campoTipo: encaps tipoSimples TK_IDENTIFICADOR;
+campoTipo
+    : encaps tipoSimples TK_IDENTIFICADOR;
 
-encaps:  TK_PR_PROTECTED
- 	   | TK_PR_PRIVATE
- 	   | TK_PR_PUBLIC
- 	   | %empty;
-
+encaps
+    :  TK_PR_PROTECTED
+ 	| TK_PR_PRIVATE
+ 	| TK_PR_PUBLIC
+ 	| %empty;
 
 /*
  * Declaração de funções
  */
-decFunc: cabecalhoFun corpoFun;
+decFunc
+    : cabecalhoFun corpoFun;
 
-cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
-			| tipo TK_IDENTIFICADOR listaFun;
-			| TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
-			| TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun;
+cabecalhoFun
+    : TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
+	| tipo TK_IDENTIFICADOR listaFun;
+	| TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+	| TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun;
 
-listaFun: '(' paramsFunOrEmpty ')';
+listaFun
+    : '(' paramsFunOrEmpty ')';
 
-paramsFunOrEmpty: paramsFun
-				| %empty;
+paramsFunOrEmpty
+    : paramsFun
+	| %empty;
 
-paramsFun: params
-	   	 | paramsFun ',' params;
+paramsFun
+    : params
+	| paramsFun ',' params;
 
-params: optConst tipo TK_IDENTIFICADOR;
+params
+    : optConst tipo TK_IDENTIFICADOR;
 
-corpoFun: bloco;
+corpoFun
+    : bloco;
 
-bloco: '{' listaComandos '}';
+bloco
+    : '{' listaComandos '}';
 
-listaComandos: listaComandos cmdsTerminadosPontoVirgula ';'
-			 | listaComandos cmdsTerminadosDoisPontos ':'
-			 | %empty;
+listaComandos
+    : listaComandos cmdsTerminadosPontoVirgula ';'
+	| listaComandos cmdsTerminadosDoisPontos ':'
+	| %empty;
 
-cmdsTerminadosPontoVirgula: cmdDecVar
-						  | cmdAtr
-						  | cmdFuncCall
-						  | cmdIO
-						  | cmdPipe
-						  | shift
-						  | rbc
-						  | dowhile
-						  | cmdBloco
-						  | ifst;
-						  | foreach
-	   				   	  | for
-	   				   	  | while
-	   				   	  | switch;
+cmdsTerminadosPontoVirgula
+    : cmdDecVar
+	| cmdAtr
+	| cmdFuncCall
+	| cmdIO
+	| cmdPipe
+	| shift
+	| rbc
+	| dowhile
+	| cmdBloco
+	| ifst;
+	| foreach
+	| for
+	| while
+	| switch;
 
-cmdsTerminadosDoisPontos: cmdCase;
+cmdsTerminadosDoisPontos
+    : cmdCase;
 
-cmdSimplesFor: cmdDecVar
-		| cmdAtr
-		| shift
-		| rbc
-		| fluxo;
+cmdSimplesFor
+    : cmdDecVar
+	| cmdAtr
+	| shift
+	| rbc
+	| fluxo;
 
 /*
  * Comando simples de bloco
  */
 
-cmdBloco: bloco;
+cmdBloco
+    : bloco;
 
 /*
  * Comando de declaração de variáveis
  */
 
-cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
- 	 	 | TK_PR_STATIC decVar
- 		 | TK_PR_CONST decVar
-		 | decVar;
+cmdDecVar
+    : TK_PR_STATIC TK_PR_CONST decVar
+ 	| TK_PR_STATIC decVar
+ 	| TK_PR_CONST decVar
+	| decVar;
 
-decVar: tipoSimples TK_IDENTIFICADOR optInit
-	  | TK_IDENTIFICADOR TK_IDENTIFICADOR;
+decVar
+    : tipoSimples TK_IDENTIFICADOR optInit
+	| TK_IDENTIFICADOR TK_IDENTIFICADOR;
 
-optInit: TK_OC_LE expr
- 	   | %empty;
+optInit
+    : TK_OC_LE expr
+ 	| %empty;
 
 /*
  * Comando de atribuição
  */
 
-cmdAtr: variable '=' expr;
+cmdAtr
+    : variable '=' expr;
 
 /*
  * Comando de chamada de função
  */
 
-cmdFuncCall: TK_IDENTIFICADOR '(' listaExprOrEmpty ')';
+cmdFuncCall
+    : TK_IDENTIFICADOR '(' listaExprOrEmpty ')';
 
 /*
  * Comando de I/O
  */
 
-cmdIO: cmdin
-	 | cmdout;
+cmdIO
+    : cmdin
+	| cmdout;
 
-cmdin: TK_PR_INPUT expr;
+cmdin
+    : TK_PR_INPUT expr;
 
-cmdout: TK_PR_OUTPUT listaExpr;
+cmdout
+    : TK_PR_OUTPUT listaExpr;
 
 /*
 *  Comando Shift
 */
 
-shift: variable shiftOp expr;
+shift
+    : variable shiftOp expr;
 
-shiftOp:  TK_OC_SL
-		| TK_OC_SR;
+shiftOp
+    :  TK_OC_SL
+	| TK_OC_SR;
 
 /*
 * Comandos Return Break Continue
 */
 
-rbc: TK_PR_RETURN expr
+rbc
+    : TK_PR_RETURN expr
 	| TK_PR_BREAK
 	| TK_PR_CONTINUE;
 
@@ -341,75 +368,89 @@ rbc: TK_PR_RETURN expr
  * Fluxo de Controle
  */
 
- fluxo: ifst
-	  | foreach
-	  | for
-	  | while
-	  | dowhile
-	  | switch;
+fluxo
+    : ifst
+	| foreach
+	| for
+	| while
+	| dowhile
+	| switch;
 
 /*
  * Comando if
  */
 
-stmt: bloco
+stmt
+    : bloco
 	| ifst;
 
-ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
+ifst
+    : TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
 	| TK_PR_IF '(' expr ')' TK_PR_THEN stmt TK_PR_ELSE stmt;
 
 /*
  * Comando foreach
  */
 
-foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco;
+foreach
+    : TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco;
 
 /*
  * Comando for
  */
 
-for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
+for
+    : TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco;
 
-listaFor: cmdSimplesFor
+listaFor
+    : cmdSimplesFor
 	|  cmdSimplesFor ',' listaFor;
 
 /*
  * Comando while e do while
  */
 
-while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco;
+while
+    : TK_PR_WHILE '(' expr ')' TK_PR_DO bloco;
 
-dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
+dowhile
+    : TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
 
 /*
  * Comando switch
  */
 
-switch: TK_PR_SWITCH '(' expr ')' bloco;
+switch
+    : TK_PR_SWITCH '(' expr ')' bloco;
 
 /*
  * Comando case
  */
 
-cmdCase: TK_PR_CASE TK_LIT_INT;
+cmdCase
+    : TK_PR_CASE TK_LIT_INT;
 
 /*
  * Comando pipe
  */
 
-cmdPipe: cmdFuncCall pipeOp pipeList;
+cmdPipe
+    : cmdFuncCall pipeOp pipeList;
 
-pipeList: cmdFuncCall
-		| cmdFuncCall pipeOp pipeList;
+pipeList
+    : cmdFuncCall
+	| cmdFuncCall pipeOp pipeList;
 
-pipeOp: TK_OC_FORWARD_PIPE
-	  | TK_OC_BASH_PIPE;
+pipeOp
+    : TK_OC_FORWARD_PIPE
+	| TK_OC_BASH_PIPE;
 
 /*
  * Expressão
  */
 
-expr: variable
+expr
+    : variable
 	| literal
 	| exprFuncCall
 	| exprPipe
@@ -423,67 +464,106 @@ expr: variable
  * Lista de expressões (para parâmetros de chamadas de função, etc)
  */
 
-listaExprOrEmpty: listaExpr
-				| %empty;
+listaExprOrEmpty
+    : listaExpr
+	| %empty;
 
-listaExpr: expr
-		 | listaExpr ',' expr;
+listaExpr
+    : expr
+	| listaExpr ',' expr;
 
 /*
  * Acesso a variáveis
  */
 
-variable: TK_IDENTIFICADOR variableIndex variableAttribute;
+variable
+    : TK_IDENTIFICADOR variableIndex variableAttribute;
 
-variableIndex: '[' expr ']'
-			 | %empty;
+variableIndex
+    : '[' expr ']'
+	| %empty;
 
-variableAttribute: '$' variable
-			 | %empty;
+variableAttribute
+    : '$' variable
+	| %empty;
 
 /*
  * Expressão de chamada de função
  */
 
-exprFuncCall: cmdFuncCall;
+exprFuncCall
+    : cmdFuncCall;
 
 /*
  * Expressão pipe
  */
 
-exprPipe: cmdPipe;
+exprPipe
+    : cmdPipe;
 
 /*
 * Operadores Expressões
 */
 
-unOp: '+' | '-' | '!' | '&' | '*' | '?' | '#';
+unOp
+    : '+'
+    | '-'
+    | '!'
+    | '&'
+    | '*'
+    | '?'
+    | '#';
 
-unario: unOp expr %prec UNARY_OP;
+unario
+    : unOp expr %prec UNARY_OP;
 
-biOp: '+' | '-' | '*' | '/' | '%' | '|' | '&' | '^' | '<' | '>' | relOp;
-relOp: TK_OC_LE | TK_OC_GE | TK_OC_EQ | TK_OC_NE | TK_OC_AND | TK_OC_OR;
+biOp
+    : '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '|'
+    | '&'
+    | '^'
+    | '<'
+    | '>'
+    | relOp;
 
-binario: expr biOp expr %prec BINARY_OP;
+relOp
+    : TK_OC_LE
+    | TK_OC_GE
+    | TK_OC_EQ
+    | TK_OC_NE
+    | TK_OC_AND
+    | TK_OC_OR;
 
-ternario: expr '?' expr ':' expr  %prec TERNARY_OP;
+binario
+    : expr biOp expr %prec BINARY_OP;
+
+ternario
+    : expr '?' expr ':' expr  %prec TERNARY_OP;
 
 /*
  * Literais
  */
 
-literal: literalNum
-	   | literalChar
-	   | literalBool;
+literal
+    : literalNum
+	| literalChar
+	| literalBool;
 
-literalNum: TK_LIT_INT
-		  | TK_LIT_FLOAT;
+literalNum
+    : TK_LIT_INT
+	| TK_LIT_FLOAT;
 
-literalChar: TK_LIT_CHAR
-		   | TK_LIT_STRING;
+literalChar
+    : TK_LIT_CHAR
+	| TK_LIT_STRING;
 
-literalBool: TK_LIT_FALSE
-	   | TK_LIT_TRUE;
+literalBool
+    : TK_LIT_FALSE
+	| TK_LIT_TRUE;
 
 %%
 
