@@ -43,23 +43,116 @@ extern int get_line_number();
 %token TK_OC_SR
 %token TK_OC_FORWARD_PIPE
 %token TK_OC_BASH_PIPE
-%token TK_LIT_INT
-%token TK_LIT_FLOAT
-%token TK_LIT_FALSE
-%token TK_LIT_TRUE
-%token TK_LIT_CHAR
-%token TK_LIT_STRING
-%token TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
-// precedencia de operadores
+/* 
+ * TIPOS (E1)
+ * 	1 - resv 	- Palavras Reservado
+ *	2 - espc 	- Caracteres Especiais
+ *	3 - opsc 	- Operadores Compostos
+ *	4 - ids 	- Identificadores
+ *	5 - lit 	- Literal
+ *	* - ast 	- Abstract Syntax Tree
+ */
 
+/*
+	TODO
+	São 5 tipos conforme a especificação (E1), porem literais tem 6 'sub'tipos (int, bool, float, char, string)
+	além disso tem a struct da arvore, verificar o  como vai ficar o UNION e os tipos
+*/
+%union{
+	int 		intValue;
+	//TODO bool
+	float 		floatValue;
+	char 		charValue;
+	char* 		stringValue;
+	AST_node 	ast; //struct arvore (?)
+} 
+//Tokens com tipo (lit)
+%token<lit> TK_LIT_INT
+%token<lit> TK_LIT_FLOAT
+%token<lit> TK_LIT_FALSE
+%token<lit> TK_LIT_TRUE
+%token<lit> TK_LIT_CHAR
+%token<lit> TK_LIT_STRING
+%token<lit> TK_IDENTIFICADOR //TODO tipo ids ?
+
+//Tipos Gramatica
+%type<ast> programa
+%type<ast> elemento
+%type<ast> optConst
+%type<ast> tipoSimples
+%type<ast> tipo
+%type<ast> decGlobal
+%type<ast> decTipo
+%type<ast> decTipo
+%type<ast> listaTipo
+%type<ast> campoTipo
+%type<ast> encaps
+%type<ast> decFunc
+%type<ast> cabecalhoFun
+%type<ast> listaFunc
+%type<ast> paramsFunOrEmpty
+%type<ast> paramsFun
+%type<ast> params
+%type<ast> corpoFun
+%type<ast> bloco
+%type<ast> listaComandos
+%type<ast> cmdsTerminadosPontoVirgula
+%type<ast> cmdsTerminadosDoisPontos
+%type<ast> cmdSimplesFor
+%type<ast> cmdBloco
+%type<ast> cmdDecVar
+%type<ast> decVar
+%type<ast> optInit
+%type<ast> cmdAtr
+%type<ast> cmdFuncCall
+%type<ast> cmdIO
+%type<ast> cmdin
+%type<ast> cmdout
+%type<ast> shift
+%type<ast> shiftOp
+%type<ast> rbc
+%type<ast> fluxo
+%type<ast> stmt
+%type<ast> ifst
+%type<ast> foreach
+%type<ast> for
+%type<ast> listaFor
+%type<ast> while
+%type<ast> dowhile
+%type<ast> switch
+%type<ast> cmdPipe
+%type<ast> pipeList
+%type<ast> pipeOp
+%type<ast> listaExprOrEmpty
+%type<ast> listaExpr
+%type<ast> variable
+%type<ast> variableIndex
+%type<ast> variableAttribute
+%type<ast> exprFuncCall
+%type<ast> exprPipe
+%type<ast> unOp
+%type<ast> unario
+%type<ast> biOp
+%type<ast> binario
+%type<ast> relOp
+%type<ast> ternario
+%type<ast> literal
+%type<ast> literalNum
+%type<ast> literalChar
+%type<ast> literalBool
+
+// precedencia de operadores
 %left '&' '?' '%' '|' '^'
 %left '<' '>' '!' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '+' '-'
 %left '*' '/' TK_OC_SL TK_OC_SR
 %right '[' ']'
 %right '(' ')'
+%left UNARY_OP
+%left BINARY_OP
+%left TERNARY_OP
 
 //ambiguidade IF ELSE
 %nonassoc TK_PR_THEN
@@ -67,10 +160,6 @@ extern int get_line_number();
 
 //resolve conflito do tipo definido por usuário
 %right TK_IDENTIFICADOR
-
-%left UNARY_OP
-%left BINARY_OP
-%left TERNARY_OP
 
 %%
 
@@ -186,7 +275,7 @@ cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
 		 | decVar;
 
 decVar: tipoSimples TK_IDENTIFICADOR optInit
-	  | TK_IDENTIFICADOR TK_IDENTIFICADOR
+	  | TK_IDENTIFICADOR TK_IDENTIFICADOR;
 
 optInit: TK_OC_LE expr
  	   | %empty;
@@ -224,7 +313,7 @@ shiftOp:  TK_OC_SL
 		| TK_OC_SR;
 
 /*
-* Comandos Return Break Continue Case
+* Comandos Return Break Continue
 */
 
 rbc: TK_PR_RETURN expr
@@ -282,6 +371,12 @@ dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')';
 switch: TK_PR_SWITCH '(' expr ')' bloco;
 
 /*
+ * Comando case
+ */
+
+cmdCase: TK_PR_CASE TK_LIT_INT;
+
+/*
  * Comando pipe
  */
 
@@ -292,12 +387,6 @@ pipeList: cmdFuncCall
 
 pipeOp: TK_OC_FORWARD_PIPE
 	  | TK_OC_BASH_PIPE;
-
-/*
- * Comando case
- */
-
-cmdCase: TK_PR_CASE TK_LIT_INT;
 
 /*
  * Expressão
@@ -368,7 +457,7 @@ ternario: expr '?' expr ':' expr  %prec TERNARY_OP;
 
 literal: literalNum
 	   | literalChar
-	   | litBool;
+	   | literalBool;
 
 literalNum: TK_LIT_INT
 		  | TK_LIT_FLOAT;
@@ -376,7 +465,7 @@ literalNum: TK_LIT_INT
 literalChar: TK_LIT_CHAR
 		   | TK_LIT_STRING;
 
-litBool: TK_LIT_FALSE
+literalBool: TK_LIT_FALSE
 	   | TK_LIT_TRUE;
 
 %%
