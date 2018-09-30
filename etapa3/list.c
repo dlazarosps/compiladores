@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "list.h"
 #include "ast.h"
+#include "list.h"
 #include "valor_lexico.h"
 
 LIST *listCreate()
@@ -29,7 +29,7 @@ void listPush(LIST *head, AST *node)
     current->next->next = NULL;
 }
 
-LIST *listGet(LIST *head, int index)
+AST *listGet(LIST *head, int index)
 {
 	LIST *current = head;
 	int currentIndex = 0;
@@ -39,5 +39,21 @@ LIST *listGet(LIST *head, int index)
 		currentIndex++;
 	}
 
-	return current;
+	if(current == NULL)
+		return NULL;
+	else
+		return current->node;
+}
+
+int listSize(LIST *head)
+{
+	LIST *current = head;
+	int currentIndex = 0;
+
+	while(current != NULL) {
+		current = current->next;
+		currentIndex++;
+	}
+
+	return currentIndex;
 }

@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "list.h"
 #include "valor_lexico.h"
 
 /*
@@ -80,17 +81,16 @@
 #define AST_DOISPONTOS                      64
 #define AST_TERMINAL                        65      //valores lexicos e caracteres reservados / especiais
 
-/*
- * Struct AST
- */
+typedef struct list_node LIST;
+
 typedef struct ast_node
 {
     int type;
     TValorLexico *valor_lexico;
-    struct ast_node *leafs;
+    LIST *leafs;
 } AST;
 
-AST *astCreate(int type, TValorLexico *lex, AST leafs[]);
+AST *astCreate(int type, TValorLexico *lex, LIST *leafs);
 void astDelete(AST parent, AST child);
 void astPrint(AST *node, int nivel);
 void astDescomp(AST *node);

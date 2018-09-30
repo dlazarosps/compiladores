@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "valor_lexico.h"
 #include "ast.h"
+#include "list.h"
 int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();
@@ -16,7 +17,7 @@ void libera (void *arvore) {}
 
 %union {
     TValorLexico valor_lexico;
-	//AST *node_AST;
+	AST *node_AST;
 }
 
 %token <valor_lexico> TK_PR_INT
@@ -64,11 +65,11 @@ void libera (void *arvore) {}
 %token <valor_lexico> TK_IDENTIFICADOR
 
 //Tipos Gramatica
-%type<AST> programa
-%type<AST> elemento
-%type<AST> tipoSimples
-%type<AST> tipo
-%type<AST> decGlobal
+%type<node_AST> programa
+%type<node_AST> elemento
+%type<node_AST> tipoSimples
+%type<node_AST> tipo
+%type<node_AST> decGlobal
 
 
 // precedencia de operadores
@@ -92,26 +93,57 @@ void libera (void *arvore) {}
 %%
 
 programa
-    : elemento {AST leafs[] = {$1}; $$ = astCreate(AST_PROGRAMA, $1, leafs);};
+    : elemento
+        {LIST *leafs = listCreate();
+         listPush(leafs, $1);
+         $$ = astCreate(AST_PROGRAMA, NULL, leafs);};
 
 elemento
     //: decFunc elemento {AST leafs[] = {$1, $2}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
-	: decGlobal elemento {AST leafs[] = {$1, $2}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
-	//| decTipo elemento {AST leafs[] = {$1, $2}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
-	//| decFunc {AST leafs[] = {$1}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
-    | decGlobal {AST leafs[] = {$1}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);};
+    //| decTipo elemento {AST leafs[] = {$1, $2}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    //| decFunc {AST leafs[] = {$1}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
     //| decTipo {AST leafs[] = {$1}; $$ = astCreate(AST_ELEMENTO, NULL, leafs);};
+	: decGlobal elemento
+        {LIST *leafs = listCreate();
+         listPush(leafs, $1);
+         listPush(leafs, $2);
+         $$ = astCreate(AST_ELEMENTO, NULL, leafs);};
+    | decGlobal
+        {LIST *leafs = listCreate();
+         listPush(leafs, $1);
+         $$ = astCreate(AST_ELEMENTO, NULL, leafs);};
 
 tipoSimples
-    : TK_PR_INT {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TERMINAL, $1, leafs);}
- 	| TK_PR_FLOAT {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TERMINAL, $1, leafs);}
- 	| TK_PR_BOOL {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TERMINAL, $1, leafs);}
- 	| TK_PR_CHAR {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TERMINAL, $1, leafs);}
- 	| TK_PR_STRING {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TERMINAL, $1, leafs);};
+    : TK_PR_INT
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+ 	| TK_PR_FLOAT
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+ 	| TK_PR_BOOL
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+ 	| TK_PR_CHAR
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+ 	| TK_PR_STRING
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);};
 
 tipo
-    : tipoSimples {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TIPO, $1, leafs);}
-	| TK_IDENTIFICADOR {AST leafs[MAX_LEAF]; $$ = astCreate(AST_TIPO, $1, leafs);};
+    : tipoSimples
+        {LIST *leafs = listCreate();
+         listPush(leafs, $1);
+         $$ = astCreate(AST_TIPO, NULL, leafs);}
+	| TK_IDENTIFICADOR
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         $$ = astCreate(AST_TIPO, NULL, leafs);};
 
 /*
  * Declaração de variáveis globais
@@ -119,41 +151,37 @@ tipo
 
 decGlobal
     : TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
-        {AST *leafs[MAX_LEAF];
-         AST *empty[MAX_LEAF];
-         leafs[0] = astCreate(AST_TERMINAL, $1, empty);
-         leafs[1] = astCreate(AST_TERMINAL, $2, empty);
-         leafs[2] = $3;
-         leafs[3] = astCreate(AST_TERMINAL, $<valor_lexico>4, empty);
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$2, NULL));
+         listPush(leafs, $3);
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>4, NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
-        {AST *leafs[MAX_LEAF];
-         AST *empty[MAX_LEAF];
-         leafs[0] = astCreate(AST_TERMINAL, $1, empty);
-         leafs[1] = astCreate(AST_TERMINAL, $<valor_lexico>2, empty);
-         leafs[2] = astCreate(AST_TERMINAL, $3, empty);
-         leafs[3] = astCreate(AST_TERMINAL, $<valor_lexico>4, empty);
-         leafs[4] = astCreate(AST_TERMINAL, $5, empty);
-         leafs[5] = $6;
-         leafs[6] = astCreate(AST_TERMINAL, $<valor_lexico>7, empty);
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>2, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$3, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>4, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$5, NULL));
+         listPush(leafs, $6);
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>7, NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
 	| TK_IDENTIFICADOR tipo ';'
-        {AST *leafs[MAX_LEAF];
-         AST *empty[MAX_LEAF];
-         leafs[0] = astCreate(AST_TERMINAL, $1, empty);
-         leafs[1] = $2;
-         leafs[2] = astCreate(AST_TERMINAL, $<valor_lexico>3, empty);
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, $2);
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>3, NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' tipo ';'
-        {AST *leafs[MAX_LEAF];
-         AST *empty[MAX_LEAF];
-         leafs[0] = astCreate(AST_TERMINAL, $1, empty);
-         leafs[1] = astCreate(AST_TERMINAL, $<valor_lexico>2, empty);
-         leafs[2] = astCreate(AST_TERMINAL, $3, empty);
-         leafs[3] = astCreate(AST_TERMINAL, $<valor_lexico>4, empty);
-         leafs[4] = $5;
-         leafs[5] = astCreate(AST_TERMINAL, $<valor_lexico>6, empty);
-         $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
+        {LIST *leafs = listCreate();
+         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>2, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$3, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>4, NULL));
+         listPush(leafs, $5);
+         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>6, NULL));
+         $$ = astCreate(AST_DECGLOBAL, NULL, leafs);};
 
 %%
 

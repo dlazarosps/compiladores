@@ -8,9 +8,8 @@
 #include "ast.h"
 #include "valor_lexico.h"
 
-/*
- * Struct AST
- */
+typedef struct ast_node AST;
+
 typedef struct list_node
 {
     AST *node;
@@ -19,6 +18,7 @@ typedef struct list_node
 
 LIST *listCreate();
 void listPush(LIST *head, AST *node);
-LIST *listGet(LIST *head, int index);
+AST *listGet(LIST *head, int index);
+int listSize(LIST *head);
 
 #endif

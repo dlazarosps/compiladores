@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "list.h"
 #include "valor_lexico.h"
 
-AST *astCreate(int type, TValorLexico *lex, AST leafs[])
+AST *astCreate(int type, TValorLexico *lex, LIST *leafs)
 {
 	AST *node = calloc(1, sizeof(AST)); //aloca struct
 
@@ -14,8 +15,8 @@ AST *astCreate(int type, TValorLexico *lex, AST leafs[])
 	node->valor_lexico = lex;
 	// memcpy(&node->valor_lexico, &lex, sizeof(lex));
 
-	//node->leafs = leafs;
-	memcpy(&node->leafs, &leafs, sizeof(leafs));
+	node->leafs = leafs;
+	//memcpy(&node->leafs, &leafs, sizeof(leafs));
 
 	return node;
 }
@@ -26,7 +27,7 @@ void astPrint(AST *node, int nivel)
 	if(!node) return;
 
 	int i;
-	for(i = 0; i < level; i++)
+	for(i = 0; i < nivel; i++)
 		fprintf(stdout,"  ");
 
 	fprintf(stdout, "AST(");
@@ -127,14 +128,16 @@ void astPrint(AST *node, int nivel)
 		fprintf(stdout, ",)\n");
 	}
 
-	for(i = 0; i < MAX_LEAF; i++){
-		astPrint(node->leafs[i], nivel+1)
+	int sizeOfLeafs = listSize(node->leafs);
+	for(i = 0; i < sizeOfLeafs; i++){
+		astPrint(listGet(node->leafs, i), nivel+1);
 	}
 }
 
 void astDescomp(AST *ast)
 {
 	int i;
+	int sizeOfLeafs;
 	if(!ast) return;
 
 	if(ast){
@@ -164,15 +167,19 @@ void astDescomp(AST *ast)
 		}
 
 		//recursão para as folhas
-		i=0;
+		/*i=0;
 		while(ast->leafs[i] != NULL){
 			astDescomp(ast->leafs[i]);
 			i++;
+		}*/
+		sizeOfLeafs = listSize(ast->leafs);
+		for(i = 0; i < sizeOfLeafs; i++){
+			astDescomp(listGet(ast->leafs, i));
 		}
 
 		//quebra as linhas por  construções gramaticais não terminais
 		if (ast->type != AST_TERMINAL)
-			fprintf(stdout, "\n")
+			fprintf(stdout, "\n");
 
 	}
 
