@@ -50,5 +50,6 @@ TValorLexico *lexCopy(TValorLexico lex)
 {
     TValorLexico *ret = NULL;
     ret = malloc(sizeof(TValorLexico));
+    memcpy(ret, &lex, sizeof(TValorLexico));
     return ret;
 }
