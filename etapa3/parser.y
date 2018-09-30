@@ -2,11 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "valor_lexico.h"
-#define TIPO_PALAVRA_RESERVADA 0
-#define TIPO_CARACTER_ESPECIAL 1
-#define TIPO_OPERADOR_COMPOSTO 2
-#define TIPO_IDENTIFICADOR 3
-#define TIPO_LITERAL 4
 int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();
@@ -17,7 +12,7 @@ void libera (void *arvore) {}
 %define parse.error verbose
 
 %union {
-    tipo_valor_lexico valor_lexico;
+    TValorLexico valor_lexico;
 }
 
 %token TK_PR_INT
@@ -56,103 +51,13 @@ void libera (void *arvore) {}
 %token TK_OC_FORWARD_PIPE
 %token TK_OC_BASH_PIPE
 %token TOKEN_ERRO
-
-/*
- * TIPOS (E1)
- * 	1 - resv 	- Palavras Reservado
- *	2 - espc 	- Caracteres Especiais
- *	3 - opsc 	- Operadores Compostos
- *	4 - ids 	- Identificadores
- *	5 - lit 	- Literal
- *	* - ast 	- Abstract Syntax Tree
- */
-
-/*
-	TODO
-	São 5 tipos conforme a especificação (E1), porem literais tem 6 'sub'tipos (int, bool, float, char, string)
-	além disso tem a struct da arvore, verificar o  como vai ficar o UNION e os tipos
-*/
-%union{
-	int 		intValue;
-	//TODO bool
-	float 		floatValue;
-	char 		charValue;
-	char* 		stringValue;
-	AST_node 	ast; //struct arvore (?)
-}
-//Tokens com tipo (lit)
-%token<lit> TK_LIT_INT
-%token<lit> TK_LIT_FLOAT
-%token<lit> TK_LIT_FALSE
-%token<lit> TK_LIT_TRUE
-%token<lit> TK_LIT_CHAR
-%token<lit> TK_LIT_STRING
-%token<lit> TK_IDENTIFICADOR //TODO tipo ids ?
-
-//Tipos Gramatica
-%type<ast> programa
-%type<ast> elemento
-%type<ast> optConst
-%type<ast> tipoSimples
-%type<ast> tipo
-%type<ast> decGlobal
-%type<ast> decTipo
-%type<ast> listaTipo
-%type<ast> campoTipo
-%type<ast> encaps
-%type<ast> decFunc
-%type<ast> cabecalhoFun
-%type<ast> listaFunc
-%type<ast> paramsFunOrEmpty
-%type<ast> paramsFun
-%type<ast> params
-%type<ast> corpoFun
-%type<ast> bloco
-%type<ast> listaComandos
-%type<ast> cmdsTerminadosPontoVirgula
-%type<ast> cmdsTerminadosDoisPontos
-%type<ast> cmdSimplesFor
-%type<ast> cmdBloco
-%type<ast> cmdDecVar
-%type<ast> decVar
-%type<ast> optInit
-%type<ast> cmdAtr
-%type<ast> cmdFuncCall
-%type<ast> cmdIO
-%type<ast> cmdin
-%type<ast> cmdout
-%type<ast> shift
-%type<ast> shiftOp
-%type<ast> rbc
-%type<ast> fluxo
-%type<ast> stmt
-%type<ast> ifst
-%type<ast> foreach
-%type<ast> for
-%type<ast> listaFor
-%type<ast> while
-%type<ast> dowhile
-%type<ast> switch
-%type<ast> cmdPipe
-%type<ast> pipeList
-%type<ast> pipeOp
-%type<ast> listaExprOrEmpty
-%type<ast> listaExpr
-%type<ast> variable
-%type<ast> variableIndex
-%type<ast> variableAttribute
-%type<ast> exprFuncCall
-%type<ast> exprPipe
-%type<ast> unOp
-%type<ast> unario
-%type<ast> biOp
-%type<ast> binario
-%type<ast> relOp
-%type<ast> ternario
-%type<ast> literal
-%type<ast> literalNum
-%type<ast> literalChar
-%type<ast> literalBool
+%token TK_LIT_INT
+%token TK_LIT_FLOAT
+%token TK_LIT_FALSE
+%token TK_LIT_TRUE
+%token TK_LIT_CHAR
+%token TK_LIT_STRING
+%token TK_IDENTIFICADOR //TODO tipo ids ?
 
 // precedencia de operadores
 %left '&' '?' '%' '|' '^'
@@ -205,7 +110,7 @@ tipoSimples
 decGlobal
     : TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
-	| TK_IDENTIFICADOR tipo ';' {printf("int linha %d\n", $<valor_lexico>2.linha);}
+	| TK_IDENTIFICADOR tipo ';' {printf("%s linha %d\n", $<valor_lexico>2.valor_string, $<valor_lexico>2.linha);}
 	| TK_IDENTIFICADOR'[' TK_LIT_INT ']' tipo ';';
 
 /*
