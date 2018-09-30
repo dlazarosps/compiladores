@@ -3,7 +3,7 @@
 #ifndef AST_HEADER
 #define AST_HEADER
 
-#define MAX_LEAF 15
+#define MAX_LEAF 10
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,6 +78,7 @@
 
 #define AST_PONTOVIRG                       63
 #define AST_DOISPONTOS                      64
+#define AST_TERMINAL                        65      //valores lexicos e caracteres reservados / especiais
 
 /*
  * Struct AST 
@@ -85,11 +86,11 @@
 typedef struct ast_node
 {
     int type;
-    TValorLexico valor_lexico;
-    struct ast_node *leafs[MAX_LEAF];
+    TValorLexico *valor_lexico;
+    struct ast_node leafs[MAX_LEAF];
 }AST;
 
-AST *astCreate(int type, TValorLexico lex, AST leafs[]);
+AST *astCreate(int type, TValorLexico *lex, AST leafs[]);
 void astDelete(AST parent, AST child);
 void astPrint(AST *node, int nivel);
 void astDescomp(AST *node);
