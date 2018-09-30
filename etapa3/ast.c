@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "ast.h"
 #include "list.h"
 #include "valor_lexico.h"
@@ -12,8 +13,10 @@ AST *astCreate(int type, TValorLexico *lex, LIST *leafs)
 
 	node->type = type;
 
-	node->valor_lexico = lex;
-	// memcpy(&node->valor_lexico, &lex, sizeof(lex));
+	if(lex == NULL)
+		node->valor_lexico = NULL;
+	else
+		memcpy(node->valor_lexico, lex, sizeof(TValorLexico));
 
 	node->leafs = leafs;
 	//memcpy(&node->leafs, &leafs, sizeof(leafs));
