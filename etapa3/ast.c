@@ -5,7 +5,7 @@
 #include "ast.h"
 #include "valor_lexico.h"
 
-AST *astCreate(int type, TValorLexico lex, AST leafs[])
+AST *astCreate(int type, TValorLexico *lex, AST leafs[])
 {
 	AST *node = calloc(1, sizeof(AST)); //aloca struct
 
