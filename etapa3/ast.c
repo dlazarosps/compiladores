@@ -9,7 +9,7 @@
 
 AST *astCreate(int type, TValorLexico *lex, LIST *leafs)
 {
-	AST *node = calloc(1, sizeof(AST)); //aloca struct
+	AST *node = malloc(sizeof(AST)); //aloca struct
 
 	node->type = type;
 
@@ -192,7 +192,9 @@ void astDelete(AST *node){
 	{
 		astDelete(listGet(node->leafs, i));
 	}
-
+	
+	free(node->valor_lexico);
+	free(node->leafs);
 	free(node);
 	return;
 }
