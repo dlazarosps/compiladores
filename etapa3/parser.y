@@ -14,7 +14,7 @@ void libera (void *arvore) {}
 
 %union {
     TValorLexico valor_lexico;
-	AST *ast_node;
+	AST *node_ast;
 }
 
 %token TK_PR_INT
