@@ -53,3 +53,14 @@ TValorLexico *lexCopy(TValorLexico lex)
     memcpy(ret, &lex, sizeof(TValorLexico));
     return ret;
 }
+
+TValorLexico *lexEmpty()
+{
+    TValorLexico *ret = NULL;
+    ret = malloc(sizeof(TValorLexico));
+    ret->linha = get_line_number();
+    ret->tipo = TIPO_LITERAL;
+    ret->tipo_valor = VALOR_STRING;
+    ret->valor_string = "";
+    return ret;
+}
