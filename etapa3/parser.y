@@ -14,7 +14,7 @@ extern void descompila (void *arvore) {
     astDescomp(arvore);
 }
 extern void libera (void *arvore) {
-    astPrint(arvore, 0);
+    //astPrint(arvore, 0);
     astDelete(arvore);
 }
 %}

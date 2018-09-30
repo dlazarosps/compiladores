@@ -41,6 +41,10 @@ targz:
 	tar cvzf etapa3.tgz main.c parser.y makefile scanner.l ast.c valor_lexico.c
 	# scp etapa3.tgz dlspsilva@html.inf.ufrgs.br:./public_html/
 
+# VALGRIND
+valgrind: etapa3
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=leak.txt -v ./etapa3 < teste1.txt
+
 # Limpeza de arquivos exec
 clean:
 	rm -rf *.o lex.yy.c parser.output parser.tab.c parser.tab.h etapa3
