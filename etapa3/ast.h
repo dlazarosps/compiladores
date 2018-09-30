@@ -80,6 +80,8 @@
 #define AST_PONTOVIRG                       63
 #define AST_DOISPONTOS                      64
 #define AST_TERMINAL                        65      //valores lexicos e caracteres reservados / especiais
+#define AST_CMDCASE                         66
+#define AST_EXPR                         67
 
 typedef struct list_node LIST;
 
