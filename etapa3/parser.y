@@ -9,8 +9,14 @@ int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();
 extern void *arvore;
-void descompila (void *arvore) {}
-void libera (void *arvore) {}
+
+extern void descompila (void *arvore) {
+    astDescomp(arvore);
+}
+extern void libera (void *arvore) {
+    astPrint(arvore, 0);
+    astDelete(arvore);
+}
 %}
 
 %define parse.error verbose
@@ -94,7 +100,8 @@ void libera (void *arvore) {}
 
 programa
     : elemento
-        {LIST *leafs = listCreate();
+        {arvore = $$;
+        LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_PROGRAMA, NULL, leafs);};
 

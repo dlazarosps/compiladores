@@ -81,6 +81,8 @@
 #define AST_DOISPONTOS                      64
 #define AST_TERMINAL                        65      //valores lexicos e caracteres reservados / especiais
 
+#define DEBUG 0
+
 typedef struct list_node LIST;
 
 typedef struct ast_node
@@ -91,7 +93,7 @@ typedef struct ast_node
 } AST;
 
 AST *astCreate(int type, TValorLexico *lex, LIST *leafs);
-void astDelete(AST parent, AST child);
+void astDelete(AST *node);
 void astPrint(AST *node, int nivel);
 void astDescomp(AST *node);
 

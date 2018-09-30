@@ -24,7 +24,7 @@ AST *astCreate(int type, TValorLexico *lex, LIST *leafs)
 void astPrint(AST *node, int nivel)
 {
 	//Testa se Nodo vazio
-	if(!node) return;
+	if(node == NULL) return;
 
 	int i;
 	for(i = 0; i < nivel; i++)
@@ -96,6 +96,7 @@ void astPrint(AST *node, int nivel)
 		case AST_LITERALNUM: fprintf(stdout, "AST_LITERALNUM"); break;
 		case AST_LITERALCHAR: fprintf(stdout, "AST_LITERALCHAR"); break;
 		case AST_LITERALBOOL: fprintf(stdout, "AST_LITERALBOOL"); break;
+		case AST_TERMINAL: fprintf(stdout, "AST_TERMINAL"); break;
 		default:
 			fprintf(stderr, "[ERROR] Node Type: %d", node->type);
 			break;
@@ -138,9 +139,9 @@ void astDescomp(AST *ast)
 {
 	int i;
 	int sizeOfLeafs;
-	if(!ast) return;
-
-	if(ast){
+	if(ast == NULL) return;
+	else
+	{
 		//printa valor lexico
 		if (ast->type == AST_TERMINAL) {
 			switch (ast->valor_lexico->tipo_valor)
@@ -167,11 +168,6 @@ void astDescomp(AST *ast)
 		}
 
 		//recursão para as folhas
-		/*i=0;
-		while(ast->leafs[i] != NULL){
-			astDescomp(ast->leafs[i]);
-			i++;
-		}*/
 		sizeOfLeafs = listSize(ast->leafs);
 		for(i = 0; i < sizeOfLeafs; i++){
 			astDescomp(listGet(ast->leafs, i));
@@ -183,5 +179,20 @@ void astDescomp(AST *ast)
 
 	}
 
+	return;
+}
+
+void astDelete(AST *node){
+	if (node == NULL) return;
+
+	int sizeOfLeafs = listSize(node->leafs);
+	int i;
+	
+	for (i = 0; i < sizeOfLeafs; i++)
+	{
+		astDelete(listGet(node->leafs, i));
+	}
+
+	free(node);
 	return;
 }
