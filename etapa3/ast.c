@@ -22,15 +22,15 @@ AST *astCreate(int type, TValorLexico lex, AST leafs[])
 
 void astPrint(AST *node, int nivel)
 {
-	//Testa se Nodo vazio	
+	//Testa se Nodo vazio
 	if(!node) return;
-	
+
 	int i;
-	for(i = 0; i < level; i++) 
+	for(i = 0; i < level; i++)
 		fprintf(stderr,"  ");
-	
+
 	fprintf(stderr, "AST(");
-	
+
 	switch(node->type){
 		case AST_PROGRAMA: fprintf(stderr, "AST_PROGRAMA"); break;
 		case AST_ELEMENTO: fprintf(stderr, "AST_ELEMENTO"); break;
@@ -136,7 +136,7 @@ void astDescomp(AST *ast)
 {
 	int i;
 	if(!ast) return;
-	if(ast){	
+	if(ast){
 		switch(ast->type){
 
 		case AST_PROGRAMA:
@@ -260,7 +260,7 @@ void astDescomp(AST *ast)
 			}
 			break;
 
-		//Produções que levam a outras produções 1 -> 1 
+		//Produções que levam a outras produções 1 -> 1
 		case AST_CORPOFUN:
 		case AST_CMDSTERMINADOSPONTOVIRGULA:
 		case AST_CMDSTERMINADOSDOISPONTOS:
@@ -288,7 +288,7 @@ void astDescomp(AST *ast)
 				else
 				{
 					fprintf(stderr, ":");
-				}		
+				}
 			}
 			break;
 
@@ -313,14 +313,14 @@ void astDescomp(AST *ast)
 			{
 				astDescomp(ast->leafs[2]);
 			}
-			
+
 			break;
 
 		case AST_OPTINIT:
 			fprintf(stderr, " <= ");
 			astDescomp(ast->leafs[1]);
 			break;
-			
+
 		case AST_CMDATR:
 			astDescomp(ast->leafs[0]);
 			fprintf(stderr, " = ");
@@ -441,7 +441,7 @@ void astDescomp(AST *ast)
 			break;
 		}
 	}
- 
+
 	return;
 
 }
