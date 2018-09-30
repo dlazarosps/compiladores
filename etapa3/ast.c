@@ -13,10 +13,7 @@ AST *astCreate(int type, TValorLexico *lex, LIST *leafs)
 
 	node->type = type;
 
-	if(lex == NULL)
-		node->valor_lexico = NULL;
-	else
-		memcpy(node->valor_lexico, lex, sizeof(TValorLexico));
+	node->valor_lexico = lex;
 
 	node->leafs = leafs;
 	//memcpy(&node->leafs, &leafs, sizeof(leafs));

@@ -45,3 +45,10 @@ TValorLexico GetValorLexico(int tipo, int tipo_valor, char *texto) {
     }
     return retorno;
 }
+
+TValorLexico *lexCopy(TValorLexico lex)
+{
+    TValorLexico *ret = NULL;
+    ret = malloc(sizeof(TValorLexico));
+    return ret;
+}

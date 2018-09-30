@@ -116,23 +116,23 @@ elemento
 tipoSimples
     : TK_PR_INT
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
  	| TK_PR_FLOAT
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
  	| TK_PR_BOOL
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
  	| TK_PR_CHAR
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
  	| TK_PR_STRING
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);};
 
 tipo
@@ -142,7 +142,7 @@ tipo
          $$ = astCreate(AST_TIPO, NULL, leafs);}
 	| TK_IDENTIFICADOR
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPO, NULL, leafs);};
 
 /*
@@ -152,35 +152,35 @@ tipo
 decGlobal
     : TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$2, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
          listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>4, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>2, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$3, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>4, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$5, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($5), NULL));
          listPush(leafs, $6);
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>7, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>7), NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
 	| TK_IDENTIFICADOR tipo ';'
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>3, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' tipo ';'
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, &$1, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>2, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$3, NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>4, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
          listPush(leafs, $5);
-         listPush(leafs, astCreate(AST_TERMINAL, &$<valor_lexico>6, NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>6), NULL));
          $$ = astCreate(AST_DECGLOBAL, NULL, leafs);};
 
 %%
