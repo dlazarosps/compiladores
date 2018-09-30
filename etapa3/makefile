@@ -1,8 +1,8 @@
 # MAKEFILE ETAPA 3
 all: etapa3
 
-etapa3: clean parser.tab.o lex.yy.o valor_lexico.o main.o
-	gcc parser.tab.o lex.yy.o valor_lexico.o main.o -o etapa3
+etapa3: clean parser.tab.o lex.yy.o valor_lexico.o ast.o main.o
+	gcc parser.tab.o lex.yy.o valor_lexico.o ast.o main.o -o etapa3
 # etapa3: y.tab.o lex.yy.o main.o
 # 	gcc y.tab.o lex.yy.o main.o -o etapa3
 

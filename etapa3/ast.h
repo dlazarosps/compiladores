@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "valor_lexico.h"
 
-/* 
+/*
  * Constantes Tipos de produções AST
  */
 #define AST_PROGRAMA                        0
@@ -81,14 +81,14 @@
 #define AST_TERMINAL                        65      //valores lexicos e caracteres reservados / especiais
 
 /*
- * Struct AST 
+ * Struct AST
  */
 typedef struct ast_node
 {
     int type;
     TValorLexico *valor_lexico;
-    struct ast_node leafs[MAX_LEAF];
-}AST;
+    struct ast_node *leafs;
+} AST;
 
 AST *astCreate(int type, TValorLexico *lex, AST leafs[]);
 void astDelete(AST parent, AST child);

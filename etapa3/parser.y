@@ -16,7 +16,7 @@ void libera (void *arvore) {}
 
 %union {
     TValorLexico valor_lexico;
-	//AST *node_AST;
+	AST *node_AST;
 }
 
 %token <valor_lexico> TK_PR_INT
@@ -64,11 +64,11 @@ void libera (void *arvore) {}
 %token <valor_lexico> TK_IDENTIFICADOR
 
 //Tipos Gramatica
-%type<AST> programa
-%type<AST> elemento
-%type<AST> tipoSimples
-%type<AST> tipo
-%type<AST> decGlobal
+%type<node_AST> programa
+%type<node_AST> elemento
+%type<node_AST> tipoSimples
+%type<node_AST> tipo
+%type<node_AST> decGlobal
 
 
 // precedencia de operadores
