@@ -1,14 +1,17 @@
 # MAKEFILE ETAPA 3
 all: etapa3
 
-etapa3: parser.tab.o lex.yy.o main.o
-	gcc parser.tab.o lex.yy.o main.o -o etapa3
+etapa3: clean parser.tab.o lex.yy.o valor_lexico.o main.o
+	gcc parser.tab.o lex.yy.o valor_lexico.o main.o -o etapa3
 
 # etapa3: y.tab.o lex.yy.o main.o
 # 	gcc y.tab.o lex.yy.o main.o -o etapa3
 
 main.o: main.c
 	gcc -c main.c
+
+valor_lexico.o: valor_lexico.c
+	gcc -c valor_lexico.c
 
 # FLEX
 lex.yy.o: lex.yy.c
@@ -41,5 +44,3 @@ targz:
 # Limpeza de arquivos exec
 clean:
 	rm -rf *.o lex.yy.c y.tab.c y.tab.h y.output parser.output parser.tab.c parser.tab.h etapa3
-	sleep 1
-	clear
