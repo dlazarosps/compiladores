@@ -11,8 +11,8 @@ AST *astCreate(int type, TValorLexico lex, AST leafs[])
 
 	node->type = type;
 
-	// node->valor_lexico = lex;
-	memcpy(&node->valor_lexico, &lex, sizeof(lex));
+	node->valor_lexico = lex;
+	// memcpy(&node->valor_lexico, &lex, sizeof(lex));
 
 	//node->leafs = leafs;
 	memcpy(&node->leafs, &leafs, sizeof(leafs));
@@ -320,7 +320,7 @@ void astDescomp(AST *ast)
 			fprintf(stderr, " <= ");
 			astDescomp(ast->leafs[1]);
 			break;
-			
+
 		case AST_CMDATR:
 			astDescomp(ast->leafs[0]);
 			fprintf(stderr, " = ");
