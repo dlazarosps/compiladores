@@ -24,8 +24,7 @@ else
 fi
 
 #pasta com os arquivos de teste e prefixo
-tests_folder="testes/"
-expect_folder="expect/"
+tests_folder="../etapa2/testes/"
 prefix="asl"
 
 testes_com_erro=""

@@ -1,8 +1,15 @@
 /* ETAPA 3 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 %{
+	#include "valor_lexico.h"
 	#include "parser.tab.h"
+	#define TIPO_PALAVRA_RESERVADA 0
+	#define TIPO_CARACTER_ESPECIAL 1
+	#define TIPO_OPERADOR_COMPOSTO 2
+	#define TIPO_IDENTIFICADOR 3
+	#define TIPO_LITERAL 4
 	int lineNumber = 1;
+	extern int get_line_number();
 %}
 
 %option noyywrap
@@ -11,7 +18,7 @@
 
 %%
 
-"int"		{return TK_PR_INT;}
+"int"		{yylval.valor_lexico = PalavraReservada(); printf("int linha %d\n", yylval.valor_lexico.linha); return TK_PR_INT;}
 "float" 	{return TK_PR_FLOAT;}
 "bool"  	{return TK_PR_BOOL;}
 "char" 		{return TK_PR_CHAR;}
