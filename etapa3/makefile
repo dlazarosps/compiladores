@@ -1,7 +1,7 @@
 # MAKEFILE ETAPA 3
 all: etapa3
 
-etapa3: parser.tab.o lex.yy.o main.o
+etapa3: parser.tab.o lex.yy.o main.o ast.o
 	gcc parser.tab.o lex.yy.o main.o -o etapa3
 
 # etapa3: y.tab.o lex.yy.o main.o
@@ -27,6 +27,9 @@ parser.tab.c: parser.y
 # y.tab.c: parser.y
 # 	bison -d -v parser.y -o y.tab.c
 
+# AST
+ast.o: ast.c ast.h
+	gcc -c ast.c
 
 # Testes
 teste1: etapa3

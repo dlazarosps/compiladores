@@ -1,3 +1,4 @@
+/* ETAPA 3 - TRABALHO DE COMPILADORES - Grupo Rho */
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,7 +86,7 @@ extern int get_line_number();
 %type<ast> tipo
 %type<ast> decGlobal
 %type<ast> decTipo
-%type<ast> decTipo
+%type<ast> decFunc
 %type<ast> listaTipo
 %type<ast> campoTipo
 %type<ast> encaps
