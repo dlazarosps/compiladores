@@ -582,7 +582,14 @@ decVar: tipoSimples TK_IDENTIFICADOR
          listPush(leafs, $1);
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
          $$ = astCreate(AST_DECVAR, NULL, leafs);}
-    | tipoSimples TK_IDENTIFICADOR TK_OC_LE expr
+    | tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
+        {LIST *leafs = listCreate();
+         listPush(leafs, $1);
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
+         listPush(leafs, $4);
+         $$ = astCreate(AST_DECVAR, NULL, leafs);}
+    | tipoSimples TK_IDENTIFICADOR TK_OC_LE literal
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
@@ -936,10 +943,10 @@ variableIndex: '[' expr ']'
          $$ = astCreate(AST_VARIABLEINDEX, NULL, leafs);}
     ;
 
-variableAttribute: '$' variable
+variableAttribute: '$' TK_IDENTIFICADOR
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, $2);
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
          $$ = astCreate(AST_VARIABLEATTRIBUTE, NULL, leafs);}
 	| %empty
         {LIST *leafs = listCreate();

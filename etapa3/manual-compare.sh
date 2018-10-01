@@ -33,7 +33,9 @@ erros=0
 #aplica teste de 1 até @parm files
 for i in `seq $files_from $files_to`
 do
+    printf "\n==============================\n"
     printf "* Teste %d:\n" $i
+    printf "==============================\n"
 
     if (($i < 10)); then
         filename=$prefix"0"$i
@@ -51,6 +53,12 @@ do
         #expected SUCCESS
         should_error=false
     fi
+
+    printf "* Código original:\n\n"
+
+    cat $tests_folder$filename
+
+    printf "\n\n* Código Descompilado:\n\n"
 
     cat $tests_folder$filename | ./etapa3
     return_value=$?
