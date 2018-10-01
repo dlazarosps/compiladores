@@ -82,6 +82,7 @@
 #define AST_TERMINAL                        65      //valores lexicos e caracteres reservados / especiais
 #define AST_CMDCASE                         66
 #define AST_EXPR                            67
+#define AST_EMPTY                           68
 
 #define DEBUG 0
 

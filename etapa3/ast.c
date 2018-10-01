@@ -97,6 +97,9 @@ void astPrint(AST *node, int nivel)
 		case AST_LITERALCHAR: fprintf(stdout, "AST_LITERALCHAR"); break;
 		case AST_LITERALBOOL: fprintf(stdout, "AST_LITERALBOOL"); break;
 		case AST_TERMINAL: fprintf(stdout, "AST_TERMINAL"); break;
+		case AST_CMDCASE: fprintf(stdout, "AST_CMDCASE"); break;
+		case AST_EXPR: fprintf(stdout, "AST_EXPR"); break;
+		case AST_EMPTY: fprintf(stdout, "AST_EMPTY"); break;
 		default:
 			fprintf(stderr, "[ERROR] Node Type: %d", node->type);
 			break;
@@ -147,19 +150,19 @@ void astDescomp(AST *ast)
 			switch (ast->valor_lexico->tipo_valor)
 			{
 			case VALOR_CHAR:
-				fprintf(stdout, "%c", ast->valor_lexico->valor_char);
+				fprintf(stdout, "%c ", ast->valor_lexico->valor_char);
 				break;
 			case VALOR_STRING:
-				fprintf(stdout, "%s", ast->valor_lexico->valor_string);
+				fprintf(stdout, "%s ", ast->valor_lexico->valor_string);
 				break;
 			case VALOR_INT:
-				fprintf(stdout, "%i", ast->valor_lexico->valor_int);
+				fprintf(stdout, "%i ", ast->valor_lexico->valor_int);
 				break;
 			case VALOR_FLOAT:
-				fprintf(stdout, "%f", ast->valor_lexico->valor_float);
+				fprintf(stdout, "%f ", ast->valor_lexico->valor_float);
 				break;
 			case VALOR_BOOL:
-				fprintf(stdout, "%d", ast->valor_lexico->valor_bool);
+				fprintf(stdout, "%d ", ast->valor_lexico->valor_bool);
 				break;
 			default:
 				fprintf(stderr, "[ERROR] tipo valor: %d", ast->valor_lexico->tipo_valor);
@@ -174,8 +177,8 @@ void astDescomp(AST *ast)
 		}
 
 		//quebra as linhas por  construções gramaticais não terminais
-		if (ast->type != AST_TERMINAL)
-			fprintf(stdout, "\n");
+		//if (ast->type != AST_TERMINAL)
+		//	fprintf(stdout, "\n");
 
 	}
 
@@ -187,12 +190,12 @@ void astDelete(AST *node){
 
 	int sizeOfLeafs = listSize(node->leafs);
 	int i;
-	
+
 	for (i = 0; i < sizeOfLeafs; i++)
 	{
 		astDelete(listGet(node->leafs, i));
 	}
-	
+
 	free(node->valor_lexico);
 	free(node->leafs);
 	free(node);

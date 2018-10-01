@@ -28,6 +28,5 @@ typedef struct tipo_valor_lexico {
 
 TValorLexico GetValorLexico(int tipo, int tipo_literal, char *texto);
 TValorLexico *lexCopy(TValorLexico lex);
-TValorLexico *lexEmpty();
 
 #endif

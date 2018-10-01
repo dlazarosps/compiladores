@@ -12,6 +12,7 @@ extern void *arvore;
 
 extern void descompila (void *arvore) {
     astDescomp(arvore);
+    fprintf(stdout, "\n");
 }
 extern void libera (void *arvore) {
     //astPrint(arvore, 0);
@@ -157,7 +158,7 @@ programa
          arvore = $$;}
     | %empty
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexEmpty(), NULL));
+         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
          $$ = astCreate(AST_PROGRAMA, NULL, leafs);
          arvore = $$;}
     ;
@@ -436,7 +437,7 @@ listaComandos
          $$ = astCreate(AST_LISTACOMANDOS, NULL, leafs);}
 	| %empty
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexEmpty(), NULL));
+         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
          $$ = astCreate(AST_LISTACOMANDOS, NULL, leafs);}
     ;
 
@@ -627,7 +628,7 @@ cmdAtr
     : variable '=' expr
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
+         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
          listPush(leafs, $3);
          $$ = astCreate(AST_CMDATR, NULL, leafs);}
     ;
@@ -978,7 +979,7 @@ variableIndex
          $$ = astCreate(AST_VARIABLEINDEX, NULL, leafs);}
 	| %empty
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexEmpty(), NULL));
+         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
          $$ = astCreate(AST_VARIABLEINDEX, NULL, leafs);}
     ;
 
@@ -990,7 +991,7 @@ variableAttribute
          $$ = astCreate(AST_VARIABLEATTRIBUTE, NULL, leafs);}
 	| %empty
         {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexEmpty(), NULL));
+         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
          $$ = astCreate(AST_VARIABLEATTRIBUTE, NULL, leafs);}
     ;
 
