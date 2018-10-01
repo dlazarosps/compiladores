@@ -150,8 +150,7 @@ extern void libera (void *arvore) {
 
 %%
 
-programa
-    : elemento
+programa: elemento
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_PROGRAMA, NULL, leafs);
@@ -163,8 +162,7 @@ programa
          arvore = $$;}
     ;
 
-elemento
-	: elemento decGlobal
+elemento: elemento decGlobal
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
@@ -193,8 +191,7 @@ elemento
          $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
     ;
 
-tipoSimples
-    : TK_PR_INT
+tipoSimples: TK_PR_INT
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
@@ -216,8 +213,7 @@ tipoSimples
          $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
     ;
 
-tipo
-    : tipoSimples
+tipo: tipoSimples
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_TIPO, NULL, leafs);}
@@ -231,8 +227,7 @@ tipo
  * Declaração de variáveis globais
  */
 
-decGlobal
-    : TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
+decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
@@ -270,8 +265,7 @@ decGlobal
 * Declaração de tipos
 */
 
-decTipo
-    : TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';'
+decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
@@ -282,8 +276,7 @@ decTipo
          $$ = astCreate(AST_DECTIPO, NULL, leafs);}
     ;
 
-listaTipo
-    : campoTipo
+listaTipo: campoTipo
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_LISTATIPO, NULL, leafs);}
@@ -295,8 +288,7 @@ listaTipo
          $$ = astCreate(AST_LISTATIPO, NULL, leafs);}
     ;
 
-campoTipo
-    : encaps tipoSimples TK_IDENTIFICADOR
+campoTipo: encaps tipoSimples TK_IDENTIFICADOR
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
@@ -309,8 +301,7 @@ campoTipo
          $$ = astCreate(AST_CAMPOTIPO, NULL, leafs);}
     ;
 
-encaps
-    : TK_PR_PROTECTED
+encaps: TK_PR_PROTECTED
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_ENCAPS, NULL, leafs);}
@@ -328,16 +319,14 @@ encaps
  * Declaração de funções
  */
 
-decFunc
-    : cabecalhoFun corpoFun
+decFunc: cabecalhoFun corpoFun
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
          $$ = astCreate(AST_ENCAPS, NULL, leafs);}
     ;
 
-cabecalhoFun
-    : TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
+cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
@@ -365,8 +354,7 @@ cabecalhoFun
          $$ = astCreate(AST_CABECALHOFUN, NULL, leafs);}
     ;
 
-listaFun
-    : '(' paramsFun ')'
+listaFun: '(' paramsFun ')'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
          listPush(leafs, $2);
@@ -379,8 +367,7 @@ listaFun
          $$ = astCreate(AST_LISTAFUN, NULL, leafs);}
     ;
 
-paramsFun
-    : params
+paramsFun: params
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_PARAMSFUN, NULL, leafs);}
@@ -392,8 +379,7 @@ paramsFun
          $$ = astCreate(AST_PARAMSFUN, NULL, leafs);}
     ;
 
-params
-    : TK_PR_CONST tipo TK_IDENTIFICADOR
+params: TK_PR_CONST tipo TK_IDENTIFICADOR
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
@@ -406,15 +392,13 @@ params
          $$ = astCreate(AST_PARAMS, NULL, leafs);}
     ;
 
-corpoFun
-    : bloco
+corpoFun: bloco
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_CORPOFUN, NULL, leafs);}
     ;
 
-bloco
-    : '{' listaComandos '}'
+bloco: '{' listaComandos '}'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
          listPush(leafs, $2);
@@ -422,8 +406,7 @@ bloco
          $$ = astCreate(AST_BLOCO, NULL, leafs);}
     ;
 
-listaComandos
-    : listaComandos cmdsTerminadosPontoVirgula ';'
+listaComandos: listaComandos cmdsTerminadosPontoVirgula ';'
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
@@ -441,8 +424,7 @@ listaComandos
          $$ = astCreate(AST_LISTACOMANDOS, NULL, leafs);}
     ;
 
-cmdsTerminadosPontoVirgula
-    : cmdDecVar
+cmdsTerminadosPontoVirgula: cmdDecVar
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
@@ -500,15 +482,13 @@ cmdsTerminadosPontoVirgula
          $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
     ;
 
-cmdsTerminadosDoisPontos
-    : cmdCase
+cmdsTerminadosDoisPontos: cmdCase
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_CMDSTERMINADOSDOISPONTOS, NULL, leafs);}
     ;
 
-cmdSimplesFor
-    : cmdDecVar
+cmdSimplesFor: cmdDecVar
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
@@ -554,8 +534,7 @@ cmdSimplesFor
  * Comando case
  */
 
-cmdCase
-    : TK_PR_CASE TK_LIT_INT
+cmdCase: TK_PR_CASE TK_LIT_INT
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
@@ -566,8 +545,7 @@ cmdCase
  * Comando simples de bloco
  */
 
-cmdBloco
-    : bloco
+cmdBloco: bloco
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_CMDBLOCO, NULL, leafs);}
@@ -577,8 +555,7 @@ cmdBloco
  * Comando de declaração de variáveis
  */
 
-cmdDecVar
-    : TK_PR_STATIC TK_PR_CONST decVar
+cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
@@ -600,8 +577,7 @@ cmdDecVar
          $$ = astCreate(AST_CMDDECVAR, NULL, leafs);}
     ;
 
-decVar
-    : tipoSimples TK_IDENTIFICADOR
+decVar: tipoSimples TK_IDENTIFICADOR
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
@@ -624,8 +600,7 @@ decVar
  * Comando de atribuição
  */
 
-cmdAtr
-    : variable '=' expr
+cmdAtr: variable '=' expr
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -637,8 +612,7 @@ cmdAtr
  * Comando de chamada de função
  */
 
-cmdFuncCall
-    : TK_IDENTIFICADOR '(' listaExpr ')'
+cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -657,8 +631,7 @@ cmdFuncCall
  * Comando de I/O
  */
 
-cmdIO
-    : cmdin
+cmdIO: cmdin
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_CMDIO, NULL, leafs);}
@@ -668,16 +641,14 @@ cmdIO
          $$ = astCreate(AST_CMDIO, NULL, leafs);}
     ;
 
-cmdin
-    : TK_PR_INPUT expr
+cmdin: TK_PR_INPUT expr
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
          $$ = astCreate(AST_CMDIN, NULL, leafs);}
     ;
 
-cmdout
-    : TK_PR_OUTPUT listaExpr
+cmdout: TK_PR_OUTPUT listaExpr
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
@@ -688,8 +659,7 @@ cmdout
  * Comando pipe
  */
 
-cmdPipe
-    : cmdFuncCall pipeOp pipeList
+cmdPipe: cmdFuncCall pipeOp pipeList
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
@@ -697,8 +667,7 @@ cmdPipe
          $$ = astCreate(AST_CMDPIPE, NULL, leafs);}
     ;
 
-pipeList
-    : cmdFuncCall
+pipeList: cmdFuncCall
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_PIPELIST, NULL, leafs);}
@@ -710,8 +679,7 @@ pipeList
          $$ = astCreate(AST_PIPELIST, NULL, leafs);}
     ;
 
-pipeOp
-    : TK_OC_FORWARD_PIPE
+pipeOp: TK_OC_FORWARD_PIPE
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_PIPEOP, NULL, leafs);}
@@ -725,8 +693,7 @@ pipeOp
 *  Comando Shift
 */
 
-shift
-    : variable shiftOp expr
+shift: variable shiftOp expr
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
@@ -734,8 +701,7 @@ shift
          $$ = astCreate(AST_SHIFT, NULL, leafs);}
     ;
 
-shiftOp
-    : TK_OC_SL
+shiftOp: TK_OC_SL
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_SHIFTOP, NULL, leafs);}
@@ -749,8 +715,7 @@ shiftOp
 * Comandos Return Break Continue
 */
 
-rbc
-    : TK_PR_RETURN expr
+rbc: TK_PR_RETURN expr
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
@@ -769,8 +734,7 @@ rbc
  * Comando if
  */
 
-ifst
-    : TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
+ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -792,8 +756,7 @@ ifst
          $$ = astCreate(AST_IFST, NULL, leafs);}
     ;
 
-stmt
-    : bloco
+stmt: bloco
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_STMT, NULL, leafs);}
@@ -807,8 +770,7 @@ stmt
  * Comando foreach
  */
 
-foreach
-    : TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco
+foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -824,8 +786,7 @@ foreach
  * Comando for
  */
 
-for
-    : TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco
+for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -839,8 +800,7 @@ for
          $$ = astCreate(AST_FOR, NULL, leafs);}
     ;
 
-listaFor
-    : cmdSimplesFor
+listaFor: cmdSimplesFor
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_LISTAFOR, NULL, leafs);}
@@ -856,8 +816,7 @@ listaFor
  * Comando while e do while
  */
 
-while
-    : TK_PR_WHILE '(' expr ')' TK_PR_DO bloco
+while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -868,8 +827,7 @@ while
          $$ = astCreate(AST_WHILE, NULL, leafs);}
     ;
 
-dowhile
-    : TK_PR_DO bloco TK_PR_WHILE '(' expr ')'
+dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
@@ -884,8 +842,7 @@ dowhile
  * Comando switch
  */
 
-switch
-    : TK_PR_SWITCH '(' expr ')' bloco
+switch: TK_PR_SWITCH '(' expr ')' bloco
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
@@ -899,8 +856,7 @@ switch
  * Expressão
  */
 
-expr
-    : variable
+expr: variable
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_EXPR, NULL, leafs);}
@@ -944,8 +900,7 @@ expr
  * Lista de expressões (para parâmetros de chamadas de função, etc)
  */
 
-listaExpr
-    : expr
+listaExpr: expr
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_LISTAEXPR, NULL, leafs);}
@@ -961,8 +916,7 @@ listaExpr
  * Acesso a variáveis
  */
 
-variable
-    : TK_IDENTIFICADOR variableIndex variableAttribute
+variable: TK_IDENTIFICADOR variableIndex variableAttribute
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          listPush(leafs, $2);
@@ -970,8 +924,7 @@ variable
          $$ = astCreate(AST_VARIABLE, NULL, leafs);}
     ;
 
-variableIndex
-    : '[' expr ']'
+variableIndex: '[' expr ']'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
          listPush(leafs, $2);
@@ -983,8 +936,7 @@ variableIndex
          $$ = astCreate(AST_VARIABLEINDEX, NULL, leafs);}
     ;
 
-variableAttribute
-    : '$' variable
+variableAttribute: '$' variable
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
          listPush(leafs, $2);
@@ -999,8 +951,7 @@ variableAttribute
  * Literais
  */
 
-literal
-    : TK_LIT_INT
+literal: TK_LIT_INT
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_LITERAL, NULL, leafs);}
@@ -1030,8 +981,7 @@ literal
  * Expressão de chamada de função
  */
 
-exprFuncCall
-    : cmdFuncCall
+exprFuncCall: cmdFuncCall
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_EXPRFUNCCALL, NULL, leafs);}
@@ -1041,8 +991,7 @@ exprFuncCall
  * Expressão pipe
  */
 
-exprPipe
-    : cmdPipe
+exprPipe: cmdPipe
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          $$ = astCreate(AST_EXPRPIPE, NULL, leafs);}
@@ -1052,8 +1001,7 @@ exprPipe
 * Operadores Expressões
 */
 
-unOp
-    : '+'
+unOp: '+'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
          $$ = astCreate(AST_UNOP, NULL, leafs);}
@@ -1083,16 +1031,14 @@ unOp
          $$ = astCreate(AST_UNOP, NULL, leafs);}
     ;
 
-unario
-    : unOp expr %prec UNARY_OP
+unario: unOp expr %prec UNARY_OP
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
          $$ = astCreate(AST_UNARIO, NULL, leafs);}
     ;
 
-biOp
-    : '+'
+biOp: '+'
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
          $$ = astCreate(AST_BIOP, NULL, leafs);}
@@ -1138,8 +1084,7 @@ biOp
          $$ = astCreate(AST_BIOP, NULL, leafs);}
     ;
 
-relOp
-    : TK_OC_LE
+relOp: TK_OC_LE
         {LIST *leafs = listCreate();
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
          $$ = astCreate(AST_RELOP, NULL, leafs);}
@@ -1165,8 +1110,7 @@ relOp
          $$ = astCreate(AST_RELOP, NULL, leafs);}
     ;
 
-binario
-    : expr biOp expr %prec BINARY_OP
+binario: expr biOp expr %prec BINARY_OP
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, $2);
@@ -1174,8 +1118,7 @@ binario
          $$ = astCreate(AST_BINARIO, NULL, leafs);}
     ;
 
-ternario
-    : expr '?' expr ':' expr  %prec TERNARY_OP
+ternario: expr '?' expr ':' expr  %prec TERNARY_OP
         {LIST *leafs = listCreate();
          listPush(leafs, $1);
          listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
