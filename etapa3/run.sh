@@ -56,15 +56,23 @@ do
     return_value=$?
 
     if [ $should_error = false ] && [ $return_value != 0 ]; then
-        echo "[TEST ERROR] Para o teste "$i", esperava nenhum erro e recebi erro!"
+        echo "[TEST ERROR] Para o teste "$i", esperava sucesso e recebi erro!"
         ((erros++))
         testes_com_erro=$i","$testes_com_erro
     fi
 
     if [ $should_error = true ] && [ $return_value -eq 0 ]; then
-        echo "[TEST ERROR] Para o teste "$i", esperava erro e recebi nenhum erro!"
+        echo "[TEST ERROR] Para o teste "$i", esperava erro e recebi sucesso!"
         ((erros++))
         testes_com_erro=$i","$testes_com_erro
+    fi
+
+    if [ $should_error = false ] && [ $return_value -eq 0 ]; then
+        echo "[TEST OK] Para o teste "$i", esperava sucesso e recebi sucesso!"
+    fi
+
+    if [ $should_error = true ] && [ $return_value != 0 ]; then
+        echo "[TEST OK] Para o teste "$i", esperava sucesso e recebi sucesso!"
     fi
 
     echo

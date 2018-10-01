@@ -20,5 +20,6 @@ LIST *listCreate();
 void listPush(LIST *head, AST *node);
 AST *listGet(LIST *head, int index);
 int listSize(LIST *head);
+LIST *listDelete(LIST *head);
 
 #endif

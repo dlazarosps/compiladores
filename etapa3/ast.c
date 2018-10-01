@@ -196,6 +196,12 @@ void astDelete(AST *node){
 		astDelete(listGet(node->leafs, i));
 	}
 
+	node->leafs = listDelete(node->leafs);
+
+	if(node->valor_lexico != NULL && node->valor_lexico->tipo_valor == VALOR_STRING) {
+		free(node->valor_lexico->valor_string);
+	}
+
 	free(node->valor_lexico);
 	free(node->leafs);
 	free(node);

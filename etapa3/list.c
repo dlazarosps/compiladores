@@ -57,3 +57,12 @@ int listSize(LIST *head)
 
 	return currentIndex;
 }
+
+LIST *listDelete(LIST *head)
+{
+	if(head != NULL) {
+		head->next = listDelete(head->next);
+		free(head);
+	}
+	return NULL;
+}
