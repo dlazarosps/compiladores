@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Para testar, execute: bash run.sh FROM TO
+# Para testar, execute: bash test.sh FROM TO
 # onde FROM e TO é o sufixo dos arquivos de teste
-# exemplo: bash run.sh 1 97
+# exemplo: bash test.sh 1 137
 
 # Gambiarra para rodar os testes
 echo "Rodando Testes"
@@ -85,6 +85,9 @@ do
         diff eq1.txt eq2.txt
         # verificação do resultado
         return_value=$?
+
+        rm -f eq1.txt
+        rm -f eq2.txt
 
         if [ $return_value != 0 ]; then
             echo "[TEST ERROR] Os arquivos gerados não são iguais!"

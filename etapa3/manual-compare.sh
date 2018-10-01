@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Para testar, execute: bash run.sh FROM TO
+# Para testar, execute: bash manual-compare.sh FROM TO
 # onde FROM e TO é o sufixo dos arquivos de teste
-# exemplo: bash run.sh 1 97
+# exemplo: bash manual-compare.sh 1 137
 
 # Gambiarra para rodar os testes
 echo "Rodando Testes"

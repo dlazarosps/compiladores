@@ -43,8 +43,8 @@ targz:
 
 # VALGRIND
 valgrind: etapa3
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=leak.txt -v ./etapa3 < teste1.txt
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=leak.txt -v ./etapa3 < ../etapa2/testes/asl49
 
 # Limpeza de arquivos exec
 clean:
-	rm -rf *.o lex.yy.c parser.output parser.tab.c parser.tab.h etapa3
+	rm -rf *.o lex.yy.c parser.output parser.tab.c parser.tab.h etapa3 leak.txt
