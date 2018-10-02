@@ -34,12 +34,12 @@ ast.o: ast.c
 # Testes
 teste1: etapa3
 	clear
-	cat teste1.txt | ./etapa3
+	cat teste2.txt | ./etapa3
 
 # Compacta para envio
 targz:
-	tar cvzf etapa3.tgz main.c parser.y makefile scanner.l ast.c valor_lexico.c
-	# scp etapa3.tgz dlspsilva@html.inf.ufrgs.br:./public_html/
+	tar cvzf etapa3.tgz main.c parser.y makefile scanner.l ast.c valor_lexico.c list.c
+	#scp etapa3.tgz dlspsilva@html.inf.ufrgs.br:./public_html/
 
 # VALGRIND
 valgrind: etapa3
