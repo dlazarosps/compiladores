@@ -37,8 +37,8 @@ teste1: etapa3
 	cat teste2.txt | ./etapa3
 
 # Compacta para envio
-targz:
-	tar cvzf etapa3.tgz main.c parser.y makefile scanner.l ast.c valor_lexico.c list.c
+targz: clean
+	tar cvzf etapa3.tgz main.c parser.y makefile scanner.l ast.* valor_lexico.* list.*
 	#scp etapa3.tgz dlspsilva@html.inf.ufrgs.br:./public_html/
 
 # VALGRIND
