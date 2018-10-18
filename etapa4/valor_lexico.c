@@ -11,6 +11,7 @@ TValorLexico GetValorLexico(int tipo, int tipo_valor, char *texto) {
     retorno.tipo = tipo;
     if(tipo_valor == TIPO_LITERAL) {
         retorno.tipo_valor = tipo_valor;
+        //TODO size of tipo_valor
         switch(tipo_valor) {
             case VALOR_CHAR:
                 retorno.valor_char = texto[0];

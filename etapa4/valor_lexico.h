@@ -17,6 +17,7 @@ typedef struct tipo_valor_lexico {
     int linha;
     int tipo;
     int tipo_valor;
+    //TODO size of tipo_valor
     union {
         char *valor_string;
         char valor_char;
