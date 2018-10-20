@@ -4,19 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
-#include "ast.h"
-#include "list.h"
-#include "valor_lexico.h"
 
-/* void hashInit()
+void hashInit()
 {
     int i;
-    
     for(int i = 0; i < HASH_SIZE; i++){
-        table[i] = NULL;
+        tabela_hash[i] = NULL;
     }
     
-} */
+}
 
 int hashIndex(char* id)
 {
@@ -31,7 +27,7 @@ int hashIndex(char* id)
     return index - 1;
 }
 
-HASH hashInsert(char *texto, TValorLexico * lex)
+HASH* hashInsert(char *texto, TValorLexico * lex)
 {
     HASH *hash_node = malloc(sizeof(HASH));
     int index;
@@ -41,8 +37,8 @@ HASH hashInsert(char *texto, TValorLexico * lex)
 
     strcpy(hash_node->text, texto);
     hash_node->valor_lexico = lex;
-    hash_node->next = table[index];
-    table[index] = hash_node;
+    hash_node->next = tabela_hash[index];
+    tabela_hash[index] = hash_node;
 
     return hash_node;
 }

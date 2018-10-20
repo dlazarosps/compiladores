@@ -4,6 +4,7 @@
 	#include "valor_lexico.h"
 	#include "ast.h"
 	#include "list.h"
+	#include "hash.h"
 	#include "parser.tab.h"
 	int lineNumber = 1;
 	extern int get_line_number();
@@ -81,4 +82,8 @@
 
 int get_line_number(void){
     return lineNumber;
+}
+
+void init(){
+	hashInit();
 }

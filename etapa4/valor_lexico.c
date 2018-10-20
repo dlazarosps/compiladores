@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "valor_lexico.h"
+#include "hash.h"
 
 extern int get_line_number();
+extern HASH* hashInsert(char *texto, TValorLexico *lex);
 
 TValorLexico GetValorLexico(int tipo, int tipo_valor, char *texto) {
     TValorLexico retorno;
@@ -53,7 +55,7 @@ TValorLexico GetValorLexico(int tipo, int tipo_valor, char *texto) {
     //Insere lexico na hash table
     if (tipo == TIPO_IDENTIFICADOR || tipo == TIPO_LITERAL) { //literal tb?
         TValorLexico * hash_lex = lexCopy(retorno);     //ponteiro do valor_lexico
-        HASH hash = hashInsert(texto, hash_lex);        //insere na tabela global
+        HASH *hash = hashInsert(texto, hash_lex);        //insere na tabela global
     }
     
 

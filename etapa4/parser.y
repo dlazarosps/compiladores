@@ -5,6 +5,7 @@
 #include "valor_lexico.h"
 #include "ast.h"
 #include "list.h"
+#include "hash.h"
 int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();

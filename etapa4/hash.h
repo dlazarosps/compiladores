@@ -18,13 +18,13 @@ typedef struct hash_node
     struct hash_node *next; //encademento
 } HASH;
 
-// HASH* table[HASH_SIZE];
-HASH* table[HASH_SIZE] = {NULL}; //auto init
+HASH *tabela_hash[HASH_SIZE];
+//HASH* tabela_hash[HASH_SIZE] = {NULL}; //auto init
 
-// void hashInit();
+void hashInit();
 void hashPrint();
 int hashIndex(char * id);
-HASH hashFind(char * id);
-HASH hashInsert(char *texto, TValorLexico *lex);
+HASH* hashFind(char * id);
+HASH* hashInsert(char *texto, TValorLexico *lex);
 
 #endif

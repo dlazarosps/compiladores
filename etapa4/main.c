@@ -22,6 +22,6 @@ int main(int argc, char **argv)
     libera(arvore);
     //libera a árvore de tabelas de símbolos
     arvore = NULL;
-    yylex_destroy();
+    //yylex_destroy();
     return ret;
 }
