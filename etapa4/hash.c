@@ -31,18 +31,17 @@ int hashIndex(char* id)
     return index - 1;
 }
 
-HASH hashInsert(char* id, TValorLexico *lex)
+HASH hashInsert(char *texto, TValorLexico * lex)
 {
-    HASH *hash_node;
-    int index, size;
-
+    HASH *hash_node = malloc(sizeof(HASH));
+    int index;
+    
     // TODO check if exist => hashFind()
+    index = hashIndex(texto);
 
-    index = hashIndex(id);
-
-    strcpy(hash_node->text, id);
+    strcpy(hash_node->text, texto);
     hash_node->valor_lexico = lex;
-
+    hash_node->next = table[index];
     table[index] = hash_node;
 
     return hash_node;

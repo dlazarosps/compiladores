@@ -14,7 +14,8 @@
 typedef struct hash_node
 {
     char * text;
-    TValorLexico *valor_lexico; // {linha, tipo, tipo_valor, union}
+    TValorLexico *valor_lexico; // {linha, size, tipo, tipo_valor, union}
+    struct hash_node *next; //encademento
 } HASH;
 
 // HASH* table[HASH_SIZE];
@@ -24,6 +25,6 @@ HASH* table[HASH_SIZE] = {NULL}; //auto init
 void hashPrint();
 int hashIndex(char * id);
 HASH hashFind(char * id);
-HASH hashInsert(char* id, TValorLexico *lex);
+HASH hashInsert(char *texto, TValorLexico *lex);
 
 #endif

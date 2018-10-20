@@ -13,11 +13,13 @@ void *arvore = NULL;
 void descompila (void *arvore);
 void libera (void *arvore);
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
+    //Inicializa a tabela de símbolos global
     int ret = yyparse();
-    descompila (arvore);
     libera(arvore);
+    //libera a árvore de tabelas de símbolos
     arvore = NULL;
+    yylex_destroy();
     return ret;
 }

@@ -7,7 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "ast.h"
+#include "hash.h"
 #include "list.h"
+#include "semantic.h"
 #include "valor_lexico.h"
 
 /*
