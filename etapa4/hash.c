@@ -11,7 +11,6 @@ void hashInit()
     for(int i = 0; i < HASH_SIZE; i++){
         tabela_hash[i] = NULL;
     }
-    
 }
 
 int hashIndex(char* id)
@@ -27,7 +26,8 @@ int hashIndex(char* id)
     return index - 1;
 }
 
-HASH* hashFind(char *id){
+HASH* hashFind(char *id)
+{
     int index = hashIndex(id);
     HASH* hash_node = tabela_hash[index];
     
@@ -59,4 +59,16 @@ HASH* hashInsert(char *texto, TValorLexico * lex)
     tabela_hash[index] = hash_node;
 
     return hash_node;
+}
+
+void hashPrint()
+{
+    int i;
+    HASH *hash_node;
+    
+    for(int i = 0; i < HASH_SIZE; i++){
+        for(hash_node = tabela_hash[i]; hash_node; hash_node hash_node->next){
+             fprintf(stdout, "tabela_hash [%d] = %s \n", i, hash_node->text);
+        }   
+    }    
 }
