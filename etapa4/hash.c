@@ -27,12 +27,30 @@ int hashIndex(char* id)
     return index - 1;
 }
 
+HASH* hashFind(char *id){
+    int index = hashIndex(id);
+    HASH hash_node = tabela_hash[index];
+    
+    while(hash_node != NULL){
+        if(strcmp(id, hash_node->text) == 0) //compara texto 
+            return hash_node; //retorna ponteiro
+        else
+            hash_node = hash_node->next; //avança para proximo encademento com mesmo index
+    }
+    
+    return NULL; //não encontrado
+}
+
 HASH* hashInsert(char *texto, TValorLexico * lex)
 {
     HASH *hash_node = malloc(sizeof(HASH));
     int index;
     
-    // TODO check if exist => hashFind()
+    // check if exist
+    if(hash_node = hashFind(texto) != NULL)
+        return hash_node; //retorna ponteiro caso exista
+
+    //create
     index = hashIndex(texto);
 
     strcpy(hash_node->text, texto);

@@ -22,7 +22,7 @@ HASH *tabela_hash[HASH_SIZE];
 //HASH* tabela_hash[HASH_SIZE] = {NULL}; //auto init
 
 void hashInit();
-void hashPrint();
+// void hashPrint();
 int hashIndex(char * id);
 HASH* hashFind(char * id);
 HASH* hashInsert(char *texto, TValorLexico *lex);
