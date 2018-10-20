@@ -29,7 +29,7 @@ int hashIndex(char* id)
 
 HASH* hashFind(char *id){
     int index = hashIndex(id);
-    HASH hash_node = tabela_hash[index];
+    HASH* hash_node = tabela_hash[index];
     
     while(hash_node != NULL){
         if(strcmp(id, hash_node->text) == 0) //compara texto 
@@ -47,7 +47,7 @@ HASH* hashInsert(char *texto, TValorLexico * lex)
     int index;
     
     // check if exist
-    if(hash_node = hashFind(texto) != NULL)
+    if((hash_node = hashFind(texto)) != NULL)
         return hash_node; //retorna ponteiro caso exista
 
     //create
