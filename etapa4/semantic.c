@@ -48,24 +48,12 @@ int setTypes(AST* node)
     leafsize = listSize(node->lefts);
 
     //para cada tipo de construção gramatical aplica atribuição de tipo e tamanho
-    switch (node->type){
-        case AST_PROGRAMA:
-            fprintf(stdout, "AST_PROGRAMA");
-            break;
-        case AST_ELEMENTO:
-            fprintf(stdout, "AST_ELEMENTO");
-            break;
-        case AST_OPTCONST:
-            fprintf(stdout, "AST_OPTCONST");
-            break;
-        case AST_TIPOSIMPLES:
-            fprintf(stdout, "AST_TIPOSIMPLES");
-            break;
+    switch (node->type){    
         case AST_TIPO:
             fprintf(stdout, "AST_TIPO");
+            //tipo do usuário precisa ter sido declarado ?
             break;
         case AST_DECGLOBAL:
-            
             //pega tipo
             child = listGet(node->leafs, (leafsize - 1)); //decglobal = id ... tipo ';'
 
@@ -74,191 +62,90 @@ int setTypes(AST* node)
             // campo natureza ? (tipo !=  tipo_valor != natureza)
             // node->valor_lexico->size = set_size_lex ()
             // troca tipo lex de TIPO_IDENTIFICADOR => AST_DECGLOBAL ?
-
             break;
         case AST_DECTIPO:
-            fprintf(stdout, "AST_DECTIPO");
-            break;
-        case AST_LISTATIPO:
-            fprintf(stdout, "AST_LISTATIPO");
+            //TODO check TK_ID dectipo
             break;
         case AST_CAMPOTIPO:
-            fprintf(stdout, "AST_CAMPOTIPO");
-            break;
-        case AST_ENCAPS:
-            fprintf(stdout, "AST_ENCAPS");
-            break;
-        case AST_DECFUNC:
-            fprintf(stdout, "AST_DECFUNC");
+            //TODO check TK_ID cabecalhofun
             break;
         case AST_CABECALHOFUN:
-            fprintf(stdout, "AST_CABECALHOFUN");
-            break;
-        case AST_LISTAFUN:
-            fprintf(stdout, "AST_LISTAFUN");
-            break;
-        case AST_PARAMSFUNOREMPTY:
-            fprintf(stdout, "AST_PARAMSFUNOREMPTY");
-            break;
-        case AST_PARAMSFUN:
-            fprintf(stdout, "AST_PARAMSFUN");
+            //TODO check TK_ID cabecalhofun
+            //count parms ?
             break;
         case AST_PARAMS:
-            fprintf(stdout, "AST_PARAMS");
-            break;
-        case AST_CORPOFUN:
-            fprintf(stdout, "AST_CORPOFUN");
-            break;
-        case AST_BLOCO:
-            fprintf(stdout, "AST_BLOCO");
-            break;
-        case AST_LISTACOMANDOS:
-            fprintf(stdout, "AST_LISTACOMANDOS");
-            break;
-        case AST_CMDSTERMINADOSPONTOVIRGULA:
-            fprintf(stdout, "AST_CMDSTERMINADOSPONTOVIRGULA");
-            break;
-        case AST_CMDSTERMINADOSDOISPONTOS:
-            fprintf(stdout, "AST_CMDSTERMINADOSDOISPONTOS");
-            break;
-        case AST_CMDSIMPLESFOR:
-            fprintf(stdout, "AST_CMDSIMPLESFOR");
-            break;
-        case AST_CMDBLOCO:
-            fprintf(stdout, "AST_CMDBLOCO");
-            break;
-        case AST_CMDDECVAR:
-            fprintf(stdout, "AST_CMDDECVAR");
-            break;
+            //TODO check TK_ID params
+            break;            
         case AST_DECVAR:
-            fprintf(stdout, "AST_DECVAR");
-            break;
-        case AST_OPTINIT:
-            fprintf(stdout, "AST_OPTINIT");
-            break;
-        case AST_CMDATR:
-            fprintf(stdout, "AST_CMDATR");
+            //TODO atribuir tipo a decvar
             break;
         case AST_CMDFUNCCALL:
-            fprintf(stdout, "AST_CMDFUNCCALL");
-            break;
-        case AST_CMDIO:
-            fprintf(stdout, "AST_CMDIO");
-            break;
-        case AST_CMDIN:
-            fprintf(stdout, "AST_CMDIN");
-            break;
-        case AST_CMDOUT:
-            fprintf(stdout, "AST_CMDOUT");
-            break;
-        case AST_SHIFT:
-            fprintf(stdout, "AST_SHIFT");
-            break;
-        case AST_SHIFTOP:
-            fprintf(stdout, "AST_SHIFTOP");
-            break;
-        case AST_RBC:
-            fprintf(stdout, "AST_RBC");
-            break;
-        case AST_FLUXO:
-            fprintf(stdout, "AST_FLUXO");
-            break;
-        case AST_STMT:
-            fprintf(stdout, "AST_STMT");
-            break;
-        case AST_IFST:
-            fprintf(stdout, "AST_IFST");
+            //TODO check TK_ID callfun
             break;
         case AST_FOREACH:
-            fprintf(stdout, "AST_FOREACH");
-            break;
-        case AST_FOR:
-            fprintf(stdout, "AST_FOR");
-            break;
-        case AST_LISTAFOR:
-            fprintf(stdout, "AST_LISTAFOR");
-            break;
-        case AST_WHILE:
-            fprintf(stdout, "AST_WHILE");
-            break;
-        case AST_DOWHILE:
-            fprintf(stdout, "AST_DOWHILE");
-            break;
-        case AST_SWITCH:
-            fprintf(stdout, "AST_SWITCH");
-            break;
-        case AST_CMDPIPE:
-            fprintf(stdout, "AST_CMDPIPE");
-            break;
-        case AST_PIPELIST:
-            fprintf(stdout, "AST_PIPELIST");
-            break;
-        case AST_PIPEOP:
-            fprintf(stdout, "AST_PIPEOP");
-            break;
-        case AST_LISTAEXPROREMPTY:
-            fprintf(stdout, "AST_LISTAEXPROREMPTY");
-            break;
-        case AST_LISTAEXPR:
-            fprintf(stdout, "AST_LISTAEXPR");
+            //TODO verificar TK_ID foreach
             break;
         case AST_VARIABLE:
-            fprintf(stdout, "AST_VARIABLE");
-            break;
-        case AST_VARIABLEINDEX:
-            fprintf(stdout, "AST_VARIABLEINDEX");
+            //TODO atribuir tipo da variável
             break;
         case AST_VARIABLEATTRIBUTE:
-            fprintf(stdout, "AST_VARIABLEATTRIBUTE");
+            //TODO atribuir tipo do atributo
             break;
-        case AST_EXPRFUNCCALL:
-            fprintf(stdout, "AST_EXPRFUNCCALL");
-            break;
-        case AST_EXPRPIPE:
-            fprintf(stdout, "AST_EXPRPIPE");
-            break;
-        case AST_UNOP:
-            fprintf(stdout, "AST_UNOP");
-            break;
-        case AST_UNARIO:
-            fprintf(stdout, "AST_UNARIO");
-            break;
-        case AST_BIOP:
-            fprintf(stdout, "AST_BIOP");
-            break;
-        case AST_BINARIO:
-            fprintf(stdout, "AST_BINARIO");
-            break;
-        case AST_RELOP:
-            fprintf(stdout, "AST_RELOP");
-            break;
-        case AST_TERNARIO:
-            fprintf(stdout, "AST_TERNARIO");
-            break;
+
         case AST_LITERAL:
-            fprintf(stdout, "AST_LITERAL");
-            break;
-        case AST_LITERALNUM:
-            fprintf(stdout, "AST_LITERALNUM");
-            break;
-        case AST_LITERALCHAR:
-            fprintf(stdout, "AST_LITERALCHAR");
-            break;
-        case AST_LITERALBOOL:
-            fprintf(stdout, "AST_LITERALBOOL");
-            break;
-        case AST_TERMINAL:
-            fprintf(stdout, "AST_TERMINAL");
-            break;
+            // já teve tipo atribuido no getlexico (scanner)
+        
+        // NOPs não tem tipo / TK_ID
+        case AST_LISTATIPO:
+        case AST_ENCAPS:
+        case AST_DECFUNC:
+        case AST_LISTAFUN:
+        case AST_PARAMSFUNOREMPTY:
+        case AST_PARAMSFUN:
+        case AST_CORPOFUN:
+        case AST_BLOCO:
+        case AST_LISTACOMANDOS:
+        case AST_CMDSTERMINADOSPONTOVIRGULA:
+        case AST_CMDSTERMINADOSDOISPONTOS:
+        case AST_CMDBLOCO:
+        case AST_CMDSIMPLESFOR:
+        case AST_CMDDECVAR:
+        case AST_OPTINIT:
+        case AST_CMDATR:
+        case AST_CMDIO:
+        case AST_CMDIN:
+        case AST_CMDOUT:
+        case AST_SHIFT:
+        case AST_SHIFTOP:
+        case AST_RBC:
+        case AST_FLUXO:
+        case AST_STMT:
+        case AST_IFST:
+        case AST_FOR:
+        case AST_LISTAFOR:
+        case AST_WHILE:
+        case AST_DOWHILE:
+        case AST_SWITCH:
+        case AST_CMDPIPE:
+        case AST_PIPELIST:
+        case AST_PIPEOP:
+        case AST_LISTAEXPROREMPTY:
+        case AST_LISTAEXPR:
+        case AST_UNOP:
+        case AST_VARIABLEINDEX:
+        case AST_EXPRFUNCCALL:
+        case AST_EXPRPIPE:
+        case AST_UNARIO:
+        case AST_BIOP:
+        case AST_BINARIO:
+        case AST_RELOP:
+        case AST_TERNARIO:
         case AST_CMDCASE:
-            fprintf(stdout, "AST_CMDCASE");
-            break;
         case AST_EXPR:
-            fprintf(stdout, "AST_EXPR");
-            break;
         case AST_EMPTY:
-            fprintf(stdout, "AST_EMPTY");
-            break;
+        case AST_PROGRAMA:
+        case AST_ELEMENTO:
+        case AST_TIPOSIMPLES:
         default:
             fprintf(stderr, "[ERROR] Node Type: %d", node->type);
             break;
@@ -266,7 +153,7 @@ int setTypes(AST* node)
 
     //TODO recursão ?
     // nem todas folhas tem isso
-    // mover para o switch
+    // mover para o switch ?
     int i;
     for (i = 0; i < leafsize; i++){
         setTypes((listGet(node->leafs, i));
