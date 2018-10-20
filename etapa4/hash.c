@@ -67,8 +67,9 @@ void hashPrint()
     HASH *hash_node;
     
     for(int i = 0; i < HASH_SIZE; i++){
-        for(hash_node = tabela_hash[i]; hash_node; hash_node hash_node->next){
-             fprintf(stdout, "tabela_hash [%d] = %s \n", i, hash_node->text);
+        for (hash_node = tabela_hash[i]; hash_node; hash_node = hash_node->next)
+        {
+            fprintf(stdout, "tabela_hash [%d] = %s \n", i, hash_node->text);
         }   
     }    
 }

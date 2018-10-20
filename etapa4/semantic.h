@@ -49,3 +49,5 @@ int checkAll(AST* root);
 int setTypes(AST* node);
 int checkUndeclared();
 int checkUse(AST* node);
+
+#endif
