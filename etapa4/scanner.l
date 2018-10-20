@@ -84,6 +84,3 @@ int get_line_number(void){
     return lineNumber;
 }
 
-void init(){
-	hashInit();
-}
