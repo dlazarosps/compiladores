@@ -7,6 +7,8 @@ Este arquivo não pode ser modificado.
 #include "valor_lexico.h"
 #include "ast.h"
 #include "list.h"
+#include "hash.h"
+#include "semantic.h"
 #include "parser.tab.h" //arquivo gerado com bison -d parser.y
 
 void *arvore = NULL;

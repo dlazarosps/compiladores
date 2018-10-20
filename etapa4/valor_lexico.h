@@ -1,11 +1,6 @@
 #ifndef VALOR_LEXICO_H
 #define VALOR_LEXICO_H
 
-#include "ast.h"
-#include "hash.h"
-#include "list.h"
-#include "semantic.h"
-
 #define TIPO_PALAVRA_RESERVADA 0
 #define TIPO_CARACTER_ESPECIAL 1
 #define TIPO_OPERADOR_COMPOSTO 2
