@@ -20,12 +20,35 @@ int checkAll(AST* root)
     return ret;
 }
 
+int checkUndeclared()
+{
+    int i, 
+    HASH* hash_node
+    
+    //percorre toda a tabela hash
+    for(i = 0; i < HASH_SIZE; i++){
+        for (hash_node = tabela_hash[i]; hash_node; hash_node = node->next){
+            //tipo identificador tem q ser trocado para AST no settypes
+            //caso contrario não foi declarada
+            if (node->type == TIPO_IDENTIFICADOR){ 
+                fprintf(stderr, "ERRO semantico: variavel '%s' nao foi declarada.\n", hash_node->text);
+                return ERR_UNDECLARED;
+            }
+        }
+    }
+    return 0;
+}
+
 int setTypes(AST* node)
 {
     int leafsize;
     AST* child;
-    switch (node->type){
 
+    //pega quantidade de folhas
+    leafsize = listSize(node->lefts);
+
+    //para cada tipo de construção gramatical aplica atribuição de tipo e tamanho
+    switch (node->type){
         case AST_PROGRAMA:
             fprintf(stdout, "AST_PROGRAMA");
             break;
@@ -43,15 +66,14 @@ int setTypes(AST* node)
             break;
         case AST_DECGLOBAL:
             
-            //pega quantidade de folhas
-            leafsize = listSize(node->lefts);
             //pega tipo
             child = listGet(node->leafs, (leafsize - 1)); //decglobal = id ... tipo ';'
 
-            //para cada tamanho especifico atribui tamanho e tipo
+            // atribui tamanho e tipo
             // node->valor_lexico->tipo_valor = get_natureza (child)
             // campo natureza ? (tipo !=  tipo_valor != natureza)
             // node->valor_lexico->size = set_size_lex ()
+            // troca tipo lex de TIPO_IDENTIFICADOR => AST_DECGLOBAL ?
 
             break;
         case AST_DECTIPO:
@@ -245,7 +267,8 @@ int setTypes(AST* node)
     //TODO recursão ?
     // nem todas folhas tem isso
     // mover para o switch
-    for (i = 0; i < leafs; i++){
+    int i;
+    for (i = 0; i < leafsize; i++){
         setTypes((listGet(node->leafs, i));
     }
 
