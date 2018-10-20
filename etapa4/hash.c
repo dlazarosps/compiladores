@@ -80,7 +80,7 @@ void hashDelete(HASH *hash_node)
         return;
 
     //TODO complete / valgrind test    
-    hash_node->next = hashDelete(hash_node->next);
+    hashDelete(hash_node->next);
     
     free(hash_node->text);
     free(hash_node->valor_lexico);
