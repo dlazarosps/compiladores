@@ -73,3 +73,17 @@ void hashPrint()
         }   
     }    
 }
+
+void hashDelete(HASH *hash_node)
+{
+    if (hash_node->next == NULL)
+        return;
+
+    //TODO complete / valgrind test    
+    hash_node->next = hashDelete(hash_node->next);
+    
+    free(hash_node->text);
+    free(hash_node->valor_lexico);
+    free(hash_node);
+    return;
+}
