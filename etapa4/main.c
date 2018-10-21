@@ -8,6 +8,7 @@ Este arquivo não pode ser modificado.
 #include "ast.h"
 #include "list.h"
 #include "hash.h"
+#include "hash_stack.h"
 #include "semantic.h"
 #include "parser.tab.h" //arquivo gerado com bison -d parser.y
 

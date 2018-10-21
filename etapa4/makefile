@@ -1,8 +1,8 @@
 # MAKEFILE ETAPA 4
 all: etapa4
 
-etapa4: clean parser.tab.o lex.yy.o valor_lexico.o ast.o list.o hash.o main.o
-	gcc parser.tab.o lex.yy.o valor_lexico.o ast.o list.o hash.o main.o  -o etapa4
+etapa4: clean parser.tab.o lex.yy.o valor_lexico.o ast.o list.o hash.o hash_stack.o main.o
+	gcc parser.tab.o lex.yy.o valor_lexico.o ast.o list.o hash.o hash_stack.o main.o  -o etapa4
 # etapa4: y.tab.o lex.yy.o main.o
 # 	gcc y.tab.o lex.yy.o main.o -o etapa4
 
@@ -11,6 +11,9 @@ main.o: main.c
 
 hash.o: hash.c
 	gcc -c hash.c
+
+hash_stack.o: hash_stack.c
+	gcc -c hash_stack.c
 
 valor_lexico.o: valor_lexico.c
 	gcc -c valor_lexico.c
