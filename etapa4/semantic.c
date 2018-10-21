@@ -126,7 +126,6 @@ int checkSemantic(AST* node)
                 child = listGet(node->leafs, 3);
             // hash_search child
             //  ret = is vector(TK_ID) ? 0 : ERR_VECTOR
-            //  
             break;
 
         case AST_BLOCO:
