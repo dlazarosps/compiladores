@@ -23,6 +23,7 @@ HASH *tabela_hash[HASH_SIZE];
 
 void hashInit();
 void hashPrint();
+void hashDelete(HASH *hash_node);
 int hashIndex(char * id);
 HASH* hashFind(char * id);
 HASH* hashInsert(char *texto, TValorLexico *lex);

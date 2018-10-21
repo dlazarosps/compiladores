@@ -45,9 +45,6 @@
 #define ERR_WRONG_PAR_OUTPUT 51 //parâmetro não é literal string ou expressão
 #define ERR_WRONG_PAR_RETURN 52 //parâmetro não é expressão compatível com tipo do retorno
 
-int checkAll(AST* root);
-int setTypes(AST* node);
-int checkUndeclared();
-int checkUse(AST* node);
+int checkSemantic(AST* node);
 
 #endif
