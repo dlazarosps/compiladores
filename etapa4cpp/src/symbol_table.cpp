@@ -2,7 +2,8 @@
 
 #include <map>
 #include <string>
-#include "symbol_table.h"
+#include "../include/lexical_value.h"
+#include "../include/symbol_table.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int natureza
             break;
         case VALOR_BOOL:
             this->tamanho = UM_BYTE * size;
-    
+
         default:
             this->tamanho = UNDEFINED;
             break;
@@ -44,6 +45,11 @@ SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int natureza
 SymbolTableEntry::~SymbolTableEntry()
 {
     // TODO: clean up
+}
+
+string SymbolTableEntry::getName()
+{
+    return this->name;
 }
 
 /*
@@ -62,12 +68,12 @@ SymbolTable::~SymbolTable()
 
 void SymbolTable::Insert(SymbolTableEntry *entry)
 {
-    this->entries.insert(pair<string, SymbolTableEntry*>(entry->name,entry));
+    this->entries.insert(pair<string, SymbolTableEntry*>(entry->getName(),entry));
 }
 
 SymbolTableEntry* SymbolTable::LookUp(string name)
 {
-    this.entries.find(name);
+    this->entries.find(name);
     map<string, SymbolTableEntry*>::const_iterator iter = this->entries.find(name);
 
     if(iter != this->entries.end()) {

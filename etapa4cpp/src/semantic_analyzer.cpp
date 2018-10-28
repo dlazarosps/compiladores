@@ -3,9 +3,10 @@
 #include <map>
 #include <string>
 #include <stack>
-#include "ast.h"
-#include "scope_stack.h"
-#include "symbol_table.h"
+#include "../include/semantic_analyzer.h"
+#include "../include/ast.h"
+#include "../include/scope_stack.h"
+#include "../include/symbol_table.h"
 
 using namespace std;
 
@@ -61,7 +62,7 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
 {
     //TODO: convert C++
     //TODO: translate pseudo codes
-    
+
     int leafSize;
     int idType;
     int idSize;
@@ -79,6 +80,7 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
     //para cada tipo de construção gramatical aplica atribuição de tipo e tamanho e insere na stack hash
     switch (node->GetType())
     {
+
         case AST_PROGRAMA:
             //TODO
             //inicializada hash
@@ -338,6 +340,5 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
             cerr << "[ERROR] Node Type:" << node->GetType() << "\n";
             break;
     }
-
-    return NULL; 
+    return NULL;
 }

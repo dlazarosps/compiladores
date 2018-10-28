@@ -12,16 +12,17 @@ class SymbolTableEntry
     private:
         string name; // identificador do simbolo
         // TODO: localização (linha e opcional coluna) da sua definição/declaração
-        // TODO: natureza (literal, variável, função, etc)
+        int natureza; // natureza (literal, variável, função, etc)
         int tipo; // (qual o tipo de dado deste símbolo)
         int tamanho; //(derivado do tipo)
         // TODO: argumentos e seus tipos (no caso de funções)
         // TODO: campos e seus tipos (no caso do tipo for de usuário)
         // TODO: demais informações do valor do token pelo yylval (veja E3)
     public:
-        SymbolTableEntry(string name); // Constructor
+        SymbolTableEntry(string name, int type, int size, int natureza); // Constructor
         ~SymbolTableEntry(); // Destructor
-}
+        string getName();
+};
 
 class SymbolTable
 {
@@ -32,7 +33,7 @@ class SymbolTable
         ~SymbolTable(); // Destructor
         void Insert(SymbolTableEntry *entry);
         SymbolTableEntry* LookUp(string name);
-}
+};
 
 #define UM_BYTE 1
 #define QUATRO_BYTE 4
