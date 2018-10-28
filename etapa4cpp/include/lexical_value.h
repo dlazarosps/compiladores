@@ -35,6 +35,7 @@ class LexicalValue
 #define TIPO_OPERADOR_COMPOSTO 2
 #define TIPO_IDENTIFICADOR 3
 #define TIPO_LITERAL 4
+#define TIPO_USER 5
 
 #define VALOR_STRING 0
 #define VALOR_CHAR 1
