@@ -16,7 +16,7 @@ AbstractSyntaxTree::AbstractSyntaxTree(int type, LexicalValue* lexicalValue)
 AbstractSyntaxTree::~AbstractSyntaxTree()
 {
 	// TODO: review this clean up
-	for (int i = 0; i < this->leafs.size(); i++)
+	for (unsigned int i = 0; i < this->leafs.size(); i++)
 	{
 		delete this->leafs.at(i);
 	}

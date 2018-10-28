@@ -72,5 +72,5 @@ targz: clean
 # Tests
 test: $(TARGET)
 	cmake $(TESTDIR)/CMakeLists.txt
-	make -c $(TESTDIR)
-	./runTests
+	make -C $(TESTDIR)
+	$(TESTDIR)/runTests
