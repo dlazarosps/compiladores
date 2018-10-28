@@ -26,7 +26,7 @@ class SemanticAnalyzer
         void SetLineError(int rowNumber, string rowText);
         void SetLineError(AbstractSyntaxTree node);
         SemanticAnalyzer CheckSemantic(AbstractSyntaxTree *node);
-}
+};
 
 /*
  * Natureza

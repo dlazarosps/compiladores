@@ -24,26 +24,41 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 # Regras do Flex
-$(BUILDDIR)/lex.yy.o: $(BUILDDIR)/lex.yy.c
+$(BUILDDIR)/lex.yy.o: $(SRCDIR)/lex.yy.c
+	@mkdir -p $(BUILDDIR)
 	$(CC) -c $(SRCDIR)/lex.yy.c -o $(BUILDDIR)/lex.yy.o
 
-$(BUILDDIR)/lex.yy.c: $(SRCDIR)/scanner.l
+$(SRCDIR)/lex.yy.c: $(SRCDIR)/scanner.l
 	flex -o $(SRCDIR)/lex.yy.c $(SRCDIR)/scanner.l
 
 # Regras do Bison
-$(BUILDDIR)/parser.tab.o: $(BUILDDIR)/parser.tab.c
+$(BUILDDIR)/parser.tab.o: $(SRCDIR)/parser.tab.c
+	@mkdir -p $(BUILDDIR)
 	$(CC) -c $(SRCDIR)/parser.tab.c -o $(BUILDDIR)/parser.tab.o
 
-$(BUILDDIR)/parser.tab.c: $(SRCDIR)/parser.y
+$(SRCDIR)/parser.tab.c: $(SRCDIR)/parser.y
 	bison -o $(SRCDIR)/parser.tab.c -d -v $(SRCDIR)/parser.y
 	mv $(SRCDIR)/parser.output $(LOGSDIR)/parser.output
 	mv $(SRCDIR)/parser.tab.h $(INCDIR)/parser.tab.h
 
 # Limpa todos os arquivos que podem ser buildados
 clean:
-	@echo " Cleaning...";
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
-
+	@echo "> Cleaning...";
+	@echo "> Removing objects...";
+	$(RM) -r $(BUILDDIR)
+	@echo "> Removing flex and bison generated files...";
+	$(RM) $(SRCDIR)/lex.yy.c
+	$(RM) $(SRCDIR)/parser.tab.c
+	$(RM) $(INCDIR)/parser.tab.h
+	@echo "> Removing logs...";
+	$(RM) -r $(LOGSDIR)/*
+	@echo "> Removing test leftovers...";
+	$(RM) -r $(TESTDIR)/CMakeFiles
+	$(RM) $(TESTDIR)/cmake_install.cmake
+	$(RM) $(TESTDIR)/CMakeCache.txt
+	$(RM) $(TESTDIR)/Makefile
+	@echo "> Removing binary...";
+	$(RM) $(TARGET)
 
 # Compacta para envio
 targz: clean
@@ -55,5 +70,7 @@ targz: clean
 #	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=leak.txt -v ./etapa4 < ../etapa2/testes/asl49
 
 # Tests
-tester:
-	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+test: $(TARGET)
+	cmake $(TESTDIR)/CMakeLists.txt
+	make -c $(TESTDIR)
+	./runTests

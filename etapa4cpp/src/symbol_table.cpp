@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include "../include/lexical_value.h"
 #include "../include/symbol_table.h"
 
 using namespace std;
@@ -32,7 +33,7 @@ SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int natureza
             break;
         case VALOR_BOOL:
             this->tamanho = UM_BYTE * size;
-    
+
         default:
             this->tamanho = UNDEFINED;
             break;

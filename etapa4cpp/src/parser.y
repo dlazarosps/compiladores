@@ -10,124 +10,124 @@ extern int get_line_number();
 extern void *arvore;
 
 extern void descompila (void *arvore) {
-    astDescomp(arvore);
-    fprintf(stdout, "\n");
+    //astDescomp(arvore);
+    //fprintf(stdout, "\n");
 }
 extern void libera (void *arvore) {
     //astPrint(arvore, 0);
-    astDelete(arvore);
+    //astDelete(arvore);
 }
 %}
 
 %define parse.error verbose
 
 %union {
-    TValorLexico valor_lexico;
-	AST *node_AST;
+    LexicalValue *lex;
+	AbstractSyntaxTree *astNode;
 }
 
-%token <valor_lexico> TK_PR_INT
-%token <valor_lexico> TK_PR_FLOAT
-%token <valor_lexico> TK_PR_BOOL
-%token <valor_lexico> TK_PR_CHAR
-%token <valor_lexico> TK_PR_STRING
-%token <valor_lexico> TK_PR_IF
-%token <valor_lexico> TK_PR_THEN
-%token <valor_lexico> TK_PR_ELSE
-%token <valor_lexico> TK_PR_WHILE
-%token <valor_lexico> TK_PR_DO
-%token <valor_lexico> TK_PR_INPUT
-%token <valor_lexico> TK_PR_OUTPUT
-%token <valor_lexico> TK_PR_RETURN
-%token <valor_lexico> TK_PR_CONST
-%token <valor_lexico> TK_PR_STATIC
-%token <valor_lexico> TK_PR_FOREACH
-%token <valor_lexico> TK_PR_FOR
-%token <valor_lexico> TK_PR_SWITCH
-%token <valor_lexico> TK_PR_CASE
-%token <valor_lexico> TK_PR_BREAK
-%token <valor_lexico> TK_PR_CONTINUE
-%token <valor_lexico> TK_PR_CLASS
-%token <valor_lexico> TK_PR_PRIVATE
-%token <valor_lexico> TK_PR_PUBLIC
-%token <valor_lexico> TK_PR_PROTECTED
-%token <valor_lexico> TK_OC_LE
-%token <valor_lexico> TK_OC_GE
-%token <valor_lexico> TK_OC_EQ
-%token <valor_lexico> TK_OC_NE
-%token <valor_lexico> TK_OC_AND
-%token <valor_lexico> TK_OC_OR
-%token <valor_lexico> TK_OC_SL
-%token <valor_lexico> TK_OC_SR
-%token <valor_lexico> TK_OC_FORWARD_PIPE
-%token <valor_lexico> TK_OC_BASH_PIPE
+%token <lex> TK_PR_INT
+%token <lex> TK_PR_FLOAT
+%token <lex> TK_PR_BOOL
+%token <lex> TK_PR_CHAR
+%token <lex> TK_PR_STRING
+%token <lex> TK_PR_IF
+%token <lex> TK_PR_THEN
+%token <lex> TK_PR_ELSE
+%token <lex> TK_PR_WHILE
+%token <lex> TK_PR_DO
+%token <lex> TK_PR_INPUT
+%token <lex> TK_PR_OUTPUT
+%token <lex> TK_PR_RETURN
+%token <lex> TK_PR_CONST
+%token <lex> TK_PR_STATIC
+%token <lex> TK_PR_FOREACH
+%token <lex> TK_PR_FOR
+%token <lex> TK_PR_SWITCH
+%token <lex> TK_PR_CASE
+%token <lex> TK_PR_BREAK
+%token <lex> TK_PR_CONTINUE
+%token <lex> TK_PR_CLASS
+%token <lex> TK_PR_PRIVATE
+%token <lex> TK_PR_PUBLIC
+%token <lex> TK_PR_PROTECTED
+%token <lex> TK_OC_LE
+%token <lex> TK_OC_GE
+%token <lex> TK_OC_EQ
+%token <lex> TK_OC_NE
+%token <lex> TK_OC_AND
+%token <lex> TK_OC_OR
+%token <lex> TK_OC_SL
+%token <lex> TK_OC_SR
+%token <lex> TK_OC_FORWARD_PIPE
+%token <lex> TK_OC_BASH_PIPE
 %token TOKEN_ERRO
-%token <valor_lexico> TK_LIT_INT
-%token <valor_lexico> TK_LIT_FLOAT
-%token <valor_lexico> TK_LIT_FALSE
-%token <valor_lexico> TK_LIT_TRUE
-%token <valor_lexico> TK_LIT_CHAR
-%token <valor_lexico> TK_LIT_STRING
-%token <valor_lexico> TK_IDENTIFICADOR
+%token <lex> TK_LIT_INT
+%token <lex> TK_LIT_FLOAT
+%token <lex> TK_LIT_FALSE
+%token <lex> TK_LIT_TRUE
+%token <lex> TK_LIT_CHAR
+%token <lex> TK_LIT_STRING
+%token <lex> TK_IDENTIFICADOR
 
 //Tipos Gramatica
-%type<node_AST> programa
-%type<node_AST> elemento
-%type<node_AST> tipoSimples
-%type<node_AST> tipo
-%type<node_AST> decGlobal
-%type<node_AST> decTipo
-%type<node_AST> listaTipo
-%type<node_AST> campoTipo
-%type<node_AST> encaps
-%type<node_AST> decFunc
-%type<node_AST> cabecalhoFun
-%type<node_AST> listaFun
-%type<node_AST> paramsFun
-%type<node_AST> params
-%type<node_AST> corpoFun
-%type<node_AST> bloco
-%type<node_AST> listaComandos
-%type<node_AST> cmdsTerminadosPontoVirgula
-%type<node_AST> cmdsTerminadosDoisPontos
-%type<node_AST> cmdSimplesFor
-%type<node_AST> cmdCase
-%type<node_AST> cmdDecVar
-%type<node_AST> decVar
-%type<node_AST> expr
-%type<node_AST> cmdAtr
-%type<node_AST> cmdFuncCall
-%type<node_AST> cmdIO
-%type<node_AST> cmdin
-%type<node_AST> cmdout
-%type<node_AST> listaExpr
-%type<node_AST> variable
-%type<node_AST> variableIndex
-%type<node_AST> variableAttribute
-%type<node_AST> literal
-%type<node_AST> exprFuncCall
-%type<node_AST> cmdPipe
-%type<node_AST> pipeList
-%type<node_AST> pipeOp
-%type<node_AST> shift
-%type<node_AST> shiftOp
-%type<node_AST> rbc
-%type<node_AST> ifst
-%type<node_AST> stmt
-%type<node_AST> foreach
-%type<node_AST> for
-%type<node_AST> listaFor
-%type<node_AST> while
-%type<node_AST> dowhile
-%type<node_AST> switch
-%type<node_AST> cmdBloco
-%type<node_AST> exprPipe
-%type<node_AST> unOp
-%type<node_AST> unario
-%type<node_AST> biOp
-%type<node_AST> relOp
-%type<node_AST> binario
-%type<node_AST> ternario
+%type<astNode> programa
+%type<astNode> elemento
+%type<astNode> tipoSimples
+%type<astNode> tipo
+%type<astNode> decGlobal
+%type<astNode> decTipo
+%type<astNode> listaTipo
+%type<astNode> campoTipo
+%type<astNode> encaps
+%type<astNode> decFunc
+%type<astNode> cabecalhoFun
+%type<astNode> listaFun
+%type<astNode> paramsFun
+%type<astNode> params
+%type<astNode> corpoFun
+%type<astNode> bloco
+%type<astNode> listaComandos
+%type<astNode> cmdsTerminadosPontoVirgula
+%type<astNode> cmdsTerminadosDoisPontos
+%type<astNode> cmdSimplesFor
+%type<astNode> cmdCase
+%type<astNode> cmdDecVar
+%type<astNode> decVar
+%type<astNode> expr
+%type<astNode> cmdAtr
+%type<astNode> cmdFuncCall
+%type<astNode> cmdIO
+%type<astNode> cmdin
+%type<astNode> cmdout
+%type<astNode> listaExpr
+%type<astNode> variable
+%type<astNode> variableIndex
+%type<astNode> variableAttribute
+%type<astNode> literal
+%type<astNode> exprFuncCall
+%type<astNode> cmdPipe
+%type<astNode> pipeList
+%type<astNode> pipeOp
+%type<astNode> shift
+%type<astNode> shiftOp
+%type<astNode> rbc
+%type<astNode> ifst
+%type<astNode> stmt
+%type<astNode> foreach
+%type<astNode> for
+%type<astNode> listaFor
+%type<astNode> while
+%type<astNode> dowhile
+%type<astNode> switch
+%type<astNode> cmdBloco
+%type<astNode> exprPipe
+%type<astNode> unOp
+%type<astNode> unario
+%type<astNode> biOp
+%type<astNode> relOp
+%type<astNode> binario
+%type<astNode> ternario
 
 // precedencia de operadores
 %left '&' '?' '%' '|' '^'
@@ -150,76 +150,106 @@ extern void libera (void *arvore) {
 %%
 
 programa: elemento
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_PROGRAMA, NULL, leafs);
-         arvore = $$;}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PROGRAMA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+        arvore = $$;
+    }
     | %empty
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
-         $$ = astCreate(AST_PROGRAMA, NULL, leafs);
-         arvore = $$;}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PROGRAMA, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_EMPTY, NULL));
+        $$ = node;
+        arvore = $$;
+    }
     ;
 
 elemento: elemento decGlobal
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ELEMENTO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        $$ = node;
+    }
     | decGlobal
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ELEMENTO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | elemento decTipo
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ELEMENTO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        $$ = node;
+    }
     | decTipo
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ELEMENTO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | elemento decFunc
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ELEMENTO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        $$ = node;
+    }
     | decFunc
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_ELEMENTO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ELEMENTO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 tipoSimples: TK_PR_INT
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPOSIMPLES, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
  	| TK_PR_FLOAT
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPOSIMPLES, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
  	| TK_PR_BOOL
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPOSIMPLES, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
  	| TK_PR_CHAR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPOSIMPLES, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
  	| TK_PR_STRING
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_TIPOSIMPLES, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPOSIMPLES, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 tipo: tipoSimples
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_TIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_TIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TIPO, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -227,37 +257,45 @@ tipo: tipoSimples
  */
 
 decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECGLOBAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        $$ = node;
+    }
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($5), NULL));
-         listPush(leafs, $6);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>7), NULL));
-         $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECGLOBAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $5));
+        node->AddLeaf($6);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>7));
+        $$ = node;
+    }
 	| TK_IDENTIFICADOR tipo ';'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECGLOBAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']' tipo ';'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, $5);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>6), NULL));
-         $$ = astCreate(AST_DECGLOBAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECGLOBAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf($5);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>6));
+        $$ = node;
+    }
     ;
 
 /*
@@ -265,53 +303,69 @@ decGlobal: TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
 */
 
 decTipo: TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         listPush(leafs, $4);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>5), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>6), NULL));
-         $$ = astCreate(AST_DECTIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECTIPO, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        node->AddLeaf($4);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>5));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>6));
+        $$ = node;
+    }
     ;
 
 listaTipo: campoTipo
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_LISTATIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTATIPO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| listaTipo ':' campoTipo
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_LISTATIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTATIPO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 campoTipo: encaps tipoSimples TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         $$ = astCreate(AST_CAMPOTIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CAMPOTIPO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        $$ = node;
+    }
     | tipoSimples TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         $$ = astCreate(AST_CAMPOTIPO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CAMPOTIPO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        $$ = node;
+    }
     ;
 
 encaps: TK_PR_PROTECTED
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_ENCAPS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ENCAPS, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
 	| TK_PR_PRIVATE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_ENCAPS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ENCAPS, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
 	| TK_PR_PUBLIC
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_ENCAPS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_ENCAPS, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -319,214 +373,296 @@ encaps: TK_PR_PROTECTED
  */
 
 decFunc: cabecalhoFun corpoFun
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         $$ = astCreate(AST_ENCAPS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECFUNC, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        $$ = node;
+    }
     ;
 
 cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, $4);
-         $$ = astCreate(AST_CABECALHOFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf($4);
+        $$ = node;
+    }
 	| tipo TK_IDENTIFICADOR listaFun
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_CABECALHOFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
 	| TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, $4);
-         $$ = astCreate(AST_CABECALHOFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf($4);
+        $$ = node;
+    }
 	| TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_CABECALHOFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 listaFun: '(' paramsFun ')'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_LISTAFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTAFUN, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
     | '(' ')'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         $$ = astCreate(AST_LISTAFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTAFUN, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        $$ = node;
+    }
     ;
 
 paramsFun: params
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_PARAMSFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PARAMSFUN, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| paramsFun ',' params
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_PARAMSFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PARAMSFUN, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 params: TK_PR_CONST tipo TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         $$ = astCreate(AST_PARAMS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PARAMS, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        $$ = node;
+    }
     | tipo TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         $$ = astCreate(AST_PARAMS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PARAMS, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        $$ = node;
+    }
     ;
 
 corpoFun: bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CORPOFUN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CORPOFUN, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 bloco: '{' listaComandos '}'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_BLOCO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BLOCO, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
     ;
 
 listaComandos: listaComandos cmdsTerminadosPontoVirgula ';'
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_LISTACOMANDOS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTACOMANDOS, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
 	| listaComandos cmdsTerminadosDoisPontos ':'
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_LISTACOMANDOS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTACOMANDOS, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
 	| %empty
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
-         $$ = astCreate(AST_LISTACOMANDOS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTACOMANDOS, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_EMPTY, NULL));
+        $$ = node;
+    }
     ;
 
 cmdsTerminadosPontoVirgula: cmdDecVar
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdAtr
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdFuncCall
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdIO
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdPipe
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| shift
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| rbc
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| dowhile
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdBloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| ifst
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| foreach
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| for
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| while
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| switch
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSPONTOVIRGULA, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSPONTOVIRGULA, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 cmdsTerminadosDoisPontos: cmdCase
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSTERMINADOSDOISPONTOS, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSTERMINADOSDOISPONTOS, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 cmdSimplesFor: cmdDecVar
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdAtr
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| shift
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| rbc
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | ifst
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | foreach
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | for
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | while
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | dowhile
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     | switch
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDSIMPLESFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDSIMPLESFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 /*
@@ -534,10 +670,12 @@ cmdSimplesFor: cmdDecVar
  */
 
 cmdCase: TK_PR_CASE TK_LIT_INT
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         $$ = astCreate(AST_CMDCASE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDCASE, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        $$ = node;
+    }
     ;
 
 /*
@@ -545,9 +683,11 @@ cmdCase: TK_PR_CASE TK_LIT_INT
  */
 
 cmdBloco: bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDBLOCO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDBLOCO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 /*
@@ -555,51 +695,67 @@ cmdBloco: bloco
  */
 
 cmdDecVar: TK_PR_STATIC TK_PR_CONST decVar
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_CMDDECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDDECVAR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
  	| TK_PR_STATIC decVar
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         $$ = astCreate(AST_CMDDECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDDECVAR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        $$ = node;
+    }
  	| TK_PR_CONST decVar
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         $$ = astCreate(AST_CMDDECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDDECVAR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        $$ = node;
+    }
 	| decVar
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDDECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDDECVAR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 decVar: tipoSimples TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         $$ = astCreate(AST_DECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECVAR, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        $$ = node;
+    }
     | tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, $4);
-         $$ = astCreate(AST_DECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECVAR, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf($4);
+        $$ = node;
+    }
     | tipoSimples TK_IDENTIFICADOR TK_OC_LE literal
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, $4);
-         $$ = astCreate(AST_DECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECVAR, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf($4);
+        $$ = node;
+    }
 	| TK_IDENTIFICADOR TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         $$ = astCreate(AST_DECVAR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DECVAR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        $$ = node;
+    }
     ;
 
 /*
@@ -607,11 +763,13 @@ decVar: tipoSimples TK_IDENTIFICADOR
  */
 
 cmdAtr: variable '=' expr
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_CMDATR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDATR, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 /*
@@ -619,18 +777,22 @@ cmdAtr: variable '=' expr
  */
 
 cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         $$ = astCreate(AST_CMDFUNCCALL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDFUNCCALL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        $$ = node;
+    }
     | TK_IDENTIFICADOR '(' ')'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_CMDFUNCCALL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDFUNCCALL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
     ;
 
 /*
@@ -638,27 +800,35 @@ cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')'
  */
 
 cmdIO: cmdin
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDIO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDIO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdout
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_CMDIO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDIO, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 cmdin: TK_PR_INPUT expr
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         $$ = astCreate(AST_CMDIN, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDIN, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        $$ = node;
+    }
     ;
 
 cmdout: TK_PR_OUTPUT listaExpr
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         $$ = astCreate(AST_CMDOUT, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDOUT, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        $$ = node;
+    }
     ;
 
 /*
@@ -666,33 +836,43 @@ cmdout: TK_PR_OUTPUT listaExpr
  */
 
 cmdPipe: cmdFuncCall pipeOp pipeList
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, $3);
-         $$ = astCreate(AST_CMDPIPE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CMDPIPE, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 pipeList: cmdFuncCall
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_PIPELIST, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PIPELIST, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| cmdFuncCall pipeOp pipeList
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, $3);
-         $$ = astCreate(AST_PIPELIST, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PIPELIST, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 pipeOp: TK_OC_FORWARD_PIPE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_PIPEOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PIPEOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
 	| TK_OC_BASH_PIPE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_PIPEOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_PIPEOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -700,21 +880,27 @@ pipeOp: TK_OC_FORWARD_PIPE
 */
 
 shift: variable shiftOp expr
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, $3);
-         $$ = astCreate(AST_SHIFT, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_SHIFT, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 shiftOp: TK_OC_SL
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_SHIFTOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_SHIFTOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
 	| TK_OC_SR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_SHIFTOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_SHIFTOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -722,18 +908,24 @@ shiftOp: TK_OC_SL
 */
 
 rbc: TK_PR_RETURN expr
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         $$ = astCreate(AST_RBC, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RBC, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        $$ = node;
+    }
 	| TK_PR_BREAK
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RBC, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RBC, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
 	| TK_PR_CONTINUE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RBC, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RBC, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -741,35 +933,43 @@ rbc: TK_PR_RETURN expr
  */
 
 ifst: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($5), NULL));
-         listPush(leafs, $6);
-         $$ = astCreate(AST_IFST, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_IFST, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $5));
+        node->AddLeaf($6);
+        $$ = node;
+    }
 	| TK_PR_IF '(' expr ')' TK_PR_THEN stmt TK_PR_ELSE stmt
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($5), NULL));
-         listPush(leafs, $6);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($7), NULL));
-         listPush(leafs, $8);
-         $$ = astCreate(AST_IFST, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_IFST, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $5));
+        node->AddLeaf($6);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $7));
+        node->AddLeaf($8);
+        $$ = node;
+    }
     ;
 
 stmt: bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_STMT, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_STMT, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| ifst
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_STMT, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_STMT, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 /*
@@ -777,15 +977,17 @@ stmt: bloco
  */
 
 foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, $5);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>6), NULL));
-         listPush(leafs, $7);
-         $$ = astCreate(AST_FOREACH, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_FOREACH, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf($5);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>6));
+        node->AddLeaf($7);
+        $$ = node;
+    }
     ;
 
 /*
@@ -793,29 +995,35 @@ foreach: TK_PR_FOREACH '(' TK_IDENTIFICADOR ':' listaExpr ')' bloco
  */
 
 for: TK_PR_FOR '(' listaFor ':' expr ':' listaFor ')' bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, $5);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>6), NULL));
-         listPush(leafs, $7);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>8), NULL));
-         listPush(leafs, $9);
-         $$ = astCreate(AST_FOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_FOR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf($5);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>6));
+        node->AddLeaf($7);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>8));
+        node->AddLeaf($9);
+        $$ = node;
+    }
     ;
 
 listaFor: cmdSimplesFor
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_LISTAFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTAFOR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| listaFor ',' cmdSimplesFor
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_LISTAFOR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTAFOR, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 /*
@@ -823,25 +1031,29 @@ listaFor: cmdSimplesFor
  */
 
 while: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($5), NULL));
-         listPush(leafs, $6);
-         $$ = astCreate(AST_WHILE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_WHILE, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $5));
+        node->AddLeaf($6);
+        $$ = node;
+    }
     ;
 
 dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($3), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, $5);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>6), NULL));
-         $$ = astCreate(AST_DOWHILE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_DOWHILE, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf($5);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>6));
+        $$ = node;
+    }
     ;
 
 /*
@@ -849,13 +1061,15 @@ dowhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')'
  */
 
 switch: TK_PR_SWITCH '(' expr ')' bloco
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, $5);
-         $$ = astCreate(AST_DOWHILE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_SWITCH, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf($5);
+        $$ = node;
+    }
     ;
 
 /*
@@ -863,43 +1077,61 @@ switch: TK_PR_SWITCH '(' expr ')' bloco
  */
 
 expr: variable
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| literal
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| exprFuncCall
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| exprPipe
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| unario
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| binario
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| ternario
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| '(' expr ')'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
     | '.'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_EXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPR, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -907,15 +1139,19 @@ expr: variable
  */
 
 listaExpr: expr
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_LISTAEXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTAEXPR, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
 	| listaExpr ',' expr
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         $$ = astCreate(AST_LISTAEXPR, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LISTAEXPR, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 /*
@@ -923,34 +1159,44 @@ listaExpr: expr
  */
 
 variable: TK_IDENTIFICADOR variableIndex variableAttribute
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, $3);
-         $$ = astCreate(AST_VARIABLE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_VARIABLE, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        node->AddLeaf($2);
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 variableIndex: '[' expr ']'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, $2);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>3), NULL));
-         $$ = astCreate(AST_VARIABLEINDEX, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_VARIABLEINDEX, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        node->AddLeaf($2);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>3));
+        $$ = node;
+    }
 	| %empty
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
-         $$ = astCreate(AST_VARIABLEINDEX, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_VARIABLEINDEX, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_EMPTY, NULL));
+        $$ = node;
+    }
     ;
 
 variableAttribute: '$' TK_IDENTIFICADOR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($2), NULL));
-         $$ = astCreate(AST_VARIABLEATTRIBUTE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_VARIABLEATTRIBUTE, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+        $$ = node;
+    }
 	| %empty
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_EMPTY, NULL, NULL));
-         $$ = astCreate(AST_VARIABLEATTRIBUTE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_VARIABLEATTRIBUTE, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_EMPTY, NULL));
+        $$ = node;
+    }
     ;
 
 /*
@@ -958,29 +1204,41 @@ variableAttribute: '$' TK_IDENTIFICADOR
  */
 
 literal: TK_LIT_INT
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_LITERAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LITERAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_LIT_FLOAT
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_LITERAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LITERAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_LIT_CHAR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_LITERAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LITERAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_LIT_STRING
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_LITERAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LITERAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_LIT_FALSE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_LITERAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LITERAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_LIT_TRUE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_LITERAL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_LITERAL, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 /*
@@ -988,9 +1246,11 @@ literal: TK_LIT_INT
  */
 
 exprFuncCall: cmdFuncCall
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPRFUNCCALL, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPRFUNCCALL, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 /*
@@ -998,9 +1258,11 @@ exprFuncCall: cmdFuncCall
  */
 
 exprPipe: cmdPipe
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_EXPRPIPE, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_EXPRPIPE, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 /*
@@ -1008,130 +1270,184 @@ exprPipe: cmdPipe
 */
 
 unOp: '+'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '-'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '!'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '&'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '*'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '?'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '#'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_UNOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     ;
 
 unario: unOp expr %prec UNARY_OP
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         $$ = astCreate(AST_UNARIO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_UNARIO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        $$ = node;
+    }
     ;
 
 biOp: '+'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '-'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '*'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '/'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '%'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '|'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '&'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '^'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '<'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | '>'
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>1), NULL));
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>1));
+        $$ = node;
+    }
     | relOp
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         $$ = astCreate(AST_BIOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BIOP, NULL);
+        node->AddLeaf($1);
+        $$ = node;
+    }
     ;
 
 relOp: TK_OC_LE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RELOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RELOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_OC_GE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RELOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RELOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_OC_EQ
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RELOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RELOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_OC_NE
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RELOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RELOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_OC_AND
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RELOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RELOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     | TK_OC_OR
-        {LIST *leafs = listCreate();
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($1), NULL));
-         $$ = astCreate(AST_RELOP, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_RELOP, NULL);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+        $$ = node;
+    }
     ;
 
 binario: expr biOp expr %prec BINARY_OP
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, $2);
-         listPush(leafs, $3);
-         $$ = astCreate(AST_BINARIO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_BINARIO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf($2);
+        node->AddLeaf($3);
+        $$ = node;
+    }
     ;
 
 ternario: expr '?' expr ':' expr  %prec TERNARY_OP
-        {LIST *leafs = listCreate();
-         listPush(leafs, $1);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>2), NULL));
-         listPush(leafs, $3);
-         listPush(leafs, astCreate(AST_TERMINAL, lexCopy($<valor_lexico>4), NULL));
-         listPush(leafs, $5);
-         $$ = astCreate(AST_TERNARIO, NULL, leafs);}
+    {
+        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_TERNARIO, NULL);
+        node->AddLeaf($1);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>2));
+        node->AddLeaf($3);
+        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $<lex>4));
+        node->AddLeaf($5);
+        $$ = node;
+    }
     ;
 
 %%

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <stack>
+#include "../include/semantic_analyzer.h"
 #include "../include/ast.h"
 #include "../include/scope_stack.h"
 #include "../include/symbol_table.h"

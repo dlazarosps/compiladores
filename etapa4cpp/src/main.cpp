@@ -4,9 +4,9 @@
 #include "../include/lexical_value.h"
 #include "../include/ast.h"
 #include "../include/symbol_table.h"
-#include "parser.tab.h" //arquivo gerado com bison -d parser.y
+#include "../include/parser.tab.h" //arquivo gerado com bison -d parser.y
 
-void *arvore = NULL;
+AbstractSyntaxTree *arvore = NULL;
 void descompila (void *arvore);
 void libera (void *arvore);
 
