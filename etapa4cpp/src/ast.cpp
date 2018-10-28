@@ -41,6 +41,16 @@ LexicalValue* AbstractSyntaxTree::GetValorLexico()
 	return this->lexicalValue;
 }
 
+int AbstractSyntaxTree::GetLeafsSize()
+{
+	return this->leafs.size();
+}
+
+AbstractSyntaxTree* AbstractSyntaxTree::GetNodeLeaf(int index)
+{
+	return this->leafs[index];
+}
+
 void AbstractSyntaxTree::Descompilation()
 {
 	LexicalValue *lex;
@@ -149,7 +159,7 @@ void AbstractSyntaxTree::Print(int nivel)
 		case AST_EXPR: cout << "AST_EXPR" break;
 		case AST_EMPTY: cout << "AST_EMPTY" break;
 		default:
-			cerr << "[ERROR] Node Type: %d", this->GetType();
+			cerr << "[ERROR] Node Type: " << this->GetType() << "\n";
 			break;
 	}
 
