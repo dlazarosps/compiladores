@@ -5,7 +5,7 @@
 using namespace std;
 
 union LexicalValueUnion {
-    char *stringValue;
+    string* stringValue;
     char charValue;
     int intValue;
     float floatValue;
@@ -21,14 +21,14 @@ class LexicalValue
         int valueType;
         LexicalValueUnion value;
     public:
-        LexicalValue(int line, int type, int valueType, char *text); // Constructor
+        LexicalValue(int line, int type, int valueType, char* value); // Constructor
         ~LexicalValue(); // Destructor
-        char* ValueToString();
+        string ValueToString();
         int GetLine();
         int GetType();
         int GetValueType();
         LexicalValueUnion GetValue();
-}
+};
 
 #define TIPO_PALAVRA_RESERVADA 0
 #define TIPO_CARACTER_ESPECIAL 1

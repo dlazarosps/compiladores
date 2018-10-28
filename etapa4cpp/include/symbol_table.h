@@ -21,7 +21,8 @@ class SymbolTableEntry
     public:
         SymbolTableEntry(string name); // Constructor
         ~SymbolTableEntry(); // Destructor
-}
+        string getName();
+};
 
 class SymbolTable
 {
@@ -32,4 +33,4 @@ class SymbolTable
         ~SymbolTable(); // Destructor
         void Insert(SymbolTableEntry *entry);
         SymbolTableEntry* LookUp(string name);
-}
+};

@@ -3,9 +3,9 @@
 #include <map>
 #include <string>
 #include <stack>
-#include "ast.h"
-#include "scope_stack.h"
-#include "symbol_table.h"
+#include "../include/ast.h"
+#include "../include/scope_stack.h"
+#include "../include/symbol_table.h"
 
 using namespace std;
 
@@ -61,7 +61,7 @@ SymbolTableEntry *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree node)
 {
     //TODO: convert C++
     //TODO: translate pseudo codes
-    /* 
+    /*
     int leafsize;
     AST *child;
 
@@ -245,6 +245,6 @@ SymbolTableEntry *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree node)
     default:
         fprintf(stderr, "[ERROR] Node Type: %d", node->type);
         break;
-    } 
+    }
     */
 }

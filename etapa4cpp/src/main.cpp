@@ -1,9 +1,9 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 #include <stdio.h>
-#include "lexical_value.h"
-#include "ast.h"
-#include "symbol_table.h"
+#include "../include/lexical_value.h"
+#include "../include/ast.h"
+#include "../include/symbol_table.h"
 #include "parser.tab.h" //arquivo gerado com bison -d parser.y
 
 void *arvore = NULL;

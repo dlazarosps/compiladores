@@ -3,8 +3,9 @@ DOCDIR := doc
 INCDIR := include
 SRCDIR := src
 BUILDDIR := build
-TESTDIR := test
+TESTDIR := tests
 SCRIPTDIR := scripts
+LOGSDIR := logs
 TARGET := bin/etapa4
 
 SRCEXT := cpp
@@ -14,7 +15,7 @@ CFLAGS := -g -Wall
 LIB := $() # -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
 INC := -I include
 
-$(TARGET): $(BUILDDIR)/lex.yy.o $(BUILDDIR)/parser.tab.o $(OBJECTS)
+$(TARGET): $(BUILDDIR)/parser.tab.o $(BUILDDIR)/lex.yy.o $(OBJECTS)
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
 
@@ -24,17 +25,19 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 # Regras do Flex
 $(BUILDDIR)/lex.yy.o: $(BUILDDIR)/lex.yy.c
-	gcc -c lex.yy.c -o $(BUILDDIR)/lex.yy.o
+	$(CC) -c $(SRCDIR)/lex.yy.c -o $(BUILDDIR)/lex.yy.o
 
 $(BUILDDIR)/lex.yy.c: $(SRCDIR)/scanner.l
-	flex -o $(BUILDDIR)/lex.yy.c scanner.l
+	flex -o $(SRCDIR)/lex.yy.c $(SRCDIR)/scanner.l
 
 # Regras do Bison
 $(BUILDDIR)/parser.tab.o: $(BUILDDIR)/parser.tab.c
-	gcc -c parser.tab.c -o $(BUILDDIR)/parser.tab.o
+	$(CC) -c $(SRCDIR)/parser.tab.c -o $(BUILDDIR)/parser.tab.o
 
 $(BUILDDIR)/parser.tab.c: $(SRCDIR)/parser.y
-	bison -o $(BUILDDIR)/parser.tab.c -d -v parser.y
+	bison -o $(SRCDIR)/parser.tab.c -d -v $(SRCDIR)/parser.y
+	mv $(SRCDIR)/parser.output $(LOGSDIR)/parser.output
+	mv $(SRCDIR)/parser.tab.h $(INCDIR)/parser.tab.h
 
 # Limpa todos os arquivos que podem ser buildados
 clean:
@@ -53,4 +56,4 @@ targz: clean
 
 # Tests
 tester:
-  $(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester

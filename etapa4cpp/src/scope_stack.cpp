@@ -3,8 +3,8 @@
 #include <map>
 #include <string>
 #include <stack>
-#include "symbol_table.h"
-#include "scope_stack.h"
+#include "../include/symbol_table.h"
+#include "../include/scope_stack.h"
 
 using namespace std;
 
@@ -48,7 +48,7 @@ SymbolTableEntry *ScopeStack::LookUp(string name)
         if (entry != NULL) { //se encontrou retorna
             return entry;
         }
-        else{ 
+        else{
             scopes.pop(); //desempilha
         }
     }

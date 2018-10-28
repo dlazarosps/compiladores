@@ -21,7 +21,7 @@ class AbstractSyntaxTree
         LexicalValue* GetLexicalValue();
         void Descompilation();
         void Print(int nivel);
-}
+};
 
 /*
  * Constantes Tipos de produções AST

@@ -1,9 +1,9 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 %{
-	#include "lexical_value.h"
-	#include "ast.h"
-	#include "parser.tab.h"
+	#include "../include/lexical_value.h"
+	#include "../include/ast.h"
+	#include "../include/parser.tab.h"
 	int lineNumber = 1;
 	extern int get_line_number();
 %}

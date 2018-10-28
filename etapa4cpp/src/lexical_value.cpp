@@ -1,13 +1,12 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 #include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "lexical_value.h"
+#include <string>
+#include "../include/lexical_value.h"
 
 using namespace std;
 
-LexicalValue::LexicalValue(int line, int type, int valueType, char *text)
+LexicalValue::LexicalValue(int line, int type, int valueType, char *value)
 {
     this->line = line;
     this->type = type;
@@ -15,19 +14,19 @@ LexicalValue::LexicalValue(int line, int type, int valueType, char *text)
         this->valueType = valueType;
         switch(valueType) {
             case VALOR_CHAR:
-                this->value.charValue = text[0];
+                this->value.charValue = value[0];
                 break;
             case VALOR_STRING:
-                this->value.stringValue = strdup(text);
+                this->value.stringValue = new string(value);
                 break;
             case VALOR_INT:
-                this->value.intValue = atoi(text);
+                this->value.intValue = atoi(value);
                 break;
             case VALOR_FLOAT:
-                this->value.floatValue = atof(text);
+                this->value.floatValue = atof(value);
                 break;
             case VALOR_BOOL:
-                if(strcmp("true", text) == 0) {
+                if(strcmp(value, "true") == 0) {
                     this->value.boolValue = 1;
                 }
                 else {
@@ -36,7 +35,7 @@ LexicalValue::LexicalValue(int line, int type, int valueType, char *text)
                 break;
             default:
                 this->valueType = VALOR_STRING;
-                this->value.stringValue = strdup(text);
+                this->value.stringValue = new string(value);
                 // TODO: include exception
                 printf("Unexpected value type for literal");
                 break;
@@ -44,7 +43,7 @@ LexicalValue::LexicalValue(int line, int type, int valueType, char *text)
     }
     else {
         this->valueType = VALOR_STRING;
-        this->value.stringValue = strdup(text);
+        this->value.stringValue = new string(value);
     }
 }
 
@@ -53,9 +52,9 @@ LexicalValue::~LexicalValue()
     // TODO: destrutor dessa classe
 }
 
-char* LexicalValue::ValueToString()
+string LexicalValue::ValueToString()
 {
-    char *str;
+    string str;
 
     switch (this->valueType)
     {
@@ -63,7 +62,7 @@ char* LexicalValue::ValueToString()
             str = to_string(this->value.charValue);
             break;
         case VALOR_STRING:
-            str = to_string(this->value.stringValue);
+            str = *(this->value.stringValue);
             break;
         case VALOR_INT:
             str = to_string(this->value.intValue);

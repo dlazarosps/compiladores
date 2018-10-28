@@ -2,10 +2,8 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "valor_lexico.h"
-#include "ast.h"
-#include "list.h"
-#include "hash.h"
+#include "../include/lexical_value.h"
+#include "../include/ast.h"
 int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();
