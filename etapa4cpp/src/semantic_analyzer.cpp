@@ -47,9 +47,12 @@ void SemanticAnalyzer::SetLineError(AbstractSyntaxTree node)
 {
     int rowNumber;
     string rowText;
+    LexicalValue* lex;
 
-    // rowNumber = node->GetLineFromValorLexico(); //TODO get private value
-    // rowText = node->PrintASTDescompNode(); //TODO print one line code
+    lex = node->GetLexicalValue();
+
+    rowNumber = lex->GetLine();
+    //rowText = node->Descompilation(); //TODO get 1 row text
 
     this->SetLineError(rowNumber, rowText);
 }
