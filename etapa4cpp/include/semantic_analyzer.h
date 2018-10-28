@@ -25,8 +25,8 @@ class SemanticAnalyzer
         string GetLineError();
         void SetLineError(int rowNumber, string rowText);
         void SetLineError(AbstractSyntaxTree node);
-        SemanticAnalyzer CheckSemantic(AbstractSyntaxTree node);
-};
+        SemanticAnalyzer CheckSemantic(AbstractSyntaxTree *node);
+}
 
 /*
  * Natureza
@@ -37,6 +37,9 @@ class SemanticAnalyzer
 #define NATUREZA_LITERAL_STRING 4
 #define NATUREZA_LITERAL_BOOL 5
 #define NATUREZA_IDENTIFICADOR 6
+#define NATUREZA_GLOBAL 7
+#define NATUREZA_FUN 8
+#define NATUREZA_TIPO 9
 
 /*
  * Erros

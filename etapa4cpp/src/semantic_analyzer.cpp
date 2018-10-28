@@ -40,7 +40,7 @@ string SemanticAnalyzer::GetLineError()
 
 void SemanticAnalyzer::SetLineError(int rowNumber, string rowText)
 {
-    this->lineError = "line " + to_string(rowNumber) + " : " + rowText;
+    this->lineError = (rowNumber > 0) ? "[ERRO] on line " + to_string(rowNumber) + " : " + rowText : "";
 }
 
 void SemanticAnalyzer::SetLineError(AbstractSyntaxTree node)
@@ -57,31 +57,60 @@ void SemanticAnalyzer::SetLineError(AbstractSyntaxTree node)
     this->SetLineError(rowNumber, rowText);
 }
 
-SymbolTableEntry *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree node)
+SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
 {
     //TODO: convert C++
     //TODO: translate pseudo codes
-    /*
-    int leafsize;
-    AST *child;
+
+    int leafSize;
+    int idType;
+    int idSize;
+    string idName;
+
+    AbstractSyntaxTree *child;
+    LexicalValue *lex;
+    SymbolTable *scope;
+    SymbolTableEntry* entry;
 
     //pega quantidade de folhas
-    leafsize = listSize(node->lefts);
+    leafSize = node->GetLeafsSize();
 
     //para cada tipo de construção gramatical aplica atribuição de tipo e tamanho e insere na stack hash
-    switch (node->type)
+    switch (node->GetType())
     {
 
     case AST_DECGLOBAL:
+
+        //decglobal = id ... tipo ';'
+        //pega identificador
+        child = node->GetNodeLeaf(0);
+        lex = child->GetLexicalValue();
+        idName = lex->GetValue();
+        entry = scope->LookUp(idName);
+
         // TESTA já_declarado_aqui (hash scopo corrente)
-        // SE sim
-        //      ret = ERR_DECLARED
-        // SENÃO
-        //      pega tipo
-        child = listGet(node->leafs, (leafsize - 1)); //decglobal = id ... tipo ';'
-        //      *setSize is_vector => leafsize (6 || 7) => listget(node->leafs, 3) => size * literal
-        //      adiciona na hash_stack {natureza, setType, setSize}
-        //      ret = 0
+        if(entry !=  NULL){
+            this->SetErrorNumber(ERR_DECLARED);
+            this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+            return this;
+        }
+        else{
+            // pega tipo
+            idType = node->GetNodeLeaf((leafSize - 1))->GetLexicalValue()->GetValueType();
+
+            // *setSize is_vector => leafsize (6 || 7) => listget(node->leafs, 3) => size * literal
+            idSize = (leafSize >= 6) ? node->GetNodeLeaf(2)->GetLexicalValue()->GetValue() : 1;
+
+            // adiciona na hash_stack {nome, tipo, tamanho, natureza}
+            entry = SymbolTableEntry(idName, idType, idSize, NATUREZA_GLOBAL);
+            scope->Insert(entry);
+
+            // ret = 0
+            this->SetErrorNumber(0);
+            this->SetLineError(0, "");
+            return this;
+        }
+
         break;
 
     case AST_DECTIPO:
@@ -127,7 +156,7 @@ SymbolTableEntry *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree node)
         //      ret = ERR_DECLARED
         // SENÃO
         //      pega tipo
-        child = listGet(node->leafs, 1);
+        // child = listGet(node->leafs, 1);
         //          SE tipo usuario  => já_declarado_aqui
         //          SE inicializado ? conferir tipo
         //      adiciona na hash_stack {natureza, setType, setSize}
@@ -174,7 +203,7 @@ SymbolTableEntry *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree node)
 
     case AST_FOREACH:
         // checkSemantic TK_ID is vector
-        child = listGet(node->leafs, 3);
+        // child = listGet(node->leafs, 3);
         // hash_search child
         //  ret = is vector(TK_ID) ? 0 : ERR_VECTOR
         break;
@@ -243,8 +272,9 @@ SymbolTableEntry *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree node)
         break;
 
     default:
-        fprintf(stderr, "[ERROR] Node Type: %d", node->type);
+        cerr << "[ERROR] Node Type:" << node->GetType() << "\n";
         break;
     }
-    */
+
+    return NULL;
 }

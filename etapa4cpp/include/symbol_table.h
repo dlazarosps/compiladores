@@ -13,8 +13,8 @@ class SymbolTableEntry
         string name; // identificador do simbolo
         // TODO: localização (linha e opcional coluna) da sua definição/declaração
         // TODO: natureza (literal, variável, função, etc)
-        // TODO: tipo (qual o tipo de dado deste símbolo)
-        // TODO: tamanho (derivado do tipo)
+        int tipo; // (qual o tipo de dado deste símbolo)
+        int tamanho; //(derivado do tipo)
         // TODO: argumentos e seus tipos (no caso de funções)
         // TODO: campos e seus tipos (no caso do tipo for de usuário)
         // TODO: demais informações do valor do token pelo yylval (veja E3)
@@ -34,3 +34,8 @@ class SymbolTable
         void Insert(SymbolTableEntry *entry);
         SymbolTableEntry* LookUp(string name);
 };
+
+#define UM_BYTE 1
+#define QUATRO_BYTE 4
+#define OITO_BYTE 8
+#define UNDEFINED -1

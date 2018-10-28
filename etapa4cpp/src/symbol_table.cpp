@@ -10,9 +10,34 @@ using namespace std;
  * SymbolTableEntry functions
  */
 
-SymbolTableEntry::SymbolTableEntry(string name)
+SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int natureza)
 {
     this->name = name;
+    this->tipo = type;
+    this->natureza = natureza;
+
+    switch (type)
+    {
+        case VALOR_CHAR:
+            this->tamanho = UM_BYTE * size;
+            break;
+        case VALOR_STRING:
+            this->tamanho = UM_BYTE * size;
+            break;
+        case VALOR_INT:
+            this->tamanho = QUATRO_BYTE * size;
+            break;
+        case VALOR_FLOAT:
+            this->tamanho = OITO_BYTE * size;
+            break;
+        case VALOR_BOOL:
+            this->tamanho = UM_BYTE * size;
+    
+        default:
+            this->tamanho = UNDEFINED;
+            break;
+    }
+
     // TODO: add the other fields
 }
 
