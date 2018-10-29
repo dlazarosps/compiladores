@@ -3,6 +3,7 @@ lex.yy.c
 parser.output
 parser.tab.c
 parser.tab.h
+etapa4.tgz
 
 # Ignore the build and lib dirs
 build
