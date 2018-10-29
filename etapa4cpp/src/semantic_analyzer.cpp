@@ -98,57 +98,11 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
             return this->AnalyzeAstDecTipo(node);
             break;
         case AST_DECFUNC:
-            /*// cria escopo
-            scope = new SymbolTable();
-            //TODO push_hash_stack
-
-            // checkSemantic folhas
-            result = new SemanticAnalyzer();
-            result->CheckSemantic(node->GetLeaf(0)); //check cabecalho
-            if(result->GetErrorNumber() != 0){
-                return result; //erro no cabecalho
-            }
-            else
-            {
-                temp = new SemanticAnalyzer();
-                temp->CheckSemantic(node->GetLeaf(1)); //check corpo
-                if(temp->GetErrorNumber() != 0) return temp; //erro no corpo
-
-                //TODO pop context
-
-                this->SetErrorNumber(0);
-                this->SetLineError(0, "");
-                return this;
-            }*/
+            return AnalyzeAstDecFunc(node);
             break;
-
         case AST_CABECALHOFUN:
-            // pop escopo (hash da função)
-            /*idName = node->GetLeaf((leafSize - 1))->GetLexicalValue()->ValueToString(); //pega identificador
-
-            entry = scope->LookUp(idName);
-            if (entry != NULL)
-            {
-                this->SetErrorNumber(ERR_DECLARED);
-                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
-            }
-            else
-            {
-                //      conta_argumentos => "AST_listfun" => listget(nodo->leafs, leafSize) => add hash
-                //      push hash
-                //      checkSemantic argumentos ? AST_listfun => "PARAMSFUN" => PARAMS (add hash)
-                idType = TIPO_IDENTIFICADOR;
-                idSize = 1;
-
-                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
-                scope->Insert(entry);
-
-                this->SetErrorNumber(0);
-                this->SetLineError(0, "");
-            }
-            return this;*/
+            return AnalyzeAstCabecalhoFun(node);
             break;
-
         case AST_PARAMS:
             //TODO check TK_ID params
             /*idName = node->GetLeaf((leafSize))->GetLexicalValue()->ValueToString();
@@ -481,6 +435,9 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
 
 bool SemanticAnalyzer::AnalyzeAstPrograma(AbstractSyntaxTree *node)
 {
+    // programa: elemento
+    // programa: %empty
+
     this->scopeStack->push(new SymbolTable());
     if(node->GetLeaf(0)->GetType() == AST_EMPTY) {
         return true;
@@ -492,6 +449,13 @@ bool SemanticAnalyzer::AnalyzeAstPrograma(AbstractSyntaxTree *node)
 
 bool SemanticAnalyzer::AnalyzeAstElemento(AbstractSyntaxTree *node)
 {
+    // elemento: elemento decGlobal
+    // elemento: decGlobal
+    // elemento: elemento decTipo
+    // elemento: decTipo
+    // elemento: elemento decFunc
+    // elemento: decFunc
+
     bool ret = true;
     int leafSize = node->GetLeafsSize(); // Pega a quantidade de nodos filhos
     for(int i = 0; i < leafSize; i++) {
@@ -565,32 +529,95 @@ bool SemanticAnalyzer::AnalyzeAstDecTipo(AbstractSyntaxTree *node)
         entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_TIPO);
         scope->Insert(entry);
 
-        this->SetErrorNumber(0);
-        this->SetLineError(0, "");
         return true;
     }
 }
 
+bool SemanticAnalyzer::AnalyzeAstDecFunc(AbstractSyntaxTree *node)
+{
+    // decFunc: cabecalhoFun corpoFun
+    // corpoFun: bloco
+
+    this->scopeStack->push(new SymbolTable()); // Cria escopo
+
+    AbstractSyntaxTree *nodeCabecalho = node->GetLeaf(0);
+    AbstractSyntaxTree *nodeBloco = node->GetLeaf(1)->GetLeaf(0);
+
+    bool ret = true;
+
+    ret = ret && this->AnalyzeAstCabecalhoFun(nodeCabecalho);
+    ret = ret && this->AnalyzeNode(nodeBloco);
+
+    this->scopeStack->pop();
+
+    return ret;
+}
+
+bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
+{
+    // cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
+    // cabecalhoFun: tipo TK_IDENTIFICADOR listaFun
+    // cabecalhoFun: TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+    // cabecalhoFun: TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+    // listaFun: '(' paramsFun ')'
+    // listaFun: '(' ')'
+    // paramsFun: params
+    // paramsFun: paramsFun ',' params
+    // params: TK_PR_CONST tipo TK_IDENTIFICADOR
+    // params: tipo TK_IDENTIFICADOR
+
+    string idName = node->GetLeaf((leafSize - 1))->GetLexicalValue()->ValueToString(); //pega identificador
+
+    entry = scope->LookUp(idName);
+    if (entry != NULL)
+    {
+        this->SetErrorNumber(ERR_DECLARED);
+        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+    }
+    else
+    {
+        //      conta_argumentos => "AST_listfun" => listget(nodo->leafs, leafSize) => add hash
+        //      push hash
+        //      checkSemantic argumentos ? AST_listfun => "PARAMSFUN" => PARAMS (add hash)
+        idType = TIPO_IDENTIFICADOR;
+        idSize = 1;
+
+        entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
+        scope->Insert(entry);
+
+        this->SetErrorNumber(0);
+        this->SetLineError(0, "");
+    }
+    return this;
+}
+
 int SemanticAnalyzer::GetTypeFromAstTipo(AbstractSyntaxTree *node)
 {
+    LexicalValue *lex = node->GetLexicalValue();
     switch(node->GetType()) {
         case AST_TERMINAL:
-            return TIPO_USER;
-            break;
-        case TK_PR_INT:
-            return TIPO_INT;
-            break;
-        case TK_PR_FLOAT:
-            return TIPO_FLOAT;
-            break;
-        case TK_PR_BOOL:
-            return TIPO_BOOL;
-            break;
-        case TK_PR_CHAR:
-            return TIPO_CHAR;
-            break;
-        case TK_PR_STRING:
-            return TIPO_STRING;
+            if(lex->GetType() == TIPO_LITERAL) {
+                switch(lex->GetValueType()) {
+                    case VALOR_STRING:
+                        return SYMBOL_TYPE_STRING;
+                        break;
+                    case VALOR_CHAR:
+                        return SYMBOL_TYPE_CHAR;
+                        break;
+                    case VALOR_INT:
+                        return SYMBOL_TYPE_INT;
+                        break;
+                    case VALOR_FLOAT:
+                        return SYMBOL_TYPE_FLOAT;
+                        break;
+                    case VALOR_BOOL:
+                        return SYMBOL_TYPE_BOOL;
+                        break;
+                }
+            }
+            else {
+                return SYMBOL_TYPE_USER;
+            }
             break;
         case AST_TIPO:
         case AST_TIPOSIMPLES:
@@ -606,11 +633,6 @@ string SemanticAnalyzer::GetValueFromAstTipo(AbstractSyntaxTree *node)
 {
     switch(node->GetType()) {
         case AST_TERMINAL:
-        case TK_PR_INT:
-        case TK_PR_FLOAT:
-        case TK_PR_BOOL:
-        case TK_PR_CHAR:
-        case TK_PR_STRING:
             return node->GetLexicalValue()->ValueToString();
             break;
         case AST_TIPO:

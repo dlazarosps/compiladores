@@ -33,24 +33,11 @@ class SemanticAnalyzer
         bool AnalyzeAstElemento(AbstractSyntaxTree *node);
         bool AnalyzeAstDecGlobal(AbstractSyntaxTree *node);
         bool AnalyzeAstDecTipo(AbstractSyntaxTree *node);
+        bool AnalyzeAstDecFunc(AbstractSyntaxTree *node);
+        bool AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node);
         int GetTypeFromAstTipo(AbstractSyntaxTree *node);
         string GetValueFromAstTipo(AbstractSyntaxTree *node);
 };
-
-/*
- * Natureza
- */
-#define NATUREZA_LITERAL_INT 1
-#define NATUREZA_LITERAL_FLOAT 2
-#define NATUREZA_LITERAL_CHAR 3
-#define NATUREZA_LITERAL_STRING 4
-#define NATUREZA_LITERAL_BOOL 5
-#define NATUREZA_IDENTIFICADOR 6
-#define NATUREZA_GLOBAL 7
-#define NATUREZA_FUN 8
-#define NATUREZA_TIPO 9
-#define NATUREZA_VAR 10
-#define NATUREZA_VEC 11
 
 /*
  * Erros

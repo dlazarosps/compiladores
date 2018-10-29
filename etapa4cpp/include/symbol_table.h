@@ -35,6 +35,34 @@ class SymbolTable
         SymbolTableEntry* LookUp(string name);
 };
 
+/*
+ * Tipo
+ */
+#define SYMBOL_TYPE_INT 1
+#define SYMBOL_TYPE_FLOAT 2
+#define SYMBOL_TYPE_STRING 3
+#define SYMBOL_TYPE_CHAR 4
+#define SYMBOL_TYPE_BOOL 5
+#define SYMBOL_TYPE_USER 6
+
+/*
+ * Natureza
+ */
+#define NATUREZA_LITERAL_INT 1
+#define NATUREZA_LITERAL_FLOAT 2
+#define NATUREZA_LITERAL_CHAR 3
+#define NATUREZA_LITERAL_STRING 4
+#define NATUREZA_LITERAL_BOOL 5
+#define NATUREZA_IDENTIFICADOR 6
+#define NATUREZA_GLOBAL 7
+#define NATUREZA_FUN 8
+#define NATUREZA_TIPO 9
+#define NATUREZA_VAR 10
+#define NATUREZA_VEC 11
+
+/*
+ * Tamanho
+ */
 #define UM_BYTE 1
 #define QUATRO_BYTE 4
 #define OITO_BYTE 8
