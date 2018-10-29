@@ -24,8 +24,8 @@ class SemanticAnalyzer
         void SetErrorNumber(int Err);
         string GetLineError();
         void SetLineError(int rowNumber, string rowText);
-        void SetLineError(AbstractSyntaxTree node);
-        SemanticAnalyzer CheckSemantic(AbstractSyntaxTree *node);
+        void SetLineError(AbstractSyntaxTree *node);
+        SemanticAnalyzer* CheckSemantic(AbstractSyntaxTree *node);
 };
 
 /*

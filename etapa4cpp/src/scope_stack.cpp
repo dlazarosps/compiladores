@@ -22,14 +22,14 @@ ScopeStack::~ScopeStack()
     // TODO: clean up
 }
 
-void ScopeStack::push(ScopeStack *table)
+void ScopeStack::push(SymbolTable *table)
 {
     this->scopes.push(table);
 }
 
-void ScopeStack::pop(ScopeStack *table)
+void ScopeStack::pop()
 {
-    this->scopes.pop(table);
+    this->scopes.pop();
 }
 
 SymbolTableEntry *ScopeStack::LookUp(string name)
@@ -38,12 +38,12 @@ SymbolTableEntry *ScopeStack::LookUp(string name)
     SymbolTable * top;
     SymbolTableEntry* entry;
 
-    scope = this->scopes; //copia local
+    scopes = this->scopes; //copia local
 
     while(!scopes.empty()){ //enquanto a pilha não for vazia
 
         top = scopes.top(); //get topo da pilha
-        entry = top.LookUp(name); //procura na hash o nome
+        entry = top->LookUp(name); //procura na hash o nome
 
         if (entry != NULL) { //se encontrou retorna
             return entry;

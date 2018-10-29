@@ -1,6 +1,7 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
-
-#include <string.h>
+#include <iostream>
+//#include <string.h>
+#include <cstdlib>
 #include <string>
 #include "../include/lexical_value.h"
 
@@ -8,8 +9,10 @@ using namespace std;
 
 LexicalValue::LexicalValue(int line, int type, int valueType, char *value)
 {
+    string svalue = value;
     this->line = line;
     this->type = type;
+    
     if(this->type == TIPO_LITERAL) {
         this->valueType = valueType;
         switch(valueType) {
@@ -26,18 +29,12 @@ LexicalValue::LexicalValue(int line, int type, int valueType, char *value)
                 this->value.floatValue = atof(value);
                 break;
             case VALOR_BOOL:
-                if(strcmp(value, "true") == 0) {
-                    this->value.boolValue = 1;
-                }
-                else {
-                    this->value.boolValue = 0;
-                }
-                break;
+                this->value.boolValue = (svalue  == "true") ? 1 : 0;
             default:
                 this->valueType = VALOR_STRING;
                 this->value.stringValue = new string(value);
                 // TODO: include exception
-                printf("Unexpected value type for literal");
+                cerr << "Unexpected value type for literal";
                 break;
         }
     }

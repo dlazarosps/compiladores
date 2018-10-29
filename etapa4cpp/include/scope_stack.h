@@ -18,6 +18,6 @@ class ScopeStack
         ScopeStack(); // Constructor
         ~ScopeStack(); // Destructor
         void push(SymbolTable *table);
-        void pop(SymbolTable *table);
+        void pop();
         SymbolTableEntry *LookUp(string name);
 };

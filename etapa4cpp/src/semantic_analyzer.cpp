@@ -1,5 +1,6 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
-
+#include <iostream>
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <stack>
@@ -29,7 +30,7 @@ int SemanticAnalyzer::GetErrorNumber()
     return this->errorNumber;
 }
 
-void SetErrorNumber(int Err)
+void SemanticAnalyzer::SetErrorNumber(int Err)
 {
     this->errorNumber = Err;
 }
@@ -44,14 +45,13 @@ void SemanticAnalyzer::SetLineError(int rowNumber, string rowText)
     this->lineError = (rowNumber > 0) ? "[ERRO] on line " + to_string(rowNumber) + " : " + rowText : "";
 }
 
-void SemanticAnalyzer::SetLineError(AbstractSyntaxTree node)
+void SemanticAnalyzer::SetLineError(AbstractSyntaxTree *node)
 {
     int rowNumber;
     string rowText;
     LexicalValue* lex;
 
     lex = node->GetLexicalValue();
-
     rowNumber = lex->GetLine();
     //rowText = node->Descompilation(); //TODO get 1 row text
 
@@ -68,11 +68,11 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
     int idSize;
     string idName;
 
-    AbstractSyntaxTree *child;
-    LexicalValue *lex;
+    //AbstractSyntaxTree *child;
+    //LexicalValue *lex;
     SymbolTable *scope;
-    SymbolTableEntry* entry;
-    SemanticAnalyzer* result, temp;
+    SymbolTableEntry *entry;
+    SemanticAnalyzer *result, *temp;
 
     //pega quantidade de folhas
     leafSize = node->GetLeafsSize() - 1; // 0 to N
@@ -83,13 +83,13 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
 
         case AST_PROGRAMA:
             //TODO
-            //inicializada hash
+            scope = new SymbolTable();
             //push stack
             break;
         case AST_DECGLOBAL:
             //decglobal = id ... tipo ';'
             //pega identificador
-            idName = node->GetNodeLeaf(0)->GetLexicalValue()->GetValue();
+            idName = node->GetNodeLeaf(0)->GetLexicalValue()->ValueToString();
 
             entry = scope->LookUp(idName);
             if(entry !=  NULL){
@@ -101,10 +101,10 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 idType = node->GetNodeLeaf((leafSize - 1))->GetLexicalValue()->GetValueType();
 
                 // *setSize is_vector => leafsize (6 || 7) => listget(node->leafs, 3) => size * literal
-                idSize = (leafSize >= 6) ? node->GetNodeLeaf(2)->GetLexicalValue()->GetValue() : 1;
+                idSize = (leafSize >= 6) ? stoi(node->GetNodeLeaf(2)->GetLexicalValue()->ValueToString()) : 1;
 
                 // adiciona na hash_stack {nome, tipo, tamanho, natureza}
-                entry = SymbolTableEntry(idName, idType, idSize, NATUREZA_GLOBAL);
+                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_GLOBAL);
                 scope->Insert(entry);
                 
                 // ret = 0
@@ -116,7 +116,7 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
 
         case AST_DECTIPO:
             //pega identificador
-            idName = node->GetNodeLeaf(1)->GetLexicalValue()->GetValue();
+            idName = node->GetNodeLeaf(1)->GetLexicalValue()->ValueToString();
 
             entry = scope->LookUp(idName);
             if (entry != NULL)
@@ -129,8 +129,8 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 idType = TIPO_USER;
                 //TODO conta_campos => "AST_listTipo" => listget(nodo->leafs, 4) => setSize
                 //idSize = conta_campos SIZE
-
-                entry = SymbolTableEntry(idName, idType, idSize, NATUREZA_TIPO);
+                idSize = 1;
+                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_TIPO);
                 scope->Insert(entry);
 
                 // ret = 0
@@ -141,18 +141,20 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 return this;
             break;
 
-        case AST_DECFUN:
+        case AST_DECFUNC:
             // cria escopo 
-            scope = SymbolTable();
+            scope = new SymbolTable();
             //TODO push_hash_stack
 
             // checkSemantic folhas
+            result = new SemanticAnalyzer();
             result->CheckSemantic(node->GetNodeLeaf(0)); //check cabecalho
             if(result->GetErrorNumber() != 0){
                 return result; //erro no cabecalho
             }
             else
             {
+                temp = new SemanticAnalyzer();
                 temp->CheckSemantic(node->GetNodeLeaf(1)); //check corpo
                 if(temp->GetErrorNumber() != 0) return temp; //erro no corpo
 
@@ -167,7 +169,7 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
         case AST_CABECALHOFUN:
             // pop escopo (hash da função)
             //pega identificador
-            idName = node->GetNodeLeaf((leafSize - 1))->GetLexicalValue()->GetValue();
+            idName = node->GetNodeLeaf((leafSize - 1))->GetLexicalValue()->ValueToString();
 
             entry = scope->LookUp(idName);
             if (entry != NULL)
@@ -180,8 +182,10 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 //      conta_argumentos => "AST_listfun" => listget(nodo->leafs, leafSize) => add hash
                 //      push hash
                 //      checkSemantic argumentos ? AST_listfun => "PARAMSFUN" => PARAMS (add hash)
+                idType = TIPO_IDENTIFICADOR;
+                idSize = 1;
 
-                entry = SymbolTableEntry(idName, idType, idSize, NATUREZA_TIPO);
+                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
                 scope->Insert(entry);
                 //      return ret
             }
@@ -189,7 +193,7 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
 
         case AST_PARAMS:
             //TODO check TK_ID params
-            idName = node->GetNodeLeaf((leafSize))->GetLexicalValue()->GetValue();
+            idName = node->GetNodeLeaf((leafSize))->GetLexicalValue()->ValueToString();
 
             entry = scope->LookUp(idName);
             if (entry != NULL)
@@ -205,7 +209,7 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 // pega tamanho
                 idSize = 1;
 
-                entry = SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
+                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
                 scope->Insert(entry);
 
                 // ret = 0
@@ -253,13 +257,13 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
             // ret = ERR_WRONG_PAR_INPUT
             break;
 
-        case AST_CMDIN:
+        case AST_CMDOUT:
             // checkSemantic folhas => expr
             // SE folhas != literal ou expr
             // ret = ERR_WRONG_PAR_OUTPUT
             break;
 
-        case AST_CMDRBC:
+        case AST_RBC:
             // SE RETURN
             // checkSemantic folhas => expr
             // SE folhas OP != (unario || binario || terario)
