@@ -41,6 +41,7 @@ class SemanticAnalyzer
 #define NATUREZA_FUN 8
 #define NATUREZA_TIPO 9
 #define NATUREZA_VAR 10
+#define NATUREZA_VEC 11
 
 /*
  * Erros
