@@ -16,6 +16,7 @@ tests/CMakeFiles
 tests/cmake_install.cmake
 tests/CMakeCache.txt
 tests/Makefile
+tests/runTests
 
 # Ignore Mac specific files
 .DS_Store

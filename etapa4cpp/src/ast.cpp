@@ -51,7 +51,7 @@ AbstractSyntaxTree* AbstractSyntaxTree::GetNodeLeaf(int index)
 	return this->leafs[index];
 }
 
-void AbstractSyntaxTree::Descompilation()
+void AbstractSyntaxTree::Decompile()
 {
 	LexicalValue *lex;
 
@@ -70,7 +70,7 @@ void AbstractSyntaxTree::Descompilation()
 
 		//recursão para as folhas
 		for (auto& leaf : this->leafs) {
-			leaf->Descompilation();
+			leaf->Decompile();
 		}
 
 	//}
