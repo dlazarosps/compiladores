@@ -133,7 +133,6 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_TIPO);
                 scope->Insert(entry);
 
-                // ret = 0
                 this->SetErrorNumber(0);
                 this->SetLineError(0, "");
 
@@ -159,11 +158,11 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 if(temp->GetErrorNumber() != 0) return temp; //erro no corpo
 
                 //TODO pop context 
-                // ret = 0
+
                 this->SetErrorNumber(0);
                 this->SetLineError(0, "");
+                return this;
             }
-
             break;
 
         case AST_CABECALHOFUN:
@@ -187,8 +186,11 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
 
                 entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
                 scope->Insert(entry);
-                //      return ret
+
+                this->SetErrorNumber(0);
+                this->SetLineError(0, "");
             }
+            return this;
             break;
 
         case AST_PARAMS:
@@ -212,55 +214,132 @@ SemanticAnalyzer *SemanticAnalyzer::CheckSemantic(AbstractSyntaxTree *node)
                 entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
                 scope->Insert(entry);
 
-                // ret = 0
                 this->SetErrorNumber(0);
                 this->SetLineError(0, "");
             }
-            
+            return this;
             break;
 
         case AST_DECVAR:
-            // TESTA já_declarado_aqui (hash scopo corrente)
-            // SE sim
-            //      ret = ERR_DECLARED
-            // SENÃO
-            //      pega tipo
-            // child = listGet(node->leafs, 1);
-            //          SE tipo usuario  => já_declarado_aqui
-            //          SE inicializado ? conferir tipo
-            //      adiciona na hash_stack {natureza, setType, setSize}
-            //      ret = 0
+            //pega identificador
+            idName = node->GetNodeLeaf(1)->GetLexicalValue()->ValueToString();
+
+            entry = scope->LookUp(idName);
+            if (entry != NULL)
+            {
+                this->SetErrorNumber(ERR_DECLARED);
+                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+            }
+            else
+            {
+                idType = node->GetNodeLeaf(0)->GetLexicalValue()->GetValueType();
+                if(idType == TIPO_USER) //TODO set TIPO_USER in lexvalue
+                {
+                    //SE tipo usuario  => já_declarado_aqui
+                    entry = scope->LookUp(node->GetNodeLeaf(0)->GetLexicalValue()->ValueToString());
+                    //SE inicializado ? conferir tipo
+                    if (entry == NULL)
+                    {
+                        this->SetErrorNumber(ERR_UNDECLARED);
+                        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+                    }
+                    //idSize = sizeUser
+                }
+                //adiciona na hash_stack {natureza, setType, setSize}
+                idSize = 1;
+
+                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_VAR);
+                scope->Insert(entry);
+
+                this->SetErrorNumber(0);
+                this->SetLineError(0, "");
+            }   
+            return this;
             break;
 
         case AST_CMDATR:
-            // TESTA já_declarado_aqui
-            // SE não
-            //      ret = ERR_UNDECLARED
-            // SENÃO
-            //      checkSemantic => expr
-            // return ret
+            //pega identificador
+            idName = node->GetNodeLeaf(0)->GetLexicalValue()->ValueToString();
+
+            entry = scope->LookUp(idName);
+            if (entry == NULL)
+            {
+                this->SetErrorNumber(ERR_UNDECLARED);
+                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+            }
+            else
+            {
+                //testa semantica da expr
+                result = new SemanticAnalyzer();
+                result->CheckSemantic(node->GetNodeLeaf(2));
+                if (result->GetErrorNumber() != 0)
+                {
+                    return result; //erro no expr
+                }
+                else
+                {
+                    idSize = 1;
+                    idType = 1; //TODO get type from hash COMPARE type from expr
+
+                    entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
+                    scope->Insert(entry);
+
+                    this->SetErrorNumber(0);
+                    this->SetLineError(0, "");
+                }
+            }
+            return this;
             break;
 
         case AST_CMDFUNCCALL:
-            // TESTA já_declarado_aqui
-            // SE não
-            //      ret = ERR_UNDECLARED
-            // SENÃO
-            //      conta parametros
-            //          checkParams
-            // return ret
+            //pega identificador
+            idName = node->GetNodeLeaf(0)->GetLexicalValue()->ValueToString();
+
+            entry = scope->LookUp(idName);
+            if (entry == NULL)
+            {
+                this->SetErrorNumber(ERR_UNDECLARED);
+                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+            }
+            else
+            {
+                // conta parametros
+                // checkParams
+                // return ret
+            }
+            return this;
             break;
 
         case AST_CMDIN:
             // checkSemantic folhas => expr
-            // SE folhas OP != (unario || binario || terario)
-            // ret = ERR_WRONG_PAR_INPUT
+            result = new SemanticAnalyzer();
+            result->CheckSemantic(node->GetNodeLeaf(1));
+            if (result->GetErrorNumber() != 0)
+            {   
+                return result; //erro no expr
+            }
+            else
+            {
+                //TODO check specs E4
+                // SE folhas OP != (unario || binario || terario)
+                // ret = ERR_WRONG_PAR_INPUT
+            }    
             break;
 
         case AST_CMDOUT:
             // checkSemantic folhas => expr
-            // SE folhas != literal ou expr
-            // ret = ERR_WRONG_PAR_OUTPUT
+            result = new SemanticAnalyzer();
+            result->CheckSemantic(node->GetNodeLeaf(1));
+            if (result->GetErrorNumber() != 0)
+            {
+                return result; //erro no expr
+            }
+            else
+            {
+                //TODO check specs E4
+                // SE folhas != literal ou expr
+                // ret = ERR_WRONG_PAR_OUTPUT
+            }
             break;
 
         case AST_RBC:
