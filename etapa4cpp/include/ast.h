@@ -21,7 +21,7 @@ class AbstractSyntaxTree
         int GetLeafsSize();
         AbstractSyntaxTree * GetNodeLeaf(int index);
         LexicalValue* GetLexicalValue();
-        void Descompilation();
+        void Decompile();
         void Print(int nivel);
 };
 

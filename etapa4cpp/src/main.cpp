@@ -7,13 +7,14 @@
 #include "../include/parser.tab.h" //arquivo gerado com bison -d parser.y
 
 AbstractSyntaxTree *arvore = NULL;
-void descompila (void *arvore);
-void libera (void *arvore);
+void descompila (AbstractSyntaxTree *arvore);
+void libera (AbstractSyntaxTree *arvore);
 
 int main(int argc, char **argv)
 {
     //Inicializa a tabela de símbolos global
     int ret = yyparse();
+    descompila(arvore);
     libera(arvore);
     //libera a árvore de tabelas de símbolos
     arvore = NULL;

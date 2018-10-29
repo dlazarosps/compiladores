@@ -9,13 +9,13 @@ int yyerror (char const *s);
 extern int get_line_number();
 extern void *arvore;
 
-extern void descompila (void *arvore) {
-    //astDescomp(arvore);
+extern void descompila (AbstractSyntaxTree *arvore) {
+    arvore->Decompile();
     //fprintf(stdout, "\n");
 }
-extern void libera (void *arvore) {
+extern void libera (AbstractSyntaxTree *arvore) {
     //astPrint(arvore, 0);
-    //astDelete(arvore);
+    delete arvore;
 }
 %}
 
