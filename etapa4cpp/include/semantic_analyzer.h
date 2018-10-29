@@ -14,18 +14,27 @@ using namespace std;
 class SemanticAnalyzer
 {
     private:
-      int errorNumber;
-      string lineError;
+        AbstractSyntaxTree* root;
+        ScopeStack* scopeStack;
+        int errorNumber;
+        string lineError;
 
     public:
-        SemanticAnalyzer(); // Constructor
+        SemanticAnalyzer(AbstractSyntaxTree *root); // Constructor
         ~SemanticAnalyzer(); // Destructor
         int GetErrorNumber();
         void SetErrorNumber(int Err);
         string GetLineError();
         void SetLineError(int rowNumber, string rowText);
         void SetLineError(AbstractSyntaxTree *node);
-        SemanticAnalyzer* CheckSemantic(AbstractSyntaxTree *node);
+        bool Analyze();
+        bool AnalyzeNode(AbstractSyntaxTree *node);
+        bool AnalyzeAstPrograma(AbstractSyntaxTree *node);
+        bool AnalyzeAstElemento(AbstractSyntaxTree *node);
+        bool AnalyzeAstDecGlobal(AbstractSyntaxTree *node);
+        bool AnalyzeAstDecTipo(AbstractSyntaxTree *node);
+        int GetTypeFromAstTipo(AbstractSyntaxTree *node);
+        string GetValueFromAstTipo(AbstractSyntaxTree *node);
 };
 
 /*

@@ -38,6 +38,11 @@ class LexicalValue
 #define TIPO_IDENTIFICADOR 3
 #define TIPO_LITERAL 4
 #define TIPO_USER 5
+#define TIPO_STRING 6
+#define TIPO_CHAR 7
+#define TIPO_INT 8
+#define TIPO_FLOAT 9
+#define TIPO_BOOL 10
 
 #define VALOR_STRING 0
 #define VALOR_CHAR 1

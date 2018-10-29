@@ -14,7 +14,7 @@ extern void descompila (AbstractSyntaxTree *arvore) {
     //fprintf(stdout, "\n");
 }
 extern void libera (AbstractSyntaxTree *arvore) {
-    //astPrint(arvore, 0);
+    //arvore->Print(0);
     delete arvore;
 }
 %}

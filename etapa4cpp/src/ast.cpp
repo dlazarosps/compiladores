@@ -46,7 +46,7 @@ int AbstractSyntaxTree::GetLeafsSize()
 	return this->leafs.size();
 }
 
-AbstractSyntaxTree* AbstractSyntaxTree::GetNodeLeaf(int index)
+AbstractSyntaxTree* AbstractSyntaxTree::GetLeaf(int index)
 {
 	return this->leafs[index];
 }

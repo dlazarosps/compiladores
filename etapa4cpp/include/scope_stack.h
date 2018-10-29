@@ -20,4 +20,5 @@ class ScopeStack
         void push(SymbolTable *table);
         void pop();
         SymbolTableEntry *LookUp(string name);
+        SymbolTable* Top();
 };

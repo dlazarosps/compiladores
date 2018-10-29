@@ -32,7 +32,7 @@ void ScopeStack::pop()
     this->scopes.pop();
 }
 
-SymbolTableEntry *ScopeStack::LookUp(string name)
+SymbolTableEntry* ScopeStack::LookUp(string name)
 {
     stack <SymbolTable*> scopes;
     SymbolTable * top;
@@ -54,4 +54,9 @@ SymbolTableEntry *ScopeStack::LookUp(string name)
     }
 
     return NULL; // não encontrou
+}
+
+SymbolTable* ScopeStack::Top()
+{
+    return this->scopes.top();
 }

@@ -19,7 +19,7 @@ class AbstractSyntaxTree
         void AddLeaf(AbstractSyntaxTree* node);
         int GetType();
         int GetLeafsSize();
-        AbstractSyntaxTree * GetNodeLeaf(int index);
+        AbstractSyntaxTree* GetLeaf(int index);
         LexicalValue* GetLexicalValue();
         void Decompile();
         void Print(int nivel);
