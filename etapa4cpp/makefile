@@ -7,7 +7,7 @@ TESTDIR := tests
 SCRIPTDIR := scripts
 LOGSDIR := logs
 BINDIR := bin
-TARGET := $(BINDIR)/etapa4
+TARGET := etapa4
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -17,10 +17,11 @@ CFLAGS := -g -Wall -std=c++11
 LIB := $() # -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
 INC := -I include
 
-$(TARGET): $(BUILDDIR)/parser.tab.o $(BUILDDIR)/lex.yy.o $(OBJECTS)
+$(BINDIR)/$(TARGET): $(BUILDDIR)/parser.tab.o $(BUILDDIR)/lex.yy.o $(OBJECTS)
 	@echo " Linking..."
 	@mkdir -p $(BINDIR)
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(BINDIR)/$(TARGET) $(LIB)
+	@cp $(BINDIR)/$(TARGET) $(TARGET)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
@@ -63,6 +64,7 @@ clean:
 	$(RM) $(TESTDIR)/Makefile
 	@echo "> Removing binaries...";
 	$(RM) -r $(BINDIR)
+	$(RM) $(TARGET)
 
 # Compacta para envio
 targz: clean

@@ -5,6 +5,7 @@
 #include <string>
 #include <stack>
 #include "../include/semantic_analyzer.h"
+#include "../include/semantic_error.h"
 #include "../include/parser.tab.h"
 #include "../include/ast.h"
 #include "../include/scope_stack.h"
@@ -26,58 +27,51 @@ SemanticAnalyzer::~SemanticAnalyzer()
     // TODO: clean up
 }
 
-// TODO: get first error?
-int SemanticAnalyzer::GetErrorNumber()
+void SemanticAnalyzer::AddError(SemanticError* error)
 {
-    return this->errorNumber;
+    this->errors.push_back(error);
 }
 
-// TODO: make a list of errors?
-void SemanticAnalyzer::SetErrorNumber(int Err)
+void SemanticAnalyzer::ClearErrors()
 {
-    this->errorNumber = Err;
+    // TODO: clean up
+    this->errors.clear();
 }
 
-// TODO: get first error?
-string SemanticAnalyzer::GetLineError()
+int SemanticAnalyzer::GetNumberOfErrors()
 {
-    return this->lineError;
+    return this->errors.size();
 }
 
-// TODO: make a list of errors?
-void SemanticAnalyzer::SetLineError(int rowNumber, string rowText)
+SemanticError* SemanticAnalyzer::GetError(int index)
 {
-    this->lineError = (rowNumber > 0) ? "[ERRO] on line " + to_string(rowNumber) + " : " + rowText : "";
+    return this->errors.at(index);
 }
 
-// TODO: make a list of errors?
-void SemanticAnalyzer::SetLineError(AbstractSyntaxTree *node)
+SemanticError* SemanticAnalyzer::GetFirstError()
 {
-    int rowNumber;
-    string rowText;
-    LexicalValue* lex;
-
-    lex = node->GetLexicalValue();
-    rowNumber = lex->GetLine();
-    //rowText = node->Descompilation(); //TODO get 1 row text
-
-    this->SetLineError(rowNumber, rowText);
+    if(this->GetNumberOfErrors() > 0)
+        return this->errors.at(0);
+    else
+        return NULL;
 }
 
 bool SemanticAnalyzer::Analyze()
 {
     // Initialize variables
     this->scopeStack = new ScopeStack();
+    this->ClearErrors();
+    bool ret;
 
     // Begin algorithm
-    this->AnalyzeNode(this->root);
+    ret = this->AnalyzeNode(this->root);
 
     // Clean up
     delete this->scopeStack;
     this->scopeStack = NULL;
 
-    // TODO: check if errors
-    return true;
+    // Return true if ok, return false if it has errors
+    return ret;
 }
 
 bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
@@ -448,28 +442,45 @@ bool SemanticAnalyzer::AnalyzeAstDecGlobal(AbstractSyntaxTree *node)
 
     int leafSize = node->GetLeafsSize(); // Pega a quantidade de nodos filhos
     string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); // Pega identificador
-    int idType;
+    int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
+    AbstractSyntaxTree *typeNode;
+    string idType;
     int idSize;
+    int idVectorSize;
 
     SymbolTableEntry *entry = this->scopeStack->LookUp(idName); // Procura no escopo
-    if(entry !=  NULL){
-        this->SetErrorNumber(ERR_DECLARED);
-        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+    if(entry !=  NULL) {
+        this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
-    else{
-        // pega tipo
-        idType = this->GetTypeFromAstTipo(node->GetLeaf(leafSize - 2));
+    else {
+        // Encontra o nodo que contém o tipo
+        typeNode = node->GetLeaf(leafSize - 2);
 
-        // *setSize is_vector => leafsize (6 || 7) => listget(node->leafs, 3) => size * literal
-        // TODO: verificar isto
-        idSize = (leafSize >= 5) ? stoi(node->GetLeaf(2)->GetLexicalValue()->ValueToString()) : 1;
+        // Verifica o tamanho do vetor. Se não for vetor, é tamanho 1, se for, busca dentro dos []
+        if(leafSize >= 5) {
+            idVectorSize = stoi(node->GetLeaf(2)->GetLexicalValue()->ValueToString());
+        }
+        else {
+            idVectorSize = 1;
+        }
 
-        // adiciona no escopo {nome, tipo, tamanho, natureza}
-        entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_GLOBAL);
-        this->scopeStack->Top()->Insert(entry);
+        // Computa o tipo
+        idType = this->GetValueFromAstTipo(typeNode);
 
-        return true;
+        //idSize = this->GetSizeFromAstTipo(typeNode); TODO
+        idSize = 1;
+        if(idSize == -1) {
+            return false;
+        }
+        else {
+            idSize *= idVectorSize;
+            // adiciona no escopo {nome, tipo, tamanho, natureza}
+            entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_GLOBAL);
+            this->scopeStack->Top()->Insert(entry);
+
+            return true;
+        }
     }
 }
 
@@ -485,24 +496,27 @@ bool SemanticAnalyzer::AnalyzeAstDecTipo(AbstractSyntaxTree *node)
     // encaps: TK_PR_PUBLIC
 
     string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
-    int idType;
+    string idType;
+    int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
     int idSize;
 
-    SymbolTableEntry *entry = scope->LookUp(idName);
+    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
     if (entry != NULL)
     {
-        this->SetErrorNumber(ERR_DECLARED);
-        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+        this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else
     {
-        idType = TIPO_USER;
+        entry = new SymbolTableEntry(idName, "erro", 0, NATUREZA_TIPO); //TODO
+
+
         //TODO conta_campos => "AST_listTipo" => listget(nodo->leafs, 4) => setSize
         //idSize = conta_campos SIZE
         idSize = 1;
-        entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_TIPO);
-        scope->Insert(entry);
+
+
+        this->scopeStack->Top()->Insert(entry);
 
         return true;
     }
@@ -530,7 +544,7 @@ bool SemanticAnalyzer::AnalyzeAstDecFunc(AbstractSyntaxTree *node)
 
 bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
 {
-    // cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
+    // cabecalhoFun: TK_PR_STATIC tipo TK_IDENTIFICADOR listaFun
     // cabecalhoFun: tipo TK_IDENTIFICADOR listaFun
     // cabecalhoFun: TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
     // cabecalhoFun: TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
@@ -541,29 +555,31 @@ bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
     // params: TK_PR_CONST tipo TK_IDENTIFICADOR
     // params: tipo TK_IDENTIFICADOR
 
-    string idName = node->GetLeaf((leafSize - 1))->GetLexicalValue()->ValueToString(); //pega identificador
+    int leafSize = node->GetLeafsSize(); // Pega a quantidade de nodos filhos
+    string idName = node->GetLeaf((leafSize - 1))->GetLexicalValue()->ValueToString(); // Pega identificador
+    int line = node->GetLeaf(leafSize - 1)->GetLexicalValue()->GetLine();
+    string idType;
+    int idSize;
 
-    entry = scope->LookUp(idName);
+    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
     if (entry != NULL)
     {
-        this->SetErrorNumber(ERR_DECLARED);
-        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+        this->AddError(new SemanticError(ERR_DECLARED, line));
+        return false;
     }
     else
     {
         //      conta_argumentos => "AST_listfun" => listget(nodo->leafs, leafSize) => add hash
         //      push hash
         //      checkSemantic argumentos ? AST_listfun => "PARAMSFUN" => PARAMS (add hash)
-        idType = TIPO_IDENTIFICADOR;
+        //idType = this->GetValueFromAstTipo(node->GetLeaf(leafSize - 2));
+        idType = "erro"; //TODO
         idSize = 1;
 
         entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
-        scope->Insert(entry);
-
-        this->SetErrorNumber(0);
-        this->SetLineError(0, "");
+        this->scopeStack->Top()->Insert(entry);
+        return true;
     }
-    return this;
 }
 
 bool SemanticAnalyzer::AnalyzeAstListaComandos(AbstractSyntaxTree *node)
@@ -689,5 +705,35 @@ string SemanticAnalyzer::GetValueFromAstTipo(AbstractSyntaxTree *node)
         default:
             return "ERRO"; // TODO: throw error properly
             break;
+    }
+}
+
+int SemanticAnalyzer::GetTypeSize(string name)
+{
+    SymbolTableEntry *entry;
+
+    if(name.compare("int")) {
+        return QUATRO_BYTE;
+    }
+    else if(name.compare("float")) {
+        return OITO_BYTE;
+    }
+    else if(name.compare("string")) {
+        return UM_BYTE * 0; //TODO
+    }
+    else if(name.compare("char")) {
+        return UM_BYTE;
+    }
+    else if(name.compare("bool")) {
+        return UM_BYTE;
+    }
+    else {
+        entry = this->scopeStack->LookUp(name);
+        if(entry == NULL) {
+            return -1;
+        }
+        else {
+            return entry->GetSize();
+        }
     }
 }

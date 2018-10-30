@@ -3,25 +3,42 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include <string>
 
 using namespace std;
+
+class SymbolTableEntryField
+{
+    private:
+        string name;
+        string type;
+    public:
+        SymbolTableEntryField(string name, string type); // Constructor
+        ~SymbolTableEntryField(); // Destructor
+        string GetName();
+        string GetType();
+};
 
 class SymbolTableEntry
 {
     private:
         string name; // identificador do simbolo
+        int nature; // natureza (literal, variável, função, etc)
+        string type; // (qual o tipo de dado deste símbolo)
+        int size; //(derivado do tipo)
+        vector<SymbolTableEntryField*> fields; // argumentos e seus tipos (no caso de funções), campos e seus tipos (no caso do tipo for de usuário)
         // TODO: localização (linha e opcional coluna) da sua definição/declaração
-        int natureza; // natureza (literal, variável, função, etc)
-        int tipo; // (qual o tipo de dado deste símbolo)
-        int tamanho; //(derivado do tipo)
-        // TODO: argumentos e seus tipos (no caso de funções)
-        // TODO: campos e seus tipos (no caso do tipo for de usuário)
         // TODO: demais informações do valor do token pelo yylval (veja E3)
     public:
-        SymbolTableEntry(string name, int type, int size, int natureza); // Constructor
+        SymbolTableEntry(string name, string type, int size, int natureza); // Constructor
         ~SymbolTableEntry(); // Destructor
-        string getName();
+        string GetName();
+        int GetSize();
+        void AddField(string name, string type);
+        int FieldsSize();
+        SymbolTableEntryField* GetField(string name);
+        SymbolTableEntryField* GetFieldAt(int index);
 };
 
 class SymbolTable
@@ -34,16 +51,6 @@ class SymbolTable
         void Insert(SymbolTableEntry *entry);
         SymbolTableEntry* LookUp(string name);
 };
-
-/*
- * Tipo
- */
-#define SYMBOL_TYPE_INT 1
-#define SYMBOL_TYPE_FLOAT 2
-#define SYMBOL_TYPE_STRING 3
-#define SYMBOL_TYPE_CHAR 4
-#define SYMBOL_TYPE_BOOL 5
-#define SYMBOL_TYPE_USER 6
 
 /*
  * Natureza
