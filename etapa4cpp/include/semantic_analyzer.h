@@ -35,6 +35,8 @@ class SemanticAnalyzer
         bool AnalyzeAstDecTipo(AbstractSyntaxTree *node);
         bool AnalyzeAstDecFunc(AbstractSyntaxTree *node);
         bool AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node);
+        bool AnalyzeAstListaComandos(AbstractSyntaxTree *node);
+        bool AnalyzeAstDecVar(AbstractSyntaxTree *node);
         int GetTypeFromAstTipo(AbstractSyntaxTree *node);
         string GetValueFromAstTipo(AbstractSyntaxTree *node);
 };
