@@ -68,7 +68,7 @@ clean:
 
 # Compacta para envio
 targz: clean
-	tar cvzf etapa4.tgz $(INCDIR) $(SRCDIR) $(TESTDIR) makefile
+	tar cvzf etapa4.tgz $(INCDIR) $(SRCDIR) $(TESTDIR) makefile README.md
 	#scp etapa4.tgz dlspsilva@html.inf.ufrgs.br:./public_html/
 
 # Roda o Valgrind
