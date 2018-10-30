@@ -381,41 +381,41 @@ decFunc: cabecalhoFun corpoFun
     }
     ;
 
-cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
-    {
-        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
-        node->AddLeaf($2);
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
-        node->AddLeaf($4);
-        $$ = node;
-    }
-	| tipo TK_IDENTIFICADOR listaFun
-    {
-        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
-        node->AddLeaf($1);
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
-        node->AddLeaf($3);
-        $$ = node;
-    }
-	| TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
-    {
-        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
-        node->AddLeaf($4);
-        $$ = node;
-    }
-	| TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
-    {
-        AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
-        node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
-        node->AddLeaf($3);
-        $$ = node;
-    }
-    ;
+    cabecalhoFun: TK_PR_STATIC tipoSimples TK_IDENTIFICADOR listaFun
+        {
+            AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+            node->AddLeaf($2);
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+            node->AddLeaf($4);
+            $$ = node;
+        }
+    	| tipo TK_IDENTIFICADOR listaFun
+        {
+            AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+            node->AddLeaf($1);
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+            node->AddLeaf($3);
+            $$ = node;
+        }
+    	| TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+        {
+            AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $3));
+            node->AddLeaf($4);
+            $$ = node;
+        }
+    	| TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+        {
+            AbstractSyntaxTree *node = new AbstractSyntaxTree(AST_CABECALHOFUN, NULL);
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $1));
+            node->AddLeaf(new AbstractSyntaxTree(AST_TERMINAL, $2));
+            node->AddLeaf($3);
+            $$ = node;
+        }
+        ;
 
 listaFun: '(' paramsFun ')'
     {

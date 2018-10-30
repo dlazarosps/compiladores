@@ -4,6 +4,7 @@ parser.output
 parser.tab.c
 parser.tab.h
 etapa4.tgz
+etapa4
 
 # Ignore the build and lib dirs
 build

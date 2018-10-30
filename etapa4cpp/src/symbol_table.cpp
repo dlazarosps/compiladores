@@ -8,36 +8,60 @@
 using namespace std;
 
 /*
+ * SymbolTableEntryField functions
+ */
+SymbolTableEntryField::SymbolTableEntryField(string name, string type)
+{
+    this->name = name;
+    this->type = type;
+}
+
+SymbolTableEntryField::~SymbolTableEntryField()
+{
+
+}
+
+string SymbolTableEntryField::GetName()
+{
+    return this->name;
+}
+
+string SymbolTableEntryField::GetType()
+{
+    return this->type;
+}
+
+/*
  * SymbolTableEntry functions
  */
 
-SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int natureza)
+SymbolTableEntry::SymbolTableEntry(string name, string type, int size, int nature)
 {
     this->name = name;
-    this->tipo = type;
-    this->natureza = natureza;
+    this->type = type;
+    this->nature = nature;
 
-    switch (type)
+    /*switch (type)
     {
         case VALOR_CHAR:
-            this->tamanho = UM_BYTE * size;
+            this->size = UM_BYTE * size;
             break;
         case VALOR_STRING:
-            this->tamanho = UM_BYTE * size;
+            this->size = UM_BYTE * size;
             break;
         case VALOR_INT:
-            this->tamanho = QUATRO_BYTE * size;
+            this->size = QUATRO_BYTE * size;
             break;
         case VALOR_FLOAT:
-            this->tamanho = OITO_BYTE * size;
+            this->size = OITO_BYTE * size;
             break;
         case VALOR_BOOL:
-            this->tamanho = UM_BYTE * size;
+            this->size = UM_BYTE * size;
 
         default:
-            this->tamanho = UNDEFINED;
+            this->size = UNDEFINED;
             break;
-    }
+    }*/
 
     // TODO: add the other fields
 }
@@ -47,9 +71,45 @@ SymbolTableEntry::~SymbolTableEntry()
     // TODO: clean up
 }
 
-string SymbolTableEntry::getName()
+string SymbolTableEntry::GetName()
 {
     return this->name;
+}
+
+int SymbolTableEntry::GetSize()
+{
+    return this->size;
+}
+
+void SymbolTableEntry::AddField(string name, string type)
+{
+    this->fields.push_back(new SymbolTableEntryField(name, type));
+}
+
+int SymbolTableEntry::FieldsSize()
+{
+    return this->fields.size();
+}
+
+SymbolTableEntryField* SymbolTableEntry::GetField(string name)
+{
+    SymbolTableEntryField *field;
+    for (unsigned int i = 0; i < this->fields.size(); i++) {
+        field = this->fields.at(i);
+        if(name.compare(field->GetName())==0)
+            return field;
+    }
+    return NULL;
+}
+
+SymbolTableEntryField* SymbolTableEntry::GetFieldAt(int index)
+{
+    if(index < this->FieldsSize()) {
+        return this->fields.at(index);
+    }
+    else {
+        return NULL;
+    }
 }
 
 /*
@@ -68,7 +128,7 @@ SymbolTable::~SymbolTable()
 
 void SymbolTable::Insert(SymbolTableEntry *entry)
 {
-    this->entries.insert(pair<string, SymbolTableEntry*>(entry->getName(),entry));
+    this->entries.insert(pair<string, SymbolTableEntry*>(entry->GetName(),entry));
 }
 
 SymbolTableEntry* SymbolTable::LookUp(string name)
