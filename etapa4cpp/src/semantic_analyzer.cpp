@@ -123,43 +123,25 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
             }
             return this;*/
             break;
-
-        case AST_DECVAR:
-            /*idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
-
-            entry = scope->LookUp(idName);
-            if (entry != NULL)
-            {
-                this->SetErrorNumber(ERR_DECLARED);
-                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
-            }
-            else
-            {
-                idType = node->GetLeaf(0)->GetLexicalValue()->GetValueType();
-                if(idType == TIPO_USER) //TODO set TIPO_USER in lexvalue
-                {
-                    //SE tipo usuario  => já_declarado_aqui
-                    entry = scope->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
-                    //SE inicializado ? conferir tipo
-                    if (entry == NULL)
-                    {
-                        this->SetErrorNumber(ERR_UNDECLARED);
-                        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
-                    }
-                    //idSize = sizeUser
-                }
-                //adiciona na hash_stack {natureza, setType, setSize}
-                idSize = 1;
-
-                entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_VAR);
-                scope->Insert(entry);
-
-                this->SetErrorNumber(0);
-                this->SetLineError(0, "");
-            }
-            return this;*/
+        case AST_BLOCO:
+            return this->AnalyzeNode(node->GetLeaf(1));
             break;
-
+        case AST_LISTACOMANDOS:
+            return this->AnalyzeAstListaComandos(node);
+            break;
+        case AST_CORPOFUN:
+        case AST_CMDSTERMINADOSPONTOVIRGULA:
+        case AST_CMDSTERMINADOSDOISPONTOS:
+        case AST_CMDSIMPLESFOR:
+        case AST_CMDBLOCO:
+            return this->AnalyzeNode(node->GetLeaf(0));
+            break;
+        case AST_CMDDECVAR:
+            return this->AnalyzeNode(node->GetLeaf(2));
+            break;
+        case AST_DECVAR:
+            return this->AnalyzeAstDecVar(node);
+            break;
         case AST_CMDATR:
             /*idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
 
@@ -286,13 +268,6 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
                 this->SetLineError(0, "");
             }
             return this;*/
-            break;
-
-        case AST_BLOCO:
-            /*// checkSemantic ALL ListComandos
-            result = new SemanticAnalyzer();
-            result->CheckSemantic(node->GetLeaf(1));
-            return result;*/
             break;
 
         case AST_VARIABLE:
@@ -604,6 +579,116 @@ bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
         entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
         this->scopeStack->Top()->Insert(entry);
         return true;
+    }
+}
+
+bool SemanticAnalyzer::AnalyzeAstListaComandos(AbstractSyntaxTree *node)
+{
+    //  listaComandos cmdsTerminadosPontoVirgula ';'
+    //  listaComandos cmdsTerminadosDoisPontos ':'
+    //  %empty
+
+    bool ret = true;
+    int leafSize = node->GetLeafsSize() - 1; // Pega a quantidade de nodos filhos
+    if(leafSize > 1)
+    {
+        for (int i = 0; i < (leafSize - 1); i++) // até antes do ';' || ':'
+        {
+            ret = ret && this->AnalyzeNode(node->GetLeaf(i));
+        }
+    }    
+    return ret;
+}
+
+
+bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
+{
+    //  tipoSimples TK_IDENTIFICADOR
+    //  tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
+    //  tipoSimples TK_IDENTIFICADOR TK_OC_LE literal
+    //  TK_IDENTIFICADOR TK_IDENTIFICADOR
+
+    bool ret = true;
+    int leafSize = node->GetLeafsSize() - 1 ;
+
+    string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
+
+    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
+    if (entry != NULL)
+    {
+        this->SetErrorNumber(ERR_DECLARED);
+        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+        return false;
+    }
+    else
+    {
+        idType = this->GetTypeFromAstTipo(node->GetLeaf(0));
+        if(idType == SYMBOL_TYPE_USER) 
+        {
+            //SE tipo usuario  => já_declarado_aqui
+            entry = scope->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
+            //SE inicializado ? conferir tipo
+            if(entry == NULL)
+            {
+                this->SetErrorNumber(ERR_UNDECLARED);
+                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+                return false;
+            }
+            //TODO idSize = get size type user
+        }
+        //adiciona na hash_stack {natureza, setType, setSize}
+        idSize = 1; //FAKE
+
+        //check type var :: value
+        if (leafSize > 1) {
+            int typevalue = this->GetTypeFromAstTipo(node->GetLeaf(leafSize - 1));
+            //TODO compareTypes :: cast
+        }
+        
+        entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_VAR);
+        scope->Insert(entry);
+
+        this->SetErrorNumber(0);
+        this->SetLineError(0, "");
+        return ret;
+    }
+}
+
+int SemanticAnalyzer::GetTypeFromAstTipo(AbstractSyntaxTree *node)
+{
+    LexicalValue *lex = node->GetLexicalValue();
+    switch(node->GetType()) {
+        case AST_TERMINAL:
+            if(lex->GetType() == TIPO_LITERAL) {
+                switch(lex->GetValueType()) {
+                    case VALOR_STRING:
+                        return SYMBOL_TYPE_STRING;
+                        break;
+                    case VALOR_CHAR:
+                        return SYMBOL_TYPE_CHAR;
+                        break;
+                    case VALOR_INT:
+                        return SYMBOL_TYPE_INT;
+                        break;
+                    case VALOR_FLOAT:
+                        return SYMBOL_TYPE_FLOAT;
+                        break;
+                    case VALOR_BOOL:
+                        return SYMBOL_TYPE_BOOL;
+                        break;
+                }
+            }
+            else {
+                return SYMBOL_TYPE_USER;
+            }
+            break;
+        case AST_TIPO:
+        case AST_TIPOSIMPLES:
+            return this->GetTypeFromAstTipo(node->GetLeaf(0));
+            break;
+        default:
+            return -1; // TODO: throw error properly
+            break;
     }
 }
 
