@@ -40,6 +40,8 @@ class SemanticAnalyzer
         bool AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node);
         bool AnalyzeAstListaComandos(AbstractSyntaxTree *node);
         bool AnalyzeAstDecVar(AbstractSyntaxTree *node);
+        bool AnalyzeAstCmdAtr(AbstractSyntaxTree *node);
+        bool AnalyzeAstCmdFunCall(AbstractSyntaxTree *node);
         int GetTypeFromAstTipo(AbstractSyntaxTree *node);
         string GetValueFromAstTipo(AbstractSyntaxTree *node);
         int GetSizeFromAstTipo(AbstractSyntaxTree *node);

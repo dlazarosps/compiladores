@@ -143,36 +143,9 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
             return this->AnalyzeAstDecVar(node);
             break;
         case AST_CMDATR:
-            /*idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
-
-            entry = scope->LookUp(idName);
-            if (entry == NULL)
-            {
-                this->SetErrorNumber(ERR_UNDECLARED);
-                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
-            }
-            else
-            {
-                //testa semantica da expr
-                result = new SemanticAnalyzer();
-                result->CheckSemantic(node->GetLeaf(2));
-                if (result->GetErrorNumber() != 0)
-                {
-                    return result; //erro no expr
-                }
-                else
-                {
-                    idSize = 1;
-                    idType = 1; //TODO get type from hash COMPARE type from expr
-
-                    entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
-                    scope->Insert(entry);
-
-                    this->SetErrorNumber(0);
-                    this->SetLineError(0, "");
-                }
-            }
-            return this;*/
+            return this->AnalyzeAstCmdAtr(node);
+            break;
+            
             break;
 
         case AST_CMDFUNCCALL:
@@ -610,14 +583,13 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
 
     bool ret = true;
     int leafSize = node->GetLeafsSize() - 1 ;
-
+    int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
     string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
 
     SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
     if (entry != NULL)
     {
-        this->SetErrorNumber(ERR_DECLARED);
-        this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+        this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else
@@ -626,12 +598,12 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
         if(idType == SYMBOL_TYPE_USER) 
         {
             //SE tipo usuario  => já_declarado_aqui
-            entry = scope->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
+            entry = this->scopeStack->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
             //SE inicializado ? conferir tipo
             if(entry == NULL)
             {
-                this->SetErrorNumber(ERR_UNDECLARED);
-                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
+                line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
+                this->AddError(new SemanticError(ERR_UNDECLARED, line));
                 return false;
             }
             //TODO idSize = get size type user
@@ -646,14 +618,63 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
         }
         
         entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_VAR);
-        scope->Insert(entry);
-
-        this->SetErrorNumber(0);
-        this->SetLineError(0, "");
+        this->scopeStack->Top()->Insert(entry);
         return ret;
     }
 }
 
+bool SemanticAnalyzer::AnalyzeAstCmdAtr(AbstractSyntaxTree *node)
+{
+    bool ret = true;
+    string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
+    int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
+    
+    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
+
+    if (entry == NULL)
+    {
+        this->AddError(new SemanticError(ERR_UNDECLARED, line));
+        return false;
+    }
+    else
+    {
+        //testa semantica da expr
+        ret = this->AnalyzeNode(node->GetLeaf(2));
+        if (!ret)
+        {
+            return ret; //erro no expr
+        }
+        else
+        {
+            idSize = 1;
+            idType = 1; //TODO get type from hash COMPARE type from expr
+
+            entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
+            this->scopeStack->Top()->Insert(entry);
+            return ret;
+        }
+    }
+}
+
+bool SemanticAnalyzer::AnalyzeAstCmdFunCall(AbstractSyntaxTree *node)
+{
+    bool ret = true;
+    string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
+    int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
+    entry = scope->LookUp(idName);
+    if (entry == NULL)
+    {
+        this->AddError(new SemanticError(ERR_UNDECLARED, line));
+        return false;
+    }
+    else
+    {
+        // conta parametros
+        // checkParams
+        // return ret
+    }
+    return ret;
+}
 int SemanticAnalyzer::GetTypeFromAstTipo(AbstractSyntaxTree *node)
 {
     LexicalValue *lex = node->GetLexicalValue();
