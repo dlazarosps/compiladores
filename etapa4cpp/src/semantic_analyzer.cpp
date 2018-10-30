@@ -145,27 +145,9 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
         case AST_CMDATR:
             return this->AnalyzeAstCmdAtr(node);
             break;
-            
-            break;
-
         case AST_CMDFUNCCALL:
-            /*idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
-
-            entry = scope->LookUp(idName);
-            if (entry == NULL)
-            {
-                this->SetErrorNumber(ERR_UNDECLARED);
-                this->SetLineError(node); //preenche string de retorno com a linha que contem erro
-            }
-            else
-            {
-                // conta parametros
-                // checkParams
-                // return ret
-            }
-            return this;*/
+            return this->AnalyzeAstCmdFunCall(node);
             break;
-
         case AST_CMDIN:
             // checkSemantic folhas => expr
             /*result = new SemanticAnalyzer();
