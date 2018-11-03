@@ -1,0 +1,26 @@
+# Ignore the files made by flex and bison
+lex.yy.c
+parser.output
+parser.tab.c
+parser.tab.h
+etapa5.tgz
+etapa5
+
+# Ignore the build and lib dirs
+build
+lib/*
+
+# Ignore any executables
+bin/*
+
+# Ignore the files made by cmake in /tests
+tests/CMakeFiles
+tests/cmake_install.cmake
+tests/CMakeCache.txt
+tests/Makefile
+tests/runTests
+
+# Ignore Mac specific files
+.DS_Store
+
+!.gitignore
