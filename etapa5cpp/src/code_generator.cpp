@@ -130,6 +130,8 @@ ControlILOC::ControlILOC()
 {
     this->registers = 0;
     this->labels = 0;
+    this->globalPositionMem = 0;
+    this->pilhaPositionMem = 1024;
 }
 
 ControlILOC::~ControlILOC()
@@ -161,6 +163,28 @@ int ControlILOC::LastRegisterNumber()
 int ControlILOC::LastLabelNumber()
 {
     return this->labels;
+}
+
+int ControlILOC::LastGlobalPositionMem()
+{
+    return this->globalPositionMem;
+}
+
+int ControlILOC::LastPilhaPositionMem()
+{
+    return this->pilhaPositionMem;
+}
+
+int ControlILOC::GetGlobalPositionMem()
+{
+    this->globalPositionMem += 4; //INT SIZE
+    return this->globalPositionMem;
+}
+
+int ControlILOC::GetPilhaPositionMem()
+{
+    this->pilhaPositionMem += 4; //INT SIZE
+    return this->pilhaPositionMem;
 }
 
 /*

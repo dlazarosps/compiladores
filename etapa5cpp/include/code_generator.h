@@ -47,14 +47,18 @@ class ControlILOC
     private:
     int registers;
     int labels;
-
-    //TODO mem position variables
+    int globalPositionMem;
+    int pilhaPositionMem;
 
     public:
     ControlILOC();
     ~ControlILOC();
     int LastRegisterNumber();
     int LastLabelNumber();
+    int LastGlobalPositionMem();
+    int LastPilhaPositionMem();
+    int GetGlobalPositionMem();
+    int GetPilhaPositionMem();
     string GetRegister();
     string GetLabel();
 };
