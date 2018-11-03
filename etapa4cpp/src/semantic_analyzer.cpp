@@ -567,6 +567,7 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
     int leafSize = node->GetLeafsSize() - 1 ;
     int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
     string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
+    string idType;
 
     SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
     if (entry != NULL)
@@ -576,7 +577,7 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
     }
     else
     {
-        idType = this->GetTypeFromAstTipo(node->GetLeaf(0));
+       int idType = this->GetTypeFromAstTipo(node->GetLeaf(0));
         if(idType == SYMBOL_TYPE_USER) 
         {
             //SE tipo usuario  => já_declarado_aqui
@@ -591,7 +592,7 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
             //TODO idSize = get size type user
         }
         //adiciona na hash_stack {natureza, setType, setSize}
-        idSize = 1; //FAKE
+        int idSize = 1; //FAKE
 
         //check type var :: value
         if (leafSize > 1) {
@@ -599,7 +600,7 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
             //TODO compareTypes :: cast
         }
         
-        entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_VAR);
+        entry = new SymbolTableEntry(idName, "erro", idSize, NATUREZA_VAR);
         this->scopeStack->Top()->Insert(entry);
         return ret;
     }
@@ -628,8 +629,8 @@ bool SemanticAnalyzer::AnalyzeAstCmdAtr(AbstractSyntaxTree *node)
         }
         else
         {
-            idSize = 1;
-            idType = 1; //TODO get type from hash COMPARE type from expr
+            int idSize = 1;
+            string idType = "erro"; //TODO get type from hash COMPARE type from expr
 
             entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
             this->scopeStack->Top()->Insert(entry);
@@ -643,7 +644,7 @@ bool SemanticAnalyzer::AnalyzeAstCmdFunCall(AbstractSyntaxTree *node)
     bool ret = true;
     string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
     int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
-    entry = scope->LookUp(idName);
+    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
     if (entry == NULL)
     {
         this->AddError(new SemanticError(ERR_UNDECLARED, line));

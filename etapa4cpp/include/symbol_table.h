@@ -74,3 +74,13 @@ class SymbolTable
 #define QUATRO_BYTE 4
 #define OITO_BYTE 8
 #define UNDEFINED -1
+
+/*	
+ * Tipo	
+ */
+#define SYMBOL_TYPE_INT 1
+#define SYMBOL_TYPE_FLOAT 2
+#define SYMBOL_TYPE_STRING 3
+#define SYMBOL_TYPE_CHAR 4
+#define SYMBOL_TYPE_BOOL 5
+#define SYMBOL_TYPE_USER 6
