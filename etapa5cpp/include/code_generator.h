@@ -7,6 +7,7 @@
 //#include <tuple>
 #include <vector>
 #include <stack>
+#include <list>
 #include "ast.h"
 #include "semantic_analyzer.h"
 #include "semantic_error.h"
@@ -14,6 +15,7 @@
 #include "symbol_table.h"
 
 using namespace std;
+
 class InstructionILOC
 {
     private:
@@ -25,7 +27,7 @@ class InstructionILOC
     // tuple<int, string> arg2;
     // tuple<int, string> arg3;
 
-  public:
+    public:
     InstructionILOC(string code, string arg1, string arg2, string arg3);    // Constructor
     ~InstructionILOC();                                                     // Destructor
     string GetInstructionCode();
@@ -37,6 +39,48 @@ class InstructionILOC
     void SetArg2(string arg2);
     void SetArg3(string arg3);
     string GetILOC();
+};
+
+
+class ControlILOC
+{
+    private:
+    int registers;
+    int labels;
+
+    //TODO mem position variables
+
+    public:
+    ControlILOC();
+    ~ControlILOC();
+    int LastRegisterNumber();
+    int LastLabelNumber();
+    string GetRegister();
+    string GetLabel();
+};
+
+class CodeGenerator
+{
+    private:
+    ControlILOC *control;
+    list <InstructionILOC*> instructions;
+
+    public:
+    CodeGenerator();
+    ~CodeGenerator();
+
+    //LIST
+    /*
+    InstructionILOC Front();
+    InstructionILOC Back();
+    void PushFront(InstructionILOC intr);
+    void PushBack(InstructionILOC intr);
+    void PopFront();
+    void PopBack();
+    */
+
+    void ParseAST(AbstractSyntaxTree *node, ScopeStack *hash);
+    string PrintOutput();
 };
 
 /*
