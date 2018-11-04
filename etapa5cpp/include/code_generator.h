@@ -84,6 +84,8 @@ class CodeGenerator
     */
 
     void ParseAST(AbstractSyntaxTree *node, ScopeStack *hash);
+    string avalExpr(AbstractSyntaxTree *node, ScopeStack *hash);
+    string GetOperator(string opSymbol);
     string PrintOutput();
 };
 

@@ -283,11 +283,12 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             // TK_IDENTIFICADOR tipo ';'
             entry = hash->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
             // get Mem Position
-            memPosition = this->control->GetGlobalPositionMem;
+            memPosition = this->control->GetGlobalPositionMem();
             entry->SetMemPosition(memPosition);
             // insert mem position in hash TK_ID
             hash->Top()->Update(entry); //TODO update into STACK ???
             break;
+        /*
         case AST_DECFUNC:
             cout << "AST_DECFUNC";
             break;
@@ -327,15 +328,17 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
         case AST_CMDBLOCO:
             cout << "AST_CMDBLOCO";
             break;
+        */
         case AST_CMDDECVAR:
-            cout << "AST_CMDDECVAR";
+            int leafSize = node->GetLeafsSize();
+            this->ParseAST(node->GetLeaf(leafSize-1), hash);
             break;
         case AST_DECVAR:
             // tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
             entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
             
             // get Mem Position
-            memPosition = this->control->GetPilhaPositionMem;
+            memPosition = this->control->GetPilhaPositionMem();
             entry->SetMemPosition(memPosition);
             
             // insert mem position in hash TK_ID
@@ -351,29 +354,54 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                     string value = node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString();
                     instr = new InstructionILOC("loadI", value, "", arg1);
                     instrList.push_front(instr);
-
-                    //posição memoria
-                    arg2 = this->control->GetRegister();
-                    instr = new InstructionILOC("loadI", to_string(memPosition), "", arg2);
-                    instrList.push_front(instr);
-
-                    //salva valor arg1 em arg2
-                    instr = new InstructionILOC("store", arg1, arg2, "");
-                    instrList.push_front(instr);
-
-                    //concat lista temporaria na lista de instruções BACK
-                    this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
                 }
                 else{
-                    //TODO VARIABLE
+                    //VARIABLE
+                    //pega posição de memoria onde variavel está salva
+                    entry = hash->LookUp(node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString());
+                    int varMemPosition = entry->GetMemPosition();
+                    //valor a ser inserido
+                    arg1 = this->control->GetRegister();
+                    instr = new InstructionILOC("loadI", to_string(varMemPosition), "", arg1);
+                    instrList.push_front(instr);
                 }
+
+                //posição memoria
+                arg2 = this->control->GetRegister();
+                instr = new InstructionILOC("loadI", to_string(memPosition), "", arg2);
+                instrList.push_front(instr);
+
+                //salva valor arg1 em arg2
+                instr = new InstructionILOC("store", arg1, arg2, "");
+                instrList.push_front(instr);
+
+                //concat lista temporaria na lista de instruções BACK
+                this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
             }
             break;
-        case AST_OPTINIT:
-            cout << "AST_OPTINIT";
-            break;
         case AST_CMDATR:
-            cout << "AST_CMDATR";
+            
+            // TODO avalia expr de atribuição     
+            arg1 = this->avalExpr(node->GetLeaf(2), hash);
+            //arg1 = result of expr ???
+            // retorna um registrador 
+                        
+            //VARIABLE
+            //pega posição de memoria onde variavel está salva
+            entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
+            int varMemPosition = entry->GetMemPosition();
+
+            arg2 = this->control->GetRegister();
+            instr = new InstructionILOC("loadI", to_string(varMemPosition), "", arg2);
+            instrList.push_front(instr);
+
+            //salva valor arg1 em arg2
+            instr = new InstructionILOC("store", arg1, arg2, "");
+            instrList.push_front(instr);
+
+            //concat lista temporaria na lista de instruções BACK
+            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
+
             break;
         case AST_CMDFUNCCALL:
             cout << "AST_CMDFUNCCALL";
@@ -498,5 +526,132 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
         default:
             cerr << "[ERROR] Node Type: " << node->GetType() << "\n";
             break;
+    }
+}
+
+string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
+{
+    InstructionILOC *instr;
+    list<InstructionILOC *> instrList;
+    SymbolTableEntry *entry;
+    int memPosition, varMemPosition;
+    string arg1, arg2, arg3;
+    string regResultReturn;
+    string value;
+
+    //gera label para inicio da avaliacao
+    //string labelBegin = this->control->GetLabel();
+    //pula para inicio da avaliacao
+    //instr = new InstructionILOC("jumpI", labelBegin, "", "");
+    //instrList.push_front(instr);
+
+    
+    switch (node->GetLeaf(0)->GetType())
+    {
+        case AST_VARIABLE:
+            //VARIABLE
+            //pega posição de memoria onde variavel está salva
+            entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
+            varMemPosition = entry->GetMemPosition();
+            arg1 = this->control->GetRegister();
+            instr = new InstructionILOC("loadI", to_string(varMemPosition), "", arg1);
+            instrList.push_front(instr);
+            regResultReturn = arg1;
+            break;
+        case AST_LITERAL:
+            //carrega literal no registrador
+            arg1 = this->control->GetRegister();
+            value = node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString();
+            instr = new InstructionILOC("loadI", value, "", arg1);
+            instrList.push_front(instr);
+            regResultReturn = arg1;
+            break;
+        case AST_BINARIO:
+            //avalia expr L
+            arg1 = this->avalExpr(node->GetLeaf(0), hash);
+            //avalia expr R
+            arg2 = this->avalExpr(node->GetLeaf(2), hash);
+
+            arg3 = this->control->GetRegister();
+            
+            //get op
+            if (node->GetLeaf(1)->GetLeaf(0)->GetLeafsSize() == 0){
+                //artimetica
+                value = this->GetOperator(node->GetLeaf(1)->GetLeaf(0)->GetLexicalValue()->ValueToString());
+            }
+            else{ 
+                //relacional
+                value = this->GetOperator(node->GetLeaf(1)->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
+            }
+            //gera instrução arg1 op arg2 = arg3
+            instr = new InstructionILOC(value, arg1, arg2, arg3);
+            instrList.push_front(instr);
+            regResultReturn = arg3;
+
+        default:
+            break;
+    }
+
+    //concat lista temporaria na lista de instruções BACK
+    this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
+
+    return regResultReturn;
+}
+
+string CodeGenerator::GetOperator(string opSymbol)
+{
+    if(opSymbol.compare("+")){
+        return "add";
+    }
+    else if (opSymbol.compare("/")){
+        return "div";
+    }
+    else if(opSymbol.compare("*")){
+        return "mult";
+    }
+    else if (opSymbol.compare("-"))
+    {
+        return "sub";
+    }
+    else if (opSymbol.compare(">"))
+    {
+        return "cmp_GT";
+    }
+    else if (opSymbol.compare("<"))
+    {
+        return "cmp_LT";
+    }
+    else if (opSymbol.compare("<=")){
+        return "cmp_LE";
+    }
+    else if(opSymbol.compare(">=")){
+        return "cmp_GE";
+    }
+    else if (opSymbol.compare("=="))
+    {
+        return "cmp_EQ";
+    }
+    else if (opSymbol.compare("!="))
+    {
+        return "cmp_NE";
+    }
+    else if (opSymbol.compare("&&"))
+    {
+        return "and";
+    }
+    else if (opSymbol.compare("||"))
+    {
+        return "or";
+    }
+    else if (opSymbol.compare("<<"))
+    {
+        return "lshift";
+    }
+    else if (opSymbol.compare(">>"))
+    {
+        return "rshift";
+    }
+    else{
+        return "nop";
     }
 }
