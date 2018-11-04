@@ -28,6 +28,7 @@ class SymbolTableEntry
         string type; // (qual o tipo de dado deste símbolo)
         int size; //(derivado do tipo)
         vector<SymbolTableEntryField*> fields; // argumentos e seus tipos (no caso de funções), campos e seus tipos (no caso do tipo for de usuário)
+        int memPositon;
         // TODO: localização (linha e opcional coluna) da sua definição/declaração
         // TODO: demais informações do valor do token pelo yylval (veja E3)
     public:
@@ -37,6 +38,8 @@ class SymbolTableEntry
         int GetSize();
         void AddField(string name, string type);
         int FieldsSize();
+        int GetMemPosition();
+        void SetMemPosition(int position);
         SymbolTableEntryField* GetField(string name);
         SymbolTableEntryField* GetFieldAt(int index);
 };
@@ -50,6 +53,7 @@ class SymbolTable
         ~SymbolTable(); // Destructor
         void Insert(SymbolTableEntry *entry);
         SymbolTableEntry* LookUp(string name);
+        void Update(SymbolTableEntry *entry);
 };
 
 /*

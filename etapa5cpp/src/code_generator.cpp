@@ -188,7 +188,7 @@ int ControlILOC::GetPilhaPositionMem()
 }
 
 /*
- * Control ILOC 
+ * Code Generator 
  */
 CodeGenerator::CodeGenerator()
 {
@@ -251,6 +251,9 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
 
     InstructionILOC *instr;
     list <InstructionILOC*> instrList;
+    SymbolTableEntry* entry;
+    int memPosition;
+    string arg1, arg2, arg3;
 
     switch (node->GetType())
     {
@@ -278,8 +281,12 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             break;
         case AST_DECGLOBAL:
             // TK_IDENTIFICADOR tipo ';'
+            entry = hash->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
             // get Mem Position
+            memPosition = this->control->GetGlobalPositionMem;
+            entry->SetMemPosition(memPosition);
             // insert mem position in hash TK_ID
+            hash->Top()->Update(entry); //TODO update into STACK ???
             break;
         case AST_DECFUNC:
             cout << "AST_DECFUNC";
@@ -324,7 +331,43 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             cout << "AST_CMDDECVAR";
             break;
         case AST_DECVAR:
-            cout << "AST_DECVAR";
+            // tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
+            entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
+            
+            // get Mem Position
+            memPosition = this->control->GetPilhaPositionMem;
+            entry->SetMemPosition(memPosition);
+            
+            // insert mem position in hash TK_ID
+            hash->Top()->Update(entry); //TODO update into STACK ???
+
+            //se tem atribuição de valor
+            if(node->GetLeafsSize() == 4){
+                //TODO subrotina
+                // LITERAL
+                if(node->GetLeaf(3)->GetType == AST_LITERAL){
+                    //valor a ser inserido
+                    arg1 = this->control->GetRegister();
+                    string value = node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString();
+                    instr = new InstructionILOC("loadI", value, "", arg1);
+                    instrList.push_front(instr);
+
+                    //posição memoria
+                    arg2 = this->control->GetRegister();
+                    instr = new InstructionILOC("loadI", to_string(memPosition), "", arg2);
+                    instrList.push_front(instr);
+
+                    //salva valor arg1 em arg2
+                    instr = new InstructionILOC("store", arg1, arg2, "");
+                    instrList.push_front(instr);
+
+                    //concat lista temporaria na lista de instruções BACK
+                    this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
+                }
+                else{
+                    //TODO VARIABLE
+                }
+            }
             break;
         case AST_OPTINIT:
             cout << "AST_OPTINIT";

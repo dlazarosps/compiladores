@@ -112,6 +112,16 @@ SymbolTableEntryField* SymbolTableEntry::GetFieldAt(int index)
     }
 }
 
+int SymbolTableEntry::GetMemPosition()
+{
+    return this->memPositon;
+}
+
+void SymbolTableEntry::SetMemPosition(int position)
+{
+    this->memPositon = position;
+}
+
 /*
  * SymbolTable functions
  */
@@ -142,4 +152,9 @@ SymbolTableEntry* SymbolTable::LookUp(string name)
     else {
         return NULL;
     }
+}
+
+void SymbolTable::Update(SymbolTableEntry *entry)
+{
+    this->entries[entry->GetName()] = entry;
 }
