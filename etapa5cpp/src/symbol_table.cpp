@@ -81,6 +81,11 @@ int SymbolTableEntry::GetSize()
     return this->size;
 }
 
+int SymbolTableEntry::GetNature()
+{
+    return this->nature;
+}
+
 void SymbolTableEntry::AddField(string name, string type)
 {
     this->fields.push_back(new SymbolTableEntryField(name, type));

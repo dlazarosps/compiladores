@@ -36,6 +36,7 @@ class SymbolTableEntry
         ~SymbolTableEntry(); // Destructor
         string GetName();
         int GetSize();
+        int GetNature();
         void AddField(string name, string type);
         int FieldsSize();
         int GetMemPosition();

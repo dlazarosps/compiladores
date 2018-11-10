@@ -253,7 +253,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
     list <InstructionILOC*> instrList;
     SymbolTableEntry* entry;
     int memPosition, deslocMem, leafSize;
-    string arg1, arg2, arg3;
+    string arg1, arg2, arg3, reg1, reg2;
 
     switch (node->GetType())
     {
@@ -342,7 +342,8 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
             // TODO setMemPosition para dentro da HASH (semantic_analizer)
             memPosition = entry->GetMemPosition();
-            
+            reg1 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
+
             //se tem atribuição de valor
             if(node->GetLeafsSize() == 4){
                 //TODO subrotina
@@ -362,15 +363,17 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                     //valor a ser inserido
                     arg1 = this->control->GetRegister();
                     //registrador arg1 recebe valor armazenado na posição mem rfp + deslocamento
-                    instr = new InstructionILOC("loadAI", "rfp", to_string(deslocMem), arg1);
+
+                    reg2 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
+                    instr = new InstructionILOC("loadAI", reg2, to_string(deslocMem), arg1);
                     instrList.push_front(instr);
 
                 }
 
                 //salva valor arg1
-                //TODO diferenciar registrador especial local de global (rfp / rbss)
                 //rpf + deslocamento (memPosition) recebe valor armazenado arg1
-                instr = new InstructionILOC("storeAI", arg1, "rfp", to_string(memPosition));
+                //TODO diferenciar registrador especial local de global (rfp / rbss)
+                instr = new InstructionILOC("storeAI", arg1, reg1, to_string(memPosition));
                 instrList.push_front(instr);
 
                 //concat lista temporaria na lista de instruções BACK
@@ -387,10 +390,10 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             //pega posição de memoria onde variavel está salva
             entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
             deslocMem = entry->GetMemPosition();
+            reg1 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
 
-            //salva valor arg1 em rfp + deslocamento
-            //TODO diferenciar registrador especial local de global (rfp / rbss)
-            instr = new InstructionILOC("storeAI", arg1, "rfp", to_string(deslocMem));
+            //salva valor arg1 em reg1 + deslocamento
+            instr = new InstructionILOC("storeAI", arg1, reg1, to_string(deslocMem));
             instrList.push_front(instr);
 
             //concat lista temporaria na lista de instruções BACK
