@@ -493,7 +493,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
 
     leaf = (node->GetLeafsSize() == 1) ? 0 : 1;
 
-    switch (node->GetLeaf(0)->GetType(leaf))
+    switch (node->GetLeaf(leaf)->GetType())
     {
         case AST_VARIABLE:
             //VARIABLE
