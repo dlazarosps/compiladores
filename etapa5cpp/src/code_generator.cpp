@@ -131,7 +131,7 @@ ControlILOC::ControlILOC()
     this->registers = 0;
     this->labels = 0;
     this->globalPositionMem = 0;
-    this->pilhaPositionMem = 1024;
+    this->pilhaPositionMem = 0;
 }
 
 ControlILOC::~ControlILOC()
@@ -252,7 +252,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
     InstructionILOC *instr;
     list <InstructionILOC*> instrList;
     SymbolTableEntry* entry;
-    int memPosition;
+    int memPosition, deslocMem, leafSize;
     string arg1, arg2, arg3;
 
     switch (node->GetType())
@@ -280,6 +280,8 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                 this->ParseAST(node->GetLeaf(1), hash);
             break;
         case AST_DECGLOBAL:
+            // TODO tranferir para dentro da HASH (semantic_analizer)
+            /*
             // TK_IDENTIFICADOR tipo ';'
             entry = hash->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
             // get Mem Position
@@ -287,6 +289,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             entry->SetMemPosition(memPosition);
             // insert mem position in hash TK_ID
             hash->Top()->Update(entry); //TODO update into STACK ???
+            */
             break;
         /*
         case AST_DECFUNC:
@@ -330,25 +333,21 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             break;
         */
         case AST_CMDDECVAR:
-            int leafSize = node->GetLeafsSize();
+            leafSize = node->GetLeafsSize();
             this->ParseAST(node->GetLeaf(leafSize-1), hash);
             break;
         case AST_DECVAR:
             // tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
-            entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
-            
-            // get Mem Position
-            memPosition = this->control->GetPilhaPositionMem();
-            entry->SetMemPosition(memPosition);
-            
-            // insert mem position in hash TK_ID
-            hash->Top()->Update(entry); //TODO update into STACK ???
 
+            entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
+            // TODO setMemPosition para dentro da HASH (semantic_analizer)
+            memPosition = entry->GetMemPosition();
+            
             //se tem atribuição de valor
             if(node->GetLeafsSize() == 4){
                 //TODO subrotina
                 // LITERAL
-                if(node->GetLeaf(3)->GetType == AST_LITERAL){
+                if(node->GetLeaf(3)->GetType() == AST_LITERAL){
                     //valor a ser inserido
                     arg1 = this->control->GetRegister();
                     string value = node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString();
@@ -359,20 +358,19 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                     //VARIABLE
                     //pega posição de memoria onde variavel está salva
                     entry = hash->LookUp(node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString());
-                    int varMemPosition = entry->GetMemPosition();
+                    deslocMem = entry->GetMemPosition();
                     //valor a ser inserido
                     arg1 = this->control->GetRegister();
-                    instr = new InstructionILOC("loadI", to_string(varMemPosition), "", arg1);
+                    //registrador arg1 recebe valor armazenado na posição mem rfp + deslocamento
+                    instr = new InstructionILOC("loadAI", "rfp", to_string(deslocMem), arg1);
                     instrList.push_front(instr);
+
                 }
 
-                //posição memoria
-                arg2 = this->control->GetRegister();
-                instr = new InstructionILOC("loadI", to_string(memPosition), "", arg2);
-                instrList.push_front(instr);
-
-                //salva valor arg1 em arg2
-                instr = new InstructionILOC("store", arg1, arg2, "");
+                //salva valor arg1
+                //TODO diferenciar registrador especial local de global (rfp / rbss)
+                //rpf + deslocamento (memPosition) recebe valor armazenado arg1
+                instr = new InstructionILOC("storeAI", arg1, "rfp", to_string(memPosition));
                 instrList.push_front(instr);
 
                 //concat lista temporaria na lista de instruções BACK
@@ -380,7 +378,6 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             }
             break;
         case AST_CMDATR:
-            
             // TODO avalia expr de atribuição     
             arg1 = this->avalExpr(node->GetLeaf(2), hash);
             //arg1 = result of expr ???
@@ -389,14 +386,11 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             //VARIABLE
             //pega posição de memoria onde variavel está salva
             entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
-            int varMemPosition = entry->GetMemPosition();
+            deslocMem = entry->GetMemPosition();
 
-            arg2 = this->control->GetRegister();
-            instr = new InstructionILOC("loadI", to_string(varMemPosition), "", arg2);
-            instrList.push_front(instr);
-
-            //salva valor arg1 em arg2
-            instr = new InstructionILOC("store", arg1, arg2, "");
+            //salva valor arg1 em rfp + deslocamento
+            //TODO diferenciar registrador especial local de global (rfp / rbss)
+            instr = new InstructionILOC("storeAI", arg1, "rfp", to_string(deslocMem));
             instrList.push_front(instr);
 
             //concat lista temporaria na lista de instruções BACK
@@ -534,7 +528,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
     InstructionILOC *instr;
     list<InstructionILOC *> instrList;
     SymbolTableEntry *entry;
-    int memPosition, varMemPosition;
+    int deslocMem;
     string arg1, arg2, arg3;
     string regResultReturn;
     string value;
@@ -552,9 +546,9 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
             //VARIABLE
             //pega posição de memoria onde variavel está salva
             entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
-            varMemPosition = entry->GetMemPosition();
+            deslocMem = entry->GetMemPosition();
             arg1 = this->control->GetRegister();
-            instr = new InstructionILOC("loadI", to_string(varMemPosition), "", arg1);
+            instr = new InstructionILOC("loadAI", "rfp", to_string(deslocMem), arg1);
             instrList.push_front(instr);
             regResultReturn = arg1;
             break;
