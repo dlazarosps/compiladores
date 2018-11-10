@@ -18,8 +18,9 @@ using namespace std;
  * InstructionILOC functions
  */
 
-InstructionILOC::InstructionILOC(string code, string arg1, string arg2, string arg3)
+InstructionILOC::InstructionILOC(string label, string code, string arg1, string arg2, string arg3)
 {
+    this->label = label;
     this->code = code;
     this->arg1 = arg1;
     this->arg2 = arg2;
@@ -34,6 +35,11 @@ InstructionILOC::~InstructionILOC()
 string InstructionILOC::GetInstructionCode()
 {
     return this->code;
+}
+
+string InstructionILOC::GetInstructionLabel()
+{
+    return this->label;
 }
 
 string InstructionILOC::GetArg1()
@@ -56,6 +62,11 @@ void InstructionILOC::SetInstructionCode(string code)
     this->code = code;
 }
 
+void InstructionILOC::SetInstructionLabel(string label)
+{
+    this->label = label;
+}
+
 void InstructionILOC::SetArg1(string arg1)
 {
     this->arg1 = arg1;
@@ -73,17 +84,21 @@ void InstructionILOC::SetArg3(string arg3)
 
 string InstructionILOC::GetILOC()
 {
+    string instrILOC;
+    
+    instrILOC = (!this->label.empty()) ? this->label + ":" : "";
+
     if (this->code.find("load") != std::string::npos){ 
     //Intruções de LOAD :: code arg1,arg2 => arg3
         //indireto/deslocamento usando arg2
         if ((this->code.find("AI") != std::string::npos) || (this->code.find("A0") != std::string::npos)){
-            return this->code + " " + this->arg1 + ", " + this->arg2 + " => " + this->arg3;
+            instrILOC += this->code + " " + this->arg1 + ", " + this->arg2 + " => " + this->arg3;
         }   
         else{
             //TODO check loadI
             // loadI c1 => r2
             // SE loadI for mapeado para  c1 == arg1 & r2 == arg3 vai funcionar
-            return this->code + " " + this->arg1 + " => " + this->arg3;
+            instrILOC += this->code + " " + this->arg1 + " => " + this->arg3;
         }
 
     }
@@ -91,36 +106,43 @@ string InstructionILOC::GetILOC()
     //Intruções de STORE :: code arg1 => arg2,arg3
         //indireto/deslocamento usando arg3
         if ((this->code.find("AI") != std::string::npos) || (this->code.find("A0") != std::string::npos)){
-            return this->code + " " + this->arg1 + " => " + this->arg2 + ", " + this->arg3;
+            instrILOC += this->code + " " + this->arg1 + " => " + this->arg2 + ", " + this->arg3;
         }
         else{
-            return this->code + " " + this->arg1 + " => " + this->arg2;
+            instrILOC += this->code + " " + this->arg1 + " => " + this->arg2;
         }
     }
     else if(this->code.find("2") != std::string::npos){
     //Intruções de COPY :: code arg1 => arg2
-        return this->code + " " + this->arg1 + " => " + this->arg2;
+        instrILOC += this->code + " " + this->arg1 + " => " + this->arg2;
     }
     else if(this->code.find("jump") != std::string::npos){
     //Instrução JUMP
-        return this->code + " -> " + this->arg1;
+        instrILOC += this->code + " -> " + this->arg1;
     }
     else if(this->code.find("cbr") != std::string::npos){
     //Instrução CBR
-        return this->code + " " + this->arg1 + " -> " + this->arg2 + ", " + this->arg3;
+        instrILOC += this->code + " " + this->arg1 + " -> " + this->arg2 + ", " + this->arg3;
     }
     else if(this->code.find("cmp") != std::string::npos){
     //Instrução CMP :: code arg1, arg2 => arg3
-        return this->code + " " + this->arg1 + ", " + this->arg2 + " -> " + this->arg3;
+        instrILOC += this->code + " " + this->arg1 + ", " + this->arg2 + " -> " + this->arg3;
     }
     else if(this->code.find("nop") != std::string::npos){
     //Instrução NOP
-        return this->code;
+        instrILOC += this->code;
+    }
+    else if (this->code.find("L") != std::string::npos)
+    {
+        //Instrução rotulo
+        instrILOC += this->code;
     }
     else{
     //Instruções ARTIMÉTICAS / SHIFTS / BOOL :: code arg1, arg2 => arg3
-        return this->code + " " + this->arg1 + ", " + this->arg2 + " => " + this->arg3;
+        instrILOC += this->code + " " + this->arg1 + ", " + this->arg2 + " => " + this->arg3;
     }
+
+    return instrILOC;
 }
 
 /*
@@ -253,7 +275,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
     list <InstructionILOC*> instrList;
     SymbolTableEntry* entry;
     int memPosition, deslocMem, leafSize;
-    string arg1, arg2, arg3, reg1, reg2;
+    string arg1, arg2, arg3, reg1, reg2, lab1, lab2;
 
     switch (node->GetType())
     {
@@ -262,13 +284,13 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
 
             //lista temporaria insert FRONT
             //instruções de inicialização
-            instr = new InstructionILOC("loadI", "1024", "", "rfp" );
+            instr = new InstructionILOC("", "loadI", "1024", "", "rfp" );
             instrList.push_front(instr);
 
-            instr = new InstructionILOC("loadI", "1024", "", "rsp");
+            instr = new InstructionILOC("", "loadI", "1024", "", "rsp");
             instrList.push_front(instr);
 
-            instr = new InstructionILOC("loadI", "0", "", "rbss");
+            instr = new InstructionILOC("", "loadI", "0", "", "rbss");
             instrList.push_front(instr);
 
             //concat lista temporaria na lista de instruções BACK
@@ -290,11 +312,17 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             // insert mem position in hash TK_ID
             hash->Top()->Update(entry); //TODO update into STACK ???
             */
-            break;
-        /*
+            break; 
         case AST_DECFUNC:
-            cout << "AST_DECFUNC";
+            //ETAPA 6
+
+            //Instruções de RA etc
+            //this->ParseAST(node->GetLeaf(0), hash);
+
+            //Instruções do corpo da função
+            this->ParseAST(node->GetLeaf(1), hash);
             break;
+        /* //ETAPA 6
         case AST_CABECALHOFUN:
             cout << "AST_CABECALHOFUN";
             break;
@@ -310,35 +338,31 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
         case AST_PARAMS:
             cout << "AST_PARAMS";
             break;
+        */
         case AST_CORPOFUN:
-            cout << "AST_CORPOFUN";
+            this->ParseAST(node->GetLeaf(0), hash); //avalia bloco
             break;
         case AST_BLOCO:
-            cout << "AST_BLOCO";
+            this->ParseAST(node->GetLeaf(1), hash); //lista de comandos
             break;
         case AST_LISTACOMANDOS:
-            cout << "AST_LISTACOMANDOS";
+            //TESTA se tem folhas
+            if(node->GetLeafsSize() > 1){
+                this->ParseAST(node->GetLeaf(0), hash);
+                this->ParseAST(node->GetLeaf(1), hash);
+            }
             break;
         case AST_CMDSTERMINADOSPONTOVIRGULA:
-            cout << "AST_CMDSTERMINADOSPONTOVIRGULA";
-            break;
-        case AST_CMDSTERMINADOSDOISPONTOS:
-            cout << "AST_CMDSTERMINADOSDOISPONTOS";
-            break;
-        case AST_CMDSIMPLESFOR:
-            cout << "AST_CMDSIMPLESFOR";
+            this->ParseAST(node->GetLeaf(0), hash);
             break;
         case AST_CMDBLOCO:
-            cout << "AST_CMDBLOCO";
+            this->ParseAST(node->GetLeaf(0), hash);
             break;
-        */
         case AST_CMDDECVAR:
             leafSize = node->GetLeafsSize();
             this->ParseAST(node->GetLeaf(leafSize-1), hash);
             break;
-        case AST_DECVAR:
-            // tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
-
+        case AST_DECVAR: // tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
             entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
             // TODO setMemPosition para dentro da HASH (semantic_analizer)
             memPosition = entry->GetMemPosition();
@@ -352,7 +376,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                     //valor a ser inserido
                     arg1 = this->control->GetRegister();
                     string value = node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString();
-                    instr = new InstructionILOC("loadI", value, "", arg1);
+                    instr = new InstructionILOC("", "loadI", value, "", arg1);
                     instrList.push_front(instr);
                 }
                 else{
@@ -365,7 +389,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                     //registrador arg1 recebe valor armazenado na posição mem rfp + deslocamento
 
                     reg2 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
-                    instr = new InstructionILOC("loadAI", reg2, to_string(deslocMem), arg1);
+                    instr = new InstructionILOC("", "loadAI", reg2, to_string(deslocMem), arg1);
                     instrList.push_front(instr);
 
                 }
@@ -373,7 +397,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
                 //salva valor arg1
                 //rpf + deslocamento (memPosition) recebe valor armazenado arg1
                 //TODO diferenciar registrador especial local de global (rfp / rbss)
-                instr = new InstructionILOC("storeAI", arg1, reg1, to_string(memPosition));
+                instr = new InstructionILOC("", "storeAI", arg1, reg1, to_string(memPosition));
                 instrList.push_front(instr);
 
                 //concat lista temporaria na lista de instruções BACK
@@ -393,132 +417,57 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             reg1 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
 
             //salva valor arg1 em reg1 + deslocamento
-            instr = new InstructionILOC("storeAI", arg1, reg1, to_string(deslocMem));
+            instr = new InstructionILOC("", "storeAI", arg1, reg1, to_string(deslocMem));
             instrList.push_front(instr);
 
             //concat lista temporaria na lista de instruções BACK
             this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
 
             break;
+       /* //Etapa 6
         case AST_CMDFUNCCALL:
             cout << "AST_CMDFUNCCALL";
-            break;
-        case AST_CMDIO:
-            cout << "AST_CMDIO";
-            break;
-        case AST_CMDIN:
-            cout << "AST_CMDIN";
-            break;
-        case AST_CMDOUT:
-            cout << "AST_CMDOUT";
-            break;
-        case AST_SHIFT:
-            cout << "AST_SHIFT";
-            break;
-        case AST_SHIFTOP:
-            cout << "AST_SHIFTOP";
             break;
         case AST_RBC:
             cout << "AST_RBC";
             break;
-        case AST_FLUXO:
-            cout << "AST_FLUXO";
-            break;
+        */
+
+       //IF COM CURTO CIRCUITO
         case AST_STMT:
             cout << "AST_STMT";
             break;
         case AST_IFST:
             cout << "AST_IFST";
             break;
-        case AST_FOREACH:
-            cout << "AST_FOREACH";
-            break;
-        case AST_FOR:
-            cout << "AST_FOR";
-            break;
-        case AST_LISTAFOR:
-            cout << "AST_LISTAFOR";
-            break;
+
+        //WHILE COM CURTO CIRCUITO
         case AST_WHILE:
             cout << "AST_WHILE";
             break;
         case AST_DOWHILE:
             cout << "AST_DOWHILE";
             break;
-        case AST_SWITCH:
-            cout << "AST_SWITCH";
-            break;
-        case AST_CMDPIPE:
-            cout << "AST_CMDPIPE";
-            break;
-        case AST_PIPELIST:
-            cout << "AST_PIPELIST";
-            break;
-        case AST_PIPEOP:
-            cout << "AST_PIPEOP";
-            break;
-        case AST_LISTAEXPROREMPTY:
-            cout << "AST_LISTAEXPROREMPTY";
-            break;
+        
+        /* //etapa 6 callfun
         case AST_LISTAEXPR:
             cout << "AST_LISTAEXPR";
             break;
-        case AST_VARIABLE:
-            cout << "AST_VARIABLE";
-            break;
-        case AST_VARIABLEINDEX:
-            cout << "AST_VARIABLEINDEX";
-            break;
-        case AST_VARIABLEATTRIBUTE:
-            cout << "AST_VARIABLEATTRIBUTE";
-            break;
+
         case AST_EXPRFUNCCALL:
             cout << "AST_EXPRFUNCCALL";
             break;
-        case AST_EXPRPIPE:
-            cout << "AST_EXPRPIPE";
-            break;
-        case AST_UNOP:
-            cout << "AST_UNOP";
-            break;
-        case AST_UNARIO:
-            cout << "AST_UNARIO";
-            break;
-        case AST_BIOP:
-            cout << "AST_BIOP";
-            break;
-        case AST_BINARIO:
-            cout << "AST_BINARIO";
-            break;
-        case AST_RELOP:
-            cout << "AST_RELOP";
-            break;
-        case AST_TERNARIO:
-            cout << "AST_TERNARIO";
-            break;
-        case AST_LITERAL:
-            cout << "AST_LITERAL";
-            break;
-        case AST_LITERALNUM:
-            cout << "AST_LITERALNUM";
-            break;
-        case AST_LITERALCHAR:
-            cout << "AST_LITERALCHAR";
-            break;
-        case AST_LITERALBOOL:
-            cout << "AST_LITERALBOOL";
-            break;
-        case AST_TERMINAL:
-            cout << "AST_TERMINAL";
-            break;
-        case AST_CMDCASE:
-            cout << "AST_CMDCASE";
-            break;
+        */
         case AST_EXPR:
-            cout << "AST_EXPR";
-            break;
-        case AST_EMPTY:
-            cout << "AST_EMPTY";
+
+            //TODO check expr sozinha no código OU sempre vinculada algum comando ?        
+            if(node->GetLeafsSize() == 1){
+                this->avalExpr(node->GetLeaf(0), hash);
+            }
+            else{ 
+                // ( expr )
+                this->avalExpr(node->GetLeaf(1), hash);
+            }
             break;
         default:
             cerr << "[ERROR] Node Type: " << node->GetType() << "\n";
@@ -531,7 +480,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
     InstructionILOC *instr;
     list<InstructionILOC *> instrList;
     SymbolTableEntry *entry;
-    int deslocMem;
+    int deslocMem, leaf;
     string arg1, arg2, arg3;
     string regResultReturn;
     string value;
@@ -542,8 +491,9 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
     //instr = new InstructionILOC("jumpI", labelBegin, "", "");
     //instrList.push_front(instr);
 
-    
-    switch (node->GetLeaf(0)->GetType())
+    leaf = (node->GetLeafsSize() == 1) ? 0 : 1;
+
+    switch (node->GetLeaf(0)->GetType(leaf))
     {
         case AST_VARIABLE:
             //VARIABLE
@@ -551,7 +501,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
             entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
             deslocMem = entry->GetMemPosition();
             arg1 = this->control->GetRegister();
-            instr = new InstructionILOC("loadAI", "rfp", to_string(deslocMem), arg1);
+            instr = new InstructionILOC("", "loadAI", "rfp", to_string(deslocMem), arg1);
             instrList.push_front(instr);
             regResultReturn = arg1;
             break;
@@ -559,7 +509,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
             //carrega literal no registrador
             arg1 = this->control->GetRegister();
             value = node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString();
-            instr = new InstructionILOC("loadI", value, "", arg1);
+            instr = new InstructionILOC("", "loadI", value, "", arg1);
             instrList.push_front(instr);
             regResultReturn = arg1;
             break;
@@ -581,7 +531,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
                 value = this->GetOperator(node->GetLeaf(1)->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
             }
             //gera instrução arg1 op arg2 = arg3
-            instr = new InstructionILOC(value, arg1, arg2, arg3);
+            instr = new InstructionILOC("", value, arg1, arg2, arg3);
             instrList.push_front(instr);
             regResultReturn = arg3;
 
