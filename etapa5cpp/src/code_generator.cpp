@@ -275,7 +275,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
     list <InstructionILOC*> instrList;
     SymbolTableEntry* entry;
     int memPosition, deslocMem, leafSize;
-    string arg1, arg2, arg3, reg1, reg2, lab1, lab2;
+    string arg1, arg2, arg3, reg1, reg2, lab0, lab1, lab2;
 
     switch (node->GetType())
     {
@@ -444,7 +444,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
 
             reg1 = this->avalExpr(node->GetLeaf(2), hash); //bool
 
-            //Curto Circuito =>  reg1 ? lab1 : lab2
+            //reg1 ? lab1 : lab2
             instr = new InstructionILOC("", "cbr", reg1, lab1, lab2);
             instrList.push_front(instr);
 
@@ -465,10 +465,50 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
 
         //WHILE COM CURTO CIRCUITO
         case AST_WHILE:
-            cout << "AST_WHILE";
+
+            lab0 = this->control->GetLabel();
+            instr = new InstructionILOC(lab0, "nop", "", "", "");
+            instrList.push_front(instr);
+
+            lab1 = this->control->GetLabel(); //true
+            lab2 = this->control->GetLabel(); //false
+
+            reg1 = this->avalExpr(node->GetLeaf(2), hash); //bool
+
+            // reg1 ? lab1 : lab2
+            instr = new InstructionILOC("", "cbr", reg1, lab1, lab2);
+            instrList.push_front(instr);
+
+            this->ParseAST(node->GetLeaf(5), hash, lab1);
+
+            instr = new InstructionILOC("", "jumpI", lab0, "", "");
+            instrList.push_front(instr);
+
+            instr = new InstructionILOC(lab2, "nop", "", "", ""); //apos while
+            instrList.push_front(instr);
+
+            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
+
             break;
         case AST_DOWHILE:
-            cout << "AST_DOWHILE";
+            lab0 = this->control->GetLabel();
+            instr = new InstructionILOC(lab0, "nop", "", "", "");
+            instrList.push_front(instr);
+
+            lab1 = this->control->GetLabel(); //true
+            lab2 = this->control->GetLabel(); //false
+            
+            this->ParseAST(node->GetLeaf(1), hash, lab1);
+
+            reg1 = this->avalExpr(node->GetLeaf(4), hash); //bool
+            // reg1 ? lab1 : lab2
+            instr = new InstructionILOC("", "cbr", reg1, lab0, lab2);
+            instrList.push_front(instr);
+
+            instr = new InstructionILOC(lab2, "nop", "", "", ""); //apos while
+            instrList.push_front(instr);
+
+            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
             break;
         
         /* //etapa 6 callfun
@@ -497,13 +537,13 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
     }
 }
 
-string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
+string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, string label)
 {
     InstructionILOC *instr;
     list<InstructionILOC *> instrList;
     SymbolTableEntry *entry;
     int deslocMem, leaf;
-    string arg1, arg2, arg3;
+    string arg1, arg2, arg3, labT, labF, lab1, lab2;
     string regResultReturn;
     string value;
 
@@ -514,6 +554,8 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
     //instrList.push_front(instr);
 
     leaf = (node->GetLeafsSize() == 1) ? 0 : 1;
+    lab1 = "";
+    lab2 = "";
 
     switch (node->GetLeaf(leaf)->GetType())
     {
@@ -536,12 +578,6 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
             regResultReturn = arg1;
             break;
         case AST_BINARIO:
-            //avalia expr L
-            arg1 = this->avalExpr(node->GetLeaf(0), hash);
-            //avalia expr R
-            arg2 = this->avalExpr(node->GetLeaf(2), hash);
-
-            arg3 = this->control->GetRegister();
             
             //get op
             if (node->GetLeaf(1)->GetLeaf(0)->GetLeafsSize() == 0){
@@ -551,10 +587,56 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash)
             else{ 
                 //relacional
                 value = this->GetOperator(node->GetLeaf(1)->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
+
             }
-            //gera instrução arg1 op arg2 = arg3
-            instr = new InstructionILOC("", value, arg1, arg2, arg3);
-            instrList.push_front(instr);
+            
+
+            arg3 = this->control->GetRegister(); //reg resultado
+
+            // curto circuito
+            if(value.compare("AND") || value.compare("OR")){
+
+                lab1 = this->control->GetLabel(); //true
+                lab2 = this->control->GetLabel(); //false
+
+                //avalia expr L & R
+                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1);
+                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2);
+
+                labT = this->control->GetLabel();
+                labF = this->control->GetLabel();
+
+                if (value.compare("AND")) {
+
+                    // arg3 = !arg1 ? FALSE : TRUE
+                    instr = new InstructionILOC("", "cbr", arg1, labT, labF);
+                    instrList.push_front(instr);
+
+                    instr = new InstructionILOC(labF, "i2i", arg1, arg3, "");
+                    instrList.push_front(instr);
+
+                }
+                else if (value.compare("OR"))
+                {
+                    // arg3 = arg1 ? TRUE : FALSE
+                    instr = new InstructionILOC("", "cbr", arg1, labT, labF); 
+                    instrList.push_front(instr);
+
+                    instr = new InstructionILOC(labT, "i2i", arg1, arg3, "");
+                    instrList.push_front(instr);
+                }
+            }
+            else{
+                //avalia expr L & R                
+                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1);
+                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2);
+
+                //gera instrução arg1 op arg2 = arg3
+                instr = new InstructionILOC("", value, arg1, arg2, arg3);
+                instrList.push_front(instr);
+
+            }
+            
             regResultReturn = arg3;
 
         default:
@@ -604,13 +686,21 @@ string CodeGenerator::GetOperator(string opSymbol)
     {
         return "cmp_NE";
     }
+    else if (opSymbol.compare("&"))
+    {
+        return "and"; //binary
+    }
+    else if (opSymbol.compare("|"))
+    {
+        return "or"; //binary
+    }
     else if (opSymbol.compare("&&"))
     {
-        return "and";
+        return "AND"; //logic
     }
     else if (opSymbol.compare("||"))
     {
-        return "or";
+        return "OR"; //logic
     }
     else if (opSymbol.compare("<<"))
     {
