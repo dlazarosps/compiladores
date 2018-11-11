@@ -269,7 +269,7 @@ string CodeGenerator::PrintOutput()
     return output;
 }
 
-void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
+void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string label){
 
     InstructionILOC *instr;
     list <InstructionILOC*> instrList;
@@ -343,6 +343,10 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
             this->ParseAST(node->GetLeaf(0), hash); //avalia bloco
             break;
         case AST_BLOCO:
+            instr = new InstructionILOC(label, "nop", "", "", ""); //cria rotulo para o bloco (if/while/fun)
+            instrList.push_front(instr);
+            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
+            
             this->ParseAST(node->GetLeaf(1), hash); //lista de comandos
             break;
         case AST_LISTACOMANDOS:
@@ -434,11 +438,29 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash){
         */
 
        //IF COM CURTO CIRCUITO
-        case AST_STMT:
-            cout << "AST_STMT";
-            break;
         case AST_IFST:
-            cout << "AST_IFST";
+            lab1 = this->control->GetLabel(); //true
+            lab2 = this->control->GetLabel(); //false
+
+            reg1 = this->avalExpr(node->GetLeaf(2), hash); //bool
+
+            //Curto Circuito =>  reg1 ? lab1 : lab2
+            instr = new InstructionILOC("", "cbr", reg1, lab1, lab2);
+            instrList.push_front(instr);
+
+            this->ParseAST(node->GetLeaf(5)->GetLeaf(0), hash, lab1); //bloco true
+
+            if(node->GetLeafsSize() > 6){
+                this->ParseAST(node->GetLeaf(7)->GetLeaf(0), hash, lab2); //bloco false
+            }
+            else{ 
+                //gambita quando não tem else
+                instr = new InstructionILOC(lab2, "nop", "", "", "");
+                instrList.push_front(instr);
+            }
+
+            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
+
             break;
 
         //WHILE COM CURTO CIRCUITO
