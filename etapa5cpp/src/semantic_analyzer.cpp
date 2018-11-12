@@ -88,14 +88,11 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
         case AST_DECGLOBAL:
             return this->AnalyzeAstDecGlobal(node);
             break;
-        case AST_DECTIPO:
-            return this->AnalyzeAstDecTipo(node);
-            break;
         case AST_DECFUNC:
-            return AnalyzeAstDecFunc(node);
+            return this->AnalyzeAstDecFunc(node);
             break;
         case AST_CABECALHOFUN:
-            return AnalyzeAstCabecalhoFun(node);
+            return this->AnalyzeAstCabecalhoFun(node);
             break;
         case AST_PARAMS:
             //TODO check TK_ID params
@@ -390,89 +387,19 @@ bool SemanticAnalyzer::AnalyzeAstElemento(AbstractSyntaxTree *node)
 
 bool SemanticAnalyzer::AnalyzeAstDecGlobal(AbstractSyntaxTree *node)
 {
-    // decglobal = TK_IDENTIFICADOR TK_PR_STATIC tipo ';'
-    // decglobal = TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC tipo ';'
     // decglobal = TK_IDENTIFICADOR tipo ';'
-    // decglobal = TK_IDENTIFICADOR '[' TK_LIT_INT ']' tipo ';'
 
-    int leafSize = node->GetLeafsSize(); // Pega a quantidade de nodos filhos
     string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); // Pega identificador
     int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
-    AbstractSyntaxTree *typeNode;
-    string idType;
-    int idSize;
-    int idVectorSize;
 
-    SymbolTableEntry *entry = this->scopeStack->LookUp(idName); // Procura no escopo
-    if(entry !=  NULL) {
+    // Procura no escopo
+    if(this->scopeStack->LookUp(idName) !=  NULL) {
         this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else {
-        // Encontra o nodo que contém o tipo
-        typeNode = node->GetLeaf(leafSize - 2);
-
-        // Verifica o tamanho do vetor. Se não for vetor, é tamanho 1, se for, busca dentro dos []
-        if(leafSize >= 5) {
-            idVectorSize = stoi(node->GetLeaf(2)->GetLexicalValue()->ValueToString());
-        }
-        else {
-            idVectorSize = 1;
-        }
-
-        // Computa o tipo
-        idType = this->GetValueFromAstTipo(typeNode);
-
-        //idSize = this->GetSizeFromAstTipo(typeNode); TODO
-        idSize = 1;
-        if(idSize == -1) {
-            return false;
-        }
-        else {
-            idSize *= idVectorSize;
-            // adiciona no escopo {nome, tipo, tamanho, natureza}
-            entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_GLOBAL);
-            this->scopeStack->Top()->Insert(entry);
-
-            return true;
-        }
-    }
-}
-
-bool SemanticAnalyzer::AnalyzeAstDecTipo(AbstractSyntaxTree *node)
-{
-    // decTipo = TK_PR_CLASS TK_IDENTIFICADOR '[' listaTipo ']' ';'
-    // listaTipo: campoTipo
-    // listaTipo: listaTipo ':' campoTipo
-    // campoTipo: encaps tipoSimples TK_IDENTIFICADOR
-    // campoTipo: tipoSimples TK_IDENTIFICADOR
-    // encaps: TK_PR_PROTECTED
-    // encaps: TK_PR_PRIVATE
-    // encaps: TK_PR_PUBLIC
-
-    string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
-    string idType;
-    int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
-    int idSize;
-
-    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
-    if (entry != NULL)
-    {
-        this->AddError(new SemanticError(ERR_DECLARED, line));
-        return false;
-    }
-    else
-    {
-        entry = new SymbolTableEntry(idName, "erro", 0, NATUREZA_TIPO); //TODO
-
-
-        //TODO conta_campos => "AST_listTipo" => listget(nodo->leafs, 4) => setSize
-        //idSize = conta_campos SIZE
-        idSize = 1;
-
-
-        this->scopeStack->Top()->Insert(entry);
-
+        // adiciona no escopo {nome, tipo, tamanho, natureza}
+        this->scopeStack->Top()->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_GLOBAL));
         return true;
     }
 }
@@ -481,8 +408,6 @@ bool SemanticAnalyzer::AnalyzeAstDecFunc(AbstractSyntaxTree *node)
 {
     // decFunc: cabecalhoFun corpoFun
     // corpoFun: bloco
-
-    this->scopeStack->push(new SymbolTable()); // Cria escopo
 
     AbstractSyntaxTree *nodeCabecalho = node->GetLeaf(0);
     AbstractSyntaxTree *nodeBloco = node->GetLeaf(1)->GetLeaf(0);
@@ -503,6 +428,31 @@ bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
     // cabecalhoFun: tipo TK_IDENTIFICADOR listaFun
     // cabecalhoFun: TK_PR_STATIC TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
     // cabecalhoFun: TK_IDENTIFICADOR TK_IDENTIFICADOR listaFun
+
+    string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); // Pega identificador
+    int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
+    SymbolTableEntry* entry;
+    SymbolTable* table;
+
+    if (this->scopeStack->LookUp(idName) != NULL)
+    {
+        this->AddError(new SemanticError(ERR_DECLARED, line));
+        return false;
+    }
+    else
+    {
+        entry = new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_FUN);
+        this->scopeStack->Top()->Insert(entry); // Adiciona função ao escopo
+        table = new SymbolTable();
+        this->scopeStack->push(table); // Cria novo escopo para a função
+        entry->setAssociatedSymbolTable(table);
+        this->GetDecFuncParams(node->GetLeaf(2));
+        return true;
+    }
+}
+
+bool SemanticAnalyzer::GetDecFuncParams(AbstractSyntaxTree *node)
+{
     // listaFun: '(' paramsFun ')'
     // listaFun: '(' ')'
     // paramsFun: params
@@ -510,31 +460,47 @@ bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
     // params: TK_PR_CONST tipo TK_IDENTIFICADOR
     // params: tipo TK_IDENTIFICADOR
 
-    int leafSize = node->GetLeafsSize(); // Pega a quantidade de nodos filhos
-    string idName = node->GetLeaf((leafSize - 1))->GetLexicalValue()->ValueToString(); // Pega identificador
-    int line = node->GetLeaf(leafSize - 1)->GetLexicalValue()->GetLine();
-    string idType;
-    int idSize;
+    string idName;
+    int line;
 
-    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
-    if (entry != NULL)
+    switch(node->GetType())
     {
-        this->AddError(new SemanticError(ERR_DECLARED, line));
-        return false;
+        case AST_LISTAFUN:
+            if(node->GetLeafsSize() == 3) {
+                return this->GetDecFuncParams(node->GetLeaf(1));
+            }
+            else {
+                return true;
+            }
+            break;
+        case AST_PARAMSFUN:
+            if(node->GetLeafsSize() == 3) {
+                return this->GetDecFuncParams(node->GetLeaf(0)) && this->GetDecFuncParams(node->GetLeaf(2));
+            }
+            else {
+                return this->GetDecFuncParams(node->GetLeaf(0));
+            }
+            break;
+        case AST_PARAMS:
+            idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); // Pega identificador
+            line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
+            if (this->scopeStack->LookUp(idName) != NULL)
+            {
+                this->AddError(new SemanticError(ERR_DECLARED, line));
+                return false;
+            }
+            else
+            {
+                this->scopeStack->Top()->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR));
+                return true;
+            }
+            break;
+        default:
+            return false;
+            break;
     }
-    else
-    {
-        //      conta_argumentos => "AST_listfun" => listget(nodo->leafs, leafSize) => add hash
-        //      push hash
-        //      checkSemantic argumentos ? AST_listfun => "PARAMSFUN" => PARAMS (add hash)
-        //idType = this->GetValueFromAstTipo(node->GetLeaf(leafSize - 2));
-        idType = "erro"; //TODO
-        idSize = 1;
 
-        entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
-        this->scopeStack->Top()->Insert(entry);
-        return true;
-    }
+    return false;
 }
 
 bool SemanticAnalyzer::AnalyzeAstListaComandos(AbstractSyntaxTree *node)
@@ -551,7 +517,7 @@ bool SemanticAnalyzer::AnalyzeAstListaComandos(AbstractSyntaxTree *node)
         {
             ret = ret && this->AnalyzeNode(node->GetLeaf(i));
         }
-    }    
+    }
     return ret;
 }
 
@@ -563,58 +529,31 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
     //  tipoSimples TK_IDENTIFICADOR TK_OC_LE literal
     //  TK_IDENTIFICADOR TK_IDENTIFICADOR
 
-    bool ret = true;
-    int leafSize = node->GetLeafsSize() - 1 ;
-    int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
     string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
-    string idType;
+    int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
 
-    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
-    if (entry != NULL)
+    if (this->scopeStack->LookUp(idName) != NULL)
     {
         this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else
     {
-       int idType = this->GetTypeFromAstTipo(node->GetLeaf(0));
-        if(idType == SYMBOL_TYPE_USER) 
-        {
-            //SE tipo usuario  => já_declarado_aqui
-            entry = this->scopeStack->LookUp(node->GetLeaf(0)->GetLexicalValue()->ValueToString());
-            //SE inicializado ? conferir tipo
-            if(entry == NULL)
-            {
-                line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
-                this->AddError(new SemanticError(ERR_UNDECLARED, line));
-                return false;
-            }
-            //TODO idSize = get size type user
-        }
-        //adiciona na hash_stack {natureza, setType, setSize}
-        int idSize = 1; //FAKE
-
-        //check type var :: value
-        if (leafSize > 1) {
-            int typevalue = this->GetTypeFromAstTipo(node->GetLeaf(leafSize - 1));
-            //TODO compareTypes :: cast
-        }
-        
-        entry = new SymbolTableEntry(idName, "erro", idSize, NATUREZA_VAR);
-        this->scopeStack->Top()->Insert(entry);
-        return ret;
+        this->scopeStack->Top()->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR));
+        return true;
     }
 }
 
 bool SemanticAnalyzer::AnalyzeAstCmdAtr(AbstractSyntaxTree *node)
 {
-    bool ret = true;
-    string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
-    int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
-    
-    SymbolTableEntry *entry = this->scopeStack->LookUp(idName);
+    // cmdAtr: variable '=' expr
+    // variable: TK_IDENTIFICADOR variableIndex variableAttribute
 
-    if (entry == NULL)
+    /*
+    string idName = node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
+    int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
+
+    if (this->scopeStack->LookUp(idName) == NULL)
     {
         this->AddError(new SemanticError(ERR_UNDECLARED, line));
         return false;
@@ -622,25 +561,15 @@ bool SemanticAnalyzer::AnalyzeAstCmdAtr(AbstractSyntaxTree *node)
     else
     {
         //testa semantica da expr
-        ret = this->AnalyzeNode(node->GetLeaf(2));
-        if (!ret)
-        {
-            return ret; //erro no expr
-        }
-        else
-        {
-            int idSize = 1;
-            string idType = "erro"; //TODO get type from hash COMPARE type from expr
-
-            entry = new SymbolTableEntry(idName, idType, idSize, NATUREZA_FUN);
-            this->scopeStack->Top()->Insert(entry);
-            return ret;
-        }
+        return this->AnalyzeNode(node->GetLeaf(2));
     }
+    */
+    return true;
 }
 
 bool SemanticAnalyzer::AnalyzeAstCmdFunCall(AbstractSyntaxTree *node)
 {
+    /*
     bool ret = true;
     string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); //pega identificador
     int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
@@ -657,87 +586,6 @@ bool SemanticAnalyzer::AnalyzeAstCmdFunCall(AbstractSyntaxTree *node)
         // return ret
     }
     return ret;
-}
-int SemanticAnalyzer::GetTypeFromAstTipo(AbstractSyntaxTree *node)
-{
-    LexicalValue *lex = node->GetLexicalValue();
-    switch(node->GetType()) {
-        case AST_TERMINAL:
-            if(lex->GetType() == TIPO_LITERAL) {
-                switch(lex->GetValueType()) {
-                    case VALOR_STRING:
-                        return SYMBOL_TYPE_STRING;
-                        break;
-                    case VALOR_CHAR:
-                        return SYMBOL_TYPE_CHAR;
-                        break;
-                    case VALOR_INT:
-                        return SYMBOL_TYPE_INT;
-                        break;
-                    case VALOR_FLOAT:
-                        return SYMBOL_TYPE_FLOAT;
-                        break;
-                    case VALOR_BOOL:
-                        return SYMBOL_TYPE_BOOL;
-                        break;
-                }
-            }
-            else {
-                return SYMBOL_TYPE_USER;
-            }
-            break;
-        case AST_TIPO:
-        case AST_TIPOSIMPLES:
-            return this->GetTypeFromAstTipo(node->GetLeaf(0));
-            break;
-        default:
-            return -1; // TODO: throw error properly
-            break;
-    }
-}
-
-string SemanticAnalyzer::GetValueFromAstTipo(AbstractSyntaxTree *node)
-{
-    switch(node->GetType()) {
-        case AST_TERMINAL:
-            return node->GetLexicalValue()->ValueToString();
-            break;
-        case AST_TIPO:
-        case AST_TIPOSIMPLES:
-            return this->GetValueFromAstTipo(node->GetLeaf(0));
-            break;
-        default:
-            return "ERRO"; // TODO: throw error properly
-            break;
-    }
-}
-
-int SemanticAnalyzer::GetTypeSize(string name)
-{
-    SymbolTableEntry *entry;
-
-    if(name.compare("int")) {
-        return QUATRO_BYTE;
-    }
-    else if(name.compare("float")) {
-        return OITO_BYTE;
-    }
-    else if(name.compare("string")) {
-        return UM_BYTE * 0; //TODO
-    }
-    else if(name.compare("char")) {
-        return UM_BYTE;
-    }
-    else if(name.compare("bool")) {
-        return UM_BYTE;
-    }
-    else {
-        entry = this->scopeStack->LookUp(name);
-        if(entry == NULL) {
-            return -1;
-        }
-        else {
-            return entry->GetSize();
-        }
-    }
+    */
+    return true;
 }

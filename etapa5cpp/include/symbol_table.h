@@ -8,6 +8,10 @@
 
 using namespace std;
 
+class SymbolTableEntryField;
+class SymbolTableEntry;
+class SymbolTable;
+
 class SymbolTableEntryField
 {
     private:
@@ -25,14 +29,15 @@ class SymbolTableEntry
     private:
         string name; // identificador do simbolo
         int nature; // natureza (literal, variável, função, etc)
-        string type; // (qual o tipo de dado deste símbolo)
+        int type; // (qual o tipo de dado deste símbolo)
         int size; //(derivado do tipo)
         vector<SymbolTableEntryField*> fields; // argumentos e seus tipos (no caso de funções), campos e seus tipos (no caso do tipo for de usuário)
-        int memPositon;
+        int memPosition;
+        SymbolTable* associatedSymbolTable; // No caso de funções, armazena o escopo associado
         // TODO: localização (linha e opcional coluna) da sua definição/declaração
         // TODO: demais informações do valor do token pelo yylval (veja E3)
     public:
-        SymbolTableEntry(string name, string type, int size, int natureza); // Constructor
+        SymbolTableEntry(string name, int type, int size, int natureza); // Constructor
         ~SymbolTableEntry(); // Destructor
         string GetName();
         int GetSize();
@@ -41,6 +46,8 @@ class SymbolTableEntry
         int FieldsSize();
         int GetMemPosition();
         void SetMemPosition(int position);
+        SymbolTable* getAssociatedSymbolTable();
+        void setAssociatedSymbolTable(SymbolTable* table);
         SymbolTableEntryField* GetField(string name);
         SymbolTableEntryField* GetFieldAt(int index);
 };
@@ -80,8 +87,8 @@ class SymbolTable
 #define OITO_BYTE 8
 #define UNDEFINED -1
 
-/*	
- * Tipo	
+/*
+ * Tipo
  */
 #define SYMBOL_TYPE_INT 1
 #define SYMBOL_TYPE_FLOAT 2

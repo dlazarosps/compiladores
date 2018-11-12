@@ -35,11 +35,13 @@ string SymbolTableEntryField::GetType()
  * SymbolTableEntry functions
  */
 
-SymbolTableEntry::SymbolTableEntry(string name, string type, int size, int nature)
+SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int nature)
 {
     this->name = name;
     this->type = type;
     this->nature = nature;
+
+    this->associatedSymbolTable = NULL;
 
     /*switch (type)
     {
@@ -119,12 +121,22 @@ SymbolTableEntryField* SymbolTableEntry::GetFieldAt(int index)
 
 int SymbolTableEntry::GetMemPosition()
 {
-    return this->memPositon;
+    return this->memPosition;
 }
 
 void SymbolTableEntry::SetMemPosition(int position)
 {
-    this->memPositon = position;
+    this->memPosition = position;
+}
+
+SymbolTable* SymbolTableEntry::getAssociatedSymbolTable()
+{
+    return this->associatedSymbolTable;
+}
+
+void SymbolTableEntry::setAssociatedSymbolTable(SymbolTable* table)
+{
+    this->associatedSymbolTable = table;
 }
 
 /*
