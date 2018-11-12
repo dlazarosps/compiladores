@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <iostream>
 #include "../include/lexical_value.h"
 #include "../include/symbol_table.h"
 
@@ -35,11 +36,12 @@ string SymbolTableEntryField::GetType()
  * SymbolTableEntry functions
  */
 
-SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int nature)
+SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int nature, int memPosition)
 {
     this->name = name;
     this->type = type;
     this->nature = nature;
+    this->memPosition = memPosition;
 
     this->associatedSymbolTable = NULL;
 
@@ -174,4 +176,45 @@ SymbolTableEntry* SymbolTable::LookUp(string name)
 void SymbolTable::Update(SymbolTableEntry *entry)
 {
     this->entries[entry->GetName()] = entry;
+}
+
+int SymbolTable::GetSize()
+{
+    return this->entries.size();
+}
+
+void SymbolTable::Print()
+{
+    for (std::map<string, SymbolTableEntry*>::iterator it = this->entries.begin(); it != this->entries.end(); ++it)
+    {
+        it->second->Print();
+    }
+}
+
+void SymbolTableEntry::Print()
+{
+    cout << "Nome: " << this->name << "\n";
+    cout << "Natureza: ";
+    switch(this->nature) {
+        case NATUREZA_FUN:
+            cout << "Função";
+            break;
+        case NATUREZA_VAR:
+            cout << "Variável";
+            break;
+        case NATUREZA_GLOBAL:
+            cout << "Variável global";
+            break;
+        default:
+            cout << "Erro";
+            break;
+    }
+    cout << "\n";
+    cout << "Deslocamento: " << this->memPosition << "\n";
+    if(this->associatedSymbolTable != NULL) {
+        cout << "--- Início do escopo associado ---\n\n";
+        this->associatedSymbolTable->Print();
+        cout << "--- Final do escopo associado ---\n";
+    }
+    cout << "\n";
 }

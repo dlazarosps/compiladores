@@ -67,8 +67,8 @@ bool SemanticAnalyzer::Analyze()
     ret = this->AnalyzeNode(this->root);
 
     // Clean up
-    delete this->scopeStack;
-    this->scopeStack = NULL;
+    //delete this->scopeStack;
+    //this->scopeStack = NULL;
 
     // Return true if ok, return false if it has errors
     return ret;
@@ -128,13 +128,17 @@ bool SemanticAnalyzer::AnalyzeNode(AbstractSyntaxTree *node)
             break;
         case AST_CORPOFUN:
         case AST_CMDSTERMINADOSPONTOVIRGULA:
+            return this->AnalyzeNode(node->GetLeaf(0));
+            break;
         case AST_CMDSTERMINADOSDOISPONTOS:
+            return this->AnalyzeNode(node->GetLeaf(0));
+            break;
         case AST_CMDSIMPLESFOR:
         case AST_CMDBLOCO:
             return this->AnalyzeNode(node->GetLeaf(0));
             break;
         case AST_CMDDECVAR:
-            return this->AnalyzeNode(node->GetLeaf(2));
+            return this->AnalyzeNode(node->GetLeaf(0));
             break;
         case AST_DECVAR:
             return this->AnalyzeAstDecVar(node);
@@ -359,7 +363,9 @@ bool SemanticAnalyzer::AnalyzeAstPrograma(AbstractSyntaxTree *node)
     // programa: elemento
     // programa: %empty
 
-    this->scopeStack->push(new SymbolTable());
+    SymbolTable* table = new SymbolTable();
+    this->scopeStack->push(table);
+    this->globalScope = table;
     if(node->GetLeaf(0)->GetType() == AST_EMPTY) {
         return true;
     }
@@ -392,14 +398,16 @@ bool SemanticAnalyzer::AnalyzeAstDecGlobal(AbstractSyntaxTree *node)
     string idName = node->GetLeaf(0)->GetLexicalValue()->ValueToString(); // Pega identificador
     int line = node->GetLeaf(0)->GetLexicalValue()->GetLine();
 
+    SymbolTable *top = this->scopeStack->Top();
+
     // Procura no escopo
-    if(this->scopeStack->LookUp(idName) !=  NULL) {
+    if(top->LookUp(idName) !=  NULL) {
         this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else {
         // adiciona no escopo {nome, tipo, tamanho, natureza}
-        this->scopeStack->Top()->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_GLOBAL));
+        top->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_GLOBAL, top->GetSize()*QUATRO_BYTE));
         return true;
     }
 }
@@ -434,15 +442,17 @@ bool SemanticAnalyzer::AnalyzeAstCabecalhoFun(AbstractSyntaxTree *node)
     SymbolTableEntry* entry;
     SymbolTable* table;
 
-    if (this->scopeStack->LookUp(idName) != NULL)
+    SymbolTable *top = this->scopeStack->Top();
+
+    if (top->LookUp(idName) != NULL)
     {
         this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else
     {
-        entry = new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_FUN);
-        this->scopeStack->Top()->Insert(entry); // Adiciona função ao escopo
+        entry = new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_FUN, top->GetSize()*QUATRO_BYTE);
+        top->Insert(entry); // Adiciona função ao escopo
         table = new SymbolTable();
         this->scopeStack->push(table); // Cria novo escopo para a função
         entry->setAssociatedSymbolTable(table);
@@ -462,6 +472,7 @@ bool SemanticAnalyzer::GetDecFuncParams(AbstractSyntaxTree *node)
 
     string idName;
     int line;
+    SymbolTable *top;
 
     switch(node->GetType())
     {
@@ -484,14 +495,15 @@ bool SemanticAnalyzer::GetDecFuncParams(AbstractSyntaxTree *node)
         case AST_PARAMS:
             idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); // Pega identificador
             line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
-            if (this->scopeStack->LookUp(idName) != NULL)
+            top = this->scopeStack->Top();
+            if (top->LookUp(idName) != NULL)
             {
                 this->AddError(new SemanticError(ERR_DECLARED, line));
                 return false;
             }
             else
             {
-                this->scopeStack->Top()->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR));
+                top->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR, top->GetSize()*QUATRO_BYTE));
                 return true;
             }
             break;
@@ -509,16 +521,12 @@ bool SemanticAnalyzer::AnalyzeAstListaComandos(AbstractSyntaxTree *node)
     //  listaComandos cmdsTerminadosDoisPontos ':'
     //  %empty
 
-    bool ret = true;
-    int leafSize = node->GetLeafsSize() - 1; // Pega a quantidade de nodos filhos
-    if(leafSize > 1)
+    int leafSize = node->GetLeafsSize(); // Pega a quantidade de nodos filhos
+    if(leafSize >= 2)
     {
-        for (int i = 0; i < (leafSize - 1); i++) // até antes do ';' || ':'
-        {
-            ret = ret && this->AnalyzeNode(node->GetLeaf(i));
-        }
+        return (this->AnalyzeNode(node->GetLeaf(0)) && this->AnalyzeNode(node->GetLeaf(1)));
     }
-    return ret;
+    return true;
 }
 
 
@@ -532,14 +540,16 @@ bool SemanticAnalyzer::AnalyzeAstDecVar(AbstractSyntaxTree *node)
     string idName = node->GetLeaf(1)->GetLexicalValue()->ValueToString(); //pega identificador
     int line = node->GetLeaf(1)->GetLexicalValue()->GetLine();
 
-    if (this->scopeStack->LookUp(idName) != NULL)
+    SymbolTable *top = this->scopeStack->Top();
+
+    if (top->LookUp(idName) != NULL)
     {
         this->AddError(new SemanticError(ERR_DECLARED, line));
         return false;
     }
     else
     {
-        this->scopeStack->Top()->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR));
+        top->Insert(new SymbolTableEntry(idName, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR, top->GetSize()*QUATRO_BYTE));
         return true;
     }
 }
@@ -588,4 +598,10 @@ bool SemanticAnalyzer::AnalyzeAstCmdFunCall(AbstractSyntaxTree *node)
     return ret;
     */
     return true;
+}
+
+void SemanticAnalyzer::PrintScopes()
+{
+    cout << "Printando o escopo global: \n\n";
+    this->globalScope->Print();
 }

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <stack>
+#include <iostream>
 #include "../include/symbol_table.h"
 #include "../include/scope_stack.h"
 

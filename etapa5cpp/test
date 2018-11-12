@@ -1,0 +1,9 @@
+a int;
+
+int main(int a, int z)
+{
+    int b;
+    int c <= 3;
+    b = 1;
+    a = 2;
+}

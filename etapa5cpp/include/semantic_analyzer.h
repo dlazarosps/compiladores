@@ -19,6 +19,7 @@ class SemanticAnalyzer
         AbstractSyntaxTree* root;
         ScopeStack* scopeStack;
         vector<SemanticError*> errors;
+        SymbolTable* globalScope;
 
     public:
         SemanticAnalyzer(AbstractSyntaxTree *root); // Constructor
@@ -42,4 +43,6 @@ class SemanticAnalyzer
         bool AnalyzeAstDecVar(AbstractSyntaxTree *node);
         bool AnalyzeAstCmdAtr(AbstractSyntaxTree *node);
         bool AnalyzeAstCmdFunCall(AbstractSyntaxTree *node);
+
+        void PrintScopes();
 };

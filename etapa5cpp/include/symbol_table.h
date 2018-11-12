@@ -37,7 +37,7 @@ class SymbolTableEntry
         // TODO: localização (linha e opcional coluna) da sua definição/declaração
         // TODO: demais informações do valor do token pelo yylval (veja E3)
     public:
-        SymbolTableEntry(string name, int type, int size, int natureza); // Constructor
+        SymbolTableEntry(string name, int type, int size, int natureza, int memPosition); // Constructor
         ~SymbolTableEntry(); // Destructor
         string GetName();
         int GetSize();
@@ -50,6 +50,7 @@ class SymbolTableEntry
         void setAssociatedSymbolTable(SymbolTable* table);
         SymbolTableEntryField* GetField(string name);
         SymbolTableEntryField* GetFieldAt(int index);
+        void Print();
 };
 
 class SymbolTable
@@ -62,6 +63,8 @@ class SymbolTable
         void Insert(SymbolTableEntry *entry);
         SymbolTableEntry* LookUp(string name);
         void Update(SymbolTableEntry *entry);
+        void Print();
+        int GetSize();
 };
 
 /*

@@ -4,6 +4,7 @@
 #include "../include/lexical_value.h"
 #include "../include/ast.h"
 #include "../include/symbol_table.h"
+#include "../include/semantic_analyzer.h"
 #include "../include/parser.tab.h" //arquivo gerado com bison -d parser.y
 
 AbstractSyntaxTree *arvore = NULL;
@@ -16,7 +17,10 @@ int main(int argc, char **argv)
     int ret = yyparse();
     //descompila(arvore);
 
-    
+    SemanticAnalyzer* analyzer = new SemanticAnalyzer(arvore);
+    analyzer->Analyze();
+
+    analyzer->PrintScopes();
 
     libera(arvore);
     //libera a árvore de tabelas de símbolos
