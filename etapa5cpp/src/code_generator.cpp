@@ -305,6 +305,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             instr = new InstructionILOC("", "jumpI", lab1, "", "");
             instrList.push_front(instr);
 
+            /*
             if(node->GetLeafsSize() > 1){
                 lab2 = this->control->GetLabel();
                 this->ParseAST(node->GetLeaf(1), hash, lab2);
@@ -312,6 +313,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
                 instr = new InstructionILOC("", "jumpI", lab2, "", "");
                 instrList.push_front(instr);
             }
+            */
 
             this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());        
             break;
@@ -361,16 +363,14 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             break;
         case AST_LISTACOMANDOS:
             //TESTA se tem folhas
-            if(node->GetLeafsSize() > 1){
-                this->ParseAST(node->GetLeaf(0), hash, label);
-
+            if(node->GetLeaf(0)->GetLeaf(0)->GetType() != AST_EMPTY){
                 lab1 = this->control->GetLabel();
+                this->ParseAST(node->GetLeaf(0), hash, lab1);
                 instr = new InstructionILOC("", "jumpI", lab1, "", "");
                 instrList.push_front(instr);
-                this->ParseAST(node->GetLeaf(1), hash, lab1);
-
                 this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
             }
+                this->ParseAST(node->GetLeaf(1), hash, label);
             break;
         case AST_CMDSTERMINADOSPONTOVIRGULA:
             this->ParseAST(node->GetLeaf(0), hash, label);
@@ -430,8 +430,8 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             arg1 = this->avalExpr(node->GetLeaf(2), hash, label, lab1); //passa label herdado como parametro  
             //TODO 
 
-            instr = new InstructionILOC("", "jumpI", label, "", "");
-            instrList.push_front(instr);
+            //instr = new InstructionILOC("", "jumpI", label, "", "");
+            //instrList.push_front(instr);
 
             //VARIABLE
             //pega posição de memoria onde variavel está salva
