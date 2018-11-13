@@ -22,11 +22,12 @@ int main(int argc, char **argv)
     analyzer->Analyze();
     //analyzer->PrintScopes();
 
-    ScopeStack *globalScope = new ScopeStack();
-    globalScope->push(analyzer->GetGlobalScope());
+    ScopeStack *scopes = new ScopeStack();
+    scopes->push(analyzer->GetGlobalScope());
+    scopes->push(scopes->LookUp("main")->getAssociatedSymbolTable());
 
     CodeGenerator *coder = new CodeGenerator();
-    coder->ParseAST(arvore, globalScope);
+    coder->ParseAST(arvore, scopes);
 
     coder->PrintOutput();
 
