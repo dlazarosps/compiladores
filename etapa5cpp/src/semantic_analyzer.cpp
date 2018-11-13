@@ -605,3 +605,8 @@ void SemanticAnalyzer::PrintScopes()
     cout << "Printando o escopo global: \n\n";
     this->globalScope->Print();
 }
+
+SymbolTable* SemanticAnalyzer::GetGlobalScope()
+{
+    return this->globalScope;
+}

@@ -45,4 +45,6 @@ class SemanticAnalyzer
         bool AnalyzeAstCmdFunCall(AbstractSyntaxTree *node);
 
         void PrintScopes();
+
+        SymbolTable* GetGlobalScope();
 };
