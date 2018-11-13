@@ -165,14 +165,14 @@ ControlILOC::~ControlILOC()
 
 string ControlILOC::GetRegister()
 {
-    string output = "r" + this->registers;
+    string output = "r" + to_string(this->registers);
     this->registers++;
     return output;
 }
 
 string ControlILOC::GetLabel()
 {
-    string output = "L" + this->labels;
+    string output = "L" + to_string(this->labels);
     this->labels++;
     return output;
 }
