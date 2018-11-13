@@ -550,7 +550,7 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
     list<InstructionILOC *> instrList;
     SymbolTableEntry *entry;
     int deslocMem, leaf;
-    string arg1, arg2, arg3, labT, labF, lab1, lab2;
+    string arg1, arg2, arg3, labT, labF, lab0, lab1, lab2, lab3;
     string regResultReturn;
     string value;
 
@@ -602,40 +602,68 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
             // curto circuito
             if(value.compare("AND") || value.compare("OR")){
 
-                lab1 = this->control->GetLabel(); //true
-                lab2 = this->control->GetLabel(); //false
+                lab0 = this->control->GetLabel(); //retorno para cá de arg1
+                lab1 = this->control->GetLabel();  //expr L1
+                lab2 = this->control->GetLabel();  //expr R1
+                lab3 = this->control->GetLabel(); //retorno para cá de arg2
+                labT = this->control->GetLabel(); //true
+                labF = this->control->GetLabel(); //false
 
                 //avalia expr L & R
-                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1, labelRet); //TODO label de retorno da expr
-                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2, labelRet); //TODO label de retorno da expr
+                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1, lab0); //TODO label de retorno da expr
+                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2, lab3); //TODO label de retorno da expr
 
-                labT = this->control->GetLabel();
-                labF = this->control->GetLabel();
 
                 if (value.compare("AND")) {
 
                     // arg3 = !arg1 ? FALSE : TRUE
-                    instr = new InstructionILOC("", "cbr", arg1, labT, labF);
+                    instr = new InstructionILOC(lab0, "cbr", arg1, labT, labF);
                     instrList.push_front(instr);
 
+                    //se arg1 é false o retorno arg3 é false
                     instr = new InstructionILOC(labF, "i2i", arg1, arg3, "");
                     instrList.push_front(instr);
 
+                    //se arg1 é verdadeiro entao avalia arg2
+                    instr = new InstructionILOC(labT, "jumpI", lab2, "", "");
+                    instrList.push_front(instr);
+
+                    //arg3 recebe retorno de arg2
+                    instr = new InstructionILOC(lab3, "i2i", arg2, arg3, "");
+                    instrList.push_front(instr);
                 }
                 else if (value.compare("OR"))
                 {
                     // arg3 = arg1 ? TRUE : FALSE
-                    instr = new InstructionILOC("", "cbr", arg1, labT, labF); 
+                    instr = new InstructionILOC(lab0, "cbr", arg1, labT, labF);
                     instrList.push_front(instr);
 
                     instr = new InstructionILOC(labT, "i2i", arg1, arg3, "");
                     instrList.push_front(instr);
+
+                    //se arg1 é falso entao avalia arg2
+                    instr = new InstructionILOC(labF, "jumpI", lab2, "", "");
+                    instrList.push_front(instr);
+
+                    //arg3 recebe retorno de arg2
+                    instr = new InstructionILOC(lab3, "i2i", arg2, arg3, "");
+                    instrList.push_front(instr);
                 }
             }
             else{
-                //avalia expr L & R                
-                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1, labelRet); //TODO label de retorno da expr
-                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2, labelRet); //TODO label de retorno da expr
+                //avalia expr L & R  
+                lab0 = this->control->GetLabel(); //retorno para cá de arg1
+                lab1 = this->control->GetLabel();  //expr L1
+                lab2 = this->control->GetLabel();  //expr R1
+                lab3 = this->control->GetLabel(); //retorno para cá de arg2
+
+                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1, lab0);
+                instr = new InstructionILOC(lab0, "jumpI", lab1, "", "");
+                instrList.push_front(instr);
+
+                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2, lab3);
+                instr = new InstructionILOC(lab3, "jumpI", lab2, "", "");
+                instrList.push_front(instr);
 
                 //gera instrução arg1 op arg2 = arg3
                 instr = new InstructionILOC(label, value, arg1, arg2, arg3);
