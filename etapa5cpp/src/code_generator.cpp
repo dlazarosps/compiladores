@@ -280,7 +280,6 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
     switch (node->GetType())
     {
         case AST_PROGRAMA:
-            this->ParseAST(node->GetLeaf(0), hash);
 
             //lista temporaria insert FRONT
             //instruções de inicialização
@@ -293,13 +292,28 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             instr = new InstructionILOC("", "loadI", "0", "", "rbss");
             instrList.push_front(instr);
 
+            
+            this->ParseAST(node->GetLeaf(0), hash);
+
             //concat lista temporaria na lista de instruções BACK
             this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());        
             break;
         case AST_ELEMENTO:
-            this->ParseAST(node->GetLeaf(0), hash);
-            if(node->GetLeafsSize() > 1)
-                this->ParseAST(node->GetLeaf(1), hash);
+            
+            lab1 = this->control->GetLabel();
+            this->ParseAST(node->GetLeaf(0), hash, lab1);
+            instr = new InstructionILOC("", "jumpI", lab1, "", "");
+            instrList.push_front(instr);
+
+            if(node->GetLeafsSize() > 1){
+                lab2 = this->control->GetLabel();
+                this->ParseAST(node->GetLeaf(1), hash, lab2);
+                
+                instr = new InstructionILOC("", "jumpI", lab2, "", "");
+                instrList.push_front(instr);
+            }
+
+            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());        
             break;
         case AST_DECGLOBAL:
             // TODO tranferir para dentro da HASH (semantic_analizer)
@@ -320,7 +334,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             //this->ParseAST(node->GetLeaf(0), hash);
 
             //Instruções do corpo da função
-            this->ParseAST(node->GetLeaf(1), hash);
+            this->ParseAST(node->GetLeaf(1), hash, label);
             break;
         /* //ETAPA 6
         case AST_CABECALHOFUN:
@@ -340,33 +354,36 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             break;
         */
         case AST_CORPOFUN:
-            this->ParseAST(node->GetLeaf(0), hash); //avalia bloco
+            this->ParseAST(node->GetLeaf(0), hash, label); //avalia bloco
             break;
         case AST_BLOCO:
-            instr = new InstructionILOC(label, "nop", "", "", ""); //cria rotulo para o bloco (if/while/fun)
-            instrList.push_front(instr);
-            this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
-            
-            this->ParseAST(node->GetLeaf(1), hash); //lista de comandos
+            this->ParseAST(node->GetLeaf(1), hash, label); //lista de comandos
             break;
         case AST_LISTACOMANDOS:
             //TESTA se tem folhas
             if(node->GetLeafsSize() > 1){
-                this->ParseAST(node->GetLeaf(0), hash);
-                this->ParseAST(node->GetLeaf(1), hash);
+                this->ParseAST(node->GetLeaf(0), hash, label);
+
+                lab1 = this->control->GetLabel();
+                instr = new InstructionILOC("", "jumpI", lab1, "", "");
+                instrList.push_front(instr);
+                this->ParseAST(node->GetLeaf(1), hash, lab1);
+
+                this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
             }
             break;
         case AST_CMDSTERMINADOSPONTOVIRGULA:
-            this->ParseAST(node->GetLeaf(0), hash);
+            this->ParseAST(node->GetLeaf(0), hash, label);
             break;
         case AST_CMDBLOCO:
-            this->ParseAST(node->GetLeaf(0), hash);
+            this->ParseAST(node->GetLeaf(0), hash, label);
             break;
         case AST_CMDDECVAR:
             leafSize = node->GetLeafsSize();
-            this->ParseAST(node->GetLeaf(leafSize-1), hash);
+            this->ParseAST(node->GetLeaf(leafSize-1), hash, label);
             break;
         case AST_DECVAR: // tipoSimples TK_IDENTIFICADOR TK_OC_LE variable
+            
             entry = hash->LookUp(node->GetLeaf(1)->GetLexicalValue()->ValueToString());
             // TODO setMemPosition para dentro da HASH (semantic_analizer)
             memPosition = entry->GetMemPosition();
@@ -380,7 +397,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
                     //valor a ser inserido
                     arg1 = this->control->GetRegister();
                     string value = node->GetLeaf(3)->GetLeaf(0)->GetLexicalValue()->ValueToString();
-                    instr = new InstructionILOC("", "loadI", value, "", arg1);
+                    instr = new InstructionILOC(label, "loadI", value, "", arg1);
                     instrList.push_front(instr);
                 }
                 else{
@@ -393,7 +410,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
                     //registrador arg1 recebe valor armazenado na posição mem rfp + deslocamento
 
                     reg2 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
-                    instr = new InstructionILOC("", "loadAI", reg2, to_string(deslocMem), arg1);
+                    instr = new InstructionILOC(label, "loadAI", reg2, to_string(deslocMem), arg1);
                     instrList.push_front(instr);
 
                 }
@@ -409,11 +426,13 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             }
             break;
         case AST_CMDATR:
-            // TODO avalia expr de atribuição     
-            arg1 = this->avalExpr(node->GetLeaf(2), hash);
-            //arg1 = result of expr ???
-            // retorna um registrador 
-                        
+            lab1 = this->control->GetLabel(); //TODO label para retorno da expr
+            arg1 = this->avalExpr(node->GetLeaf(2), hash, label, lab1); //passa label herdado como parametro  
+            //TODO 
+
+            instr = new InstructionILOC("", "jumpI", label, "", "");
+            instrList.push_front(instr);
+
             //VARIABLE
             //pega posição de memoria onde variavel está salva
             entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
@@ -421,7 +440,7 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             reg1 = (entry->GetNature() == NATUREZA_GLOBAL) ? "rbss" : "rfp";
 
             //salva valor arg1 em reg1 + deslocamento
-            instr = new InstructionILOC("", "storeAI", arg1, reg1, to_string(deslocMem));
+            instr = new InstructionILOC(lab1, "storeAI", arg1, reg1, to_string(deslocMem));
             instrList.push_front(instr);
 
             //concat lista temporaria na lista de instruções BACK
@@ -439,13 +458,14 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
 
        //IF COM CURTO CIRCUITO
         case AST_IFST:
+            lab0 = this->control->GetLabel(); //TODO label para retorno da expr
             lab1 = this->control->GetLabel(); //true
             lab2 = this->control->GetLabel(); //false
 
-            reg1 = this->avalExpr(node->GetLeaf(2), hash); //bool
+            reg1 = this->avalExpr(node->GetLeaf(2), hash, label, lab0); //bool
 
             //reg1 ? lab1 : lab2
-            instr = new InstructionILOC("", "cbr", reg1, lab1, lab2);
+            instr = new InstructionILOC(lab0, "cbr", reg1, lab1, lab2);
             instrList.push_front(instr);
 
             this->ParseAST(node->GetLeaf(5)->GetLeaf(0), hash, lab1); //bloco true
@@ -466,23 +486,20 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
         //WHILE COM CURTO CIRCUITO
         case AST_WHILE:
 
-            lab0 = this->control->GetLabel();
-            instr = new InstructionILOC(lab0, "nop", "", "", "");
+            instr = new InstructionILOC("", "jumpI", label, "", ""); //pula para avalicao
             instrList.push_front(instr);
 
+            lab0 = this->control->GetLabel(); // retorno da avaliacao
             lab1 = this->control->GetLabel(); //true
             lab2 = this->control->GetLabel(); //false
 
-            reg1 = this->avalExpr(node->GetLeaf(2), hash); //bool
+            reg1 = this->avalExpr(node->GetLeaf(2), hash, label, lab0); //bool
 
             // reg1 ? lab1 : lab2
-            instr = new InstructionILOC("", "cbr", reg1, lab1, lab2);
+            instr = new InstructionILOC(lab0, "cbr", reg1, lab1, lab2); //testa expr
             instrList.push_front(instr);
 
             this->ParseAST(node->GetLeaf(5), hash, lab1);
-
-            instr = new InstructionILOC("", "jumpI", lab0, "", "");
-            instrList.push_front(instr);
 
             instr = new InstructionILOC(lab2, "nop", "", "", ""); //apos while
             instrList.push_front(instr);
@@ -492,17 +509,18 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             break;
         case AST_DOWHILE:
             lab0 = this->control->GetLabel();
-            instr = new InstructionILOC(lab0, "nop", "", "", "");
-            instrList.push_front(instr);
-
             lab1 = this->control->GetLabel(); //true
             lab2 = this->control->GetLabel(); //false
+
+            instr = new InstructionILOC(label, "jumpI", lab1, "", ""); //pula para exec
+            instrList.push_front(instr);
+
             
             this->ParseAST(node->GetLeaf(1), hash, lab1);
 
-            reg1 = this->avalExpr(node->GetLeaf(4), hash); //bool
+            reg1 = this->avalExpr(node->GetLeaf(4), hash,lab1, lab0); //bool
             // reg1 ? lab1 : lab2
-            instr = new InstructionILOC("", "cbr", reg1, lab0, lab2);
+            instr = new InstructionILOC(lab0, "cbr", reg1, lab1, lab2);
             instrList.push_front(instr);
 
             instr = new InstructionILOC(lab2, "nop", "", "", ""); //apos while
@@ -520,24 +538,13 @@ void CodeGenerator::ParseAST(AbstractSyntaxTree *node, ScopeStack *hash, string 
             cout << "AST_EXPRFUNCCALL";
             break;
         */
-        case AST_EXPR:
-
-            //TODO check expr sozinha no código OU sempre vinculada algum comando ?        
-            if(node->GetLeafsSize() == 1){
-                this->avalExpr(node->GetLeaf(0), hash);
-            }
-            else{ 
-                // ( expr )
-                this->avalExpr(node->GetLeaf(1), hash);
-            }
-            break;
         default:
             cerr << "[ERROR] Node Type: " << node->GetType() << "\n";
             break;
     }
 }
 
-string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, string label)
+string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, string label, string labelRet)
 {
     InstructionILOC *instr;
     list<InstructionILOC *> instrList;
@@ -547,11 +554,6 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
     string regResultReturn;
     string value;
 
-    //gera label para inicio da avaliacao
-    //string labelBegin = this->control->GetLabel();
-    //pula para inicio da avaliacao
-    //instr = new InstructionILOC("jumpI", labelBegin, "", "");
-    //instrList.push_front(instr);
 
     leaf = (node->GetLeafsSize() == 1) ? 0 : 1;
     lab1 = "";
@@ -564,16 +566,20 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
             //pega posição de memoria onde variavel está salva
             entry = hash->LookUp(node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString());
             deslocMem = entry->GetMemPosition();
+            
             arg1 = this->control->GetRegister();
-            instr = new InstructionILOC("", "loadAI", "rfp", to_string(deslocMem), arg1);
+
+            instr = new InstructionILOC(label, "loadAI", "rfp", to_string(deslocMem), arg1);
             instrList.push_front(instr);
+
+
             regResultReturn = arg1;
             break;
         case AST_LITERAL:
             //carrega literal no registrador
             arg1 = this->control->GetRegister();
             value = node->GetLeaf(0)->GetLeaf(0)->GetLexicalValue()->ValueToString();
-            instr = new InstructionILOC("", "loadI", value, "", arg1);
+            instr = new InstructionILOC(label, "loadI", value, "", arg1);
             instrList.push_front(instr);
             regResultReturn = arg1;
             break;
@@ -600,8 +606,8 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
                 lab2 = this->control->GetLabel(); //false
 
                 //avalia expr L & R
-                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1);
-                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2);
+                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1, labelRet); //TODO label de retorno da expr
+                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2, labelRet); //TODO label de retorno da expr
 
                 labT = this->control->GetLabel();
                 labF = this->control->GetLabel();
@@ -628,11 +634,11 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
             }
             else{
                 //avalia expr L & R                
-                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1);
-                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2);
+                arg1 = this->avalExpr(node->GetLeaf(0), hash, lab1, labelRet); //TODO label de retorno da expr
+                arg2 = this->avalExpr(node->GetLeaf(2), hash, lab2, labelRet); //TODO label de retorno da expr
 
                 //gera instrução arg1 op arg2 = arg3
-                instr = new InstructionILOC("", value, arg1, arg2, arg3);
+                instr = new InstructionILOC(label, value, arg1, arg2, arg3);
                 instrList.push_front(instr);
 
             }
@@ -642,6 +648,10 @@ string CodeGenerator::avalExpr(AbstractSyntaxTree *node, ScopeStack *hash, strin
         default:
             break;
     }
+
+    // jump de retorno para o pai
+    instr = new InstructionILOC("", "jumpI", labelRet, "", "");
+    instrList.push_front(instr);
 
     //concat lista temporaria na lista de instruções BACK
     this->instructions.insert(this->instructions.end(), instrList.begin(), instrList.end());
