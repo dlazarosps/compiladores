@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include "../include/lexical_value.h"
+#include "../include/code_generator.h"
 #include "../include/ast.h"
 #include "../include/symbol_table.h"
 #include "../include/semantic_analyzer.h"
@@ -19,8 +20,15 @@ int main(int argc, char **argv)
 
     SemanticAnalyzer* analyzer = new SemanticAnalyzer(arvore);
     analyzer->Analyze();
+    //analyzer->PrintScopes();
 
-    analyzer->PrintScopes();
+    ScopeStack *globalScope = new ScopeStack();
+    globalScope->push(analyzer->GetGlobalScope());
+
+    CodeGenerator *coder = new CodeGenerator();
+    coder->ParseAST(arvore, globalScope);
+
+    coder->PrintOutput();
 
     libera(arvore);
     //libera a árvore de tabelas de símbolos
