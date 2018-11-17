@@ -1,7 +1,11 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
+#include <vector>
 #include "../include/AstDeclareFunction.h"
 #include "../include/LexicalValue.h"
+#include "../include/ScopeManager.h"
+#include "../include/SymbolTable.h"
+#include "../include/SymbolTableEntry.h"
 
 using namespace std;
 
@@ -26,4 +30,29 @@ AstDeclareFunction::AstDeclareFunction(LexicalValue *identifier, vector<Abstract
 AstDeclareFunction::~AstDeclareFunction()
 {
 
+}
+
+void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	// TODO check if already exists
+	ScopeManager *scopeManager = semanticAnalyzer->GetScopeManager();
+	SymbolTableEntry* entry = new SymbolTableEntry(this->name, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_FUN);
+	scopeManager->SetCurrentScopeToGlobal();
+	scopeManager->InsertEntry(entry);
+
+	// TODO check if already exists
+	scopeManager->AddFunctionScope(new SymbolTable(this->name));
+	scopeManager->SetCurrentScope(this->name);
+
+	for (unsigned int i = 0; i < this->parameters.size(); i++)
+	{
+		this->parameters.at(i)->SemanticAnalysis(semanticAnalyzer);
+	}
+
+	for (unsigned int i = 0; i < this->commands.size(); i++)
+	{
+		this->commands.at(i)->SemanticAnalysis(semanticAnalyzer);
+	}
+
+	scopeManager->SetCurrentScopeToGlobal();
 }

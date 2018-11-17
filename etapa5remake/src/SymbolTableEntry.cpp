@@ -7,14 +7,13 @@
 #include "../include/SymbolTable.h"
 #include "../include/SymbolTableEntry.h"
 
-SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int nature, int memPosition)
+SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int nature)
 {
     this->name = name;
     this->type = type;
+    this->size = size;
     this->nature = nature;
-    this->memPosition = memPosition;
-
-    this->size = 4; // Integer size
+    this->memPosition = 0;
 
     /*switch (type)
     {
@@ -69,4 +68,9 @@ int SymbolTableEntry::GetMemPosition()
 void SymbolTableEntry::SetMemPosition(int position)
 {
     this->memPosition = position;
+}
+
+void SymbolTableEntry::Print()
+{
+    cout << "---> " + this->name + ", type: " + to_string(this->type) + ", size: " + to_string(this->size) + ", nature: " + to_string(this->nature) + "\n";
 }

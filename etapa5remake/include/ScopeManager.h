@@ -26,4 +26,5 @@ class ScopeManager
         string GetCurrentScope();
         void SetCurrentScopeToGlobal();
         void InsertEntry(SymbolTableEntry *entry);
+        void Print();
 };

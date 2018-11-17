@@ -15,4 +15,5 @@ class AstLiteral : public AbstractSyntaxTree
     public:
         AstLiteral(LexicalValue *lex); // Constructor
         ~AstLiteral(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

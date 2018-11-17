@@ -17,4 +17,5 @@ class AstDeclareVariable : public AbstractSyntaxTree
     public:
         AstDeclareVariable(LexicalValue *identifier, AbstractSyntaxTree* val); // Constructor
         ~AstDeclareVariable(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

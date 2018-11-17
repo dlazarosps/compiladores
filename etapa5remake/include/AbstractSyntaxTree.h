@@ -2,7 +2,11 @@
 
 #pragma once
 
+#include "SemanticAnalyzer.h"
+
 using namespace std;
+
+class SemanticAnalyzer;
 
 class AbstractSyntaxTree
 {
@@ -10,8 +14,9 @@ class AbstractSyntaxTree
         int astType;
     public:
         AbstractSyntaxTree(); // Constructor
-        ~AbstractSyntaxTree(); // Destructor
+        virtual ~AbstractSyntaxTree(); // Destructor
         int GetAstType();
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };
 
 /*

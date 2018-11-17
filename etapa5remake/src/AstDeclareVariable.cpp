@@ -18,3 +18,11 @@ AstDeclareVariable::~AstDeclareVariable()
 {
 
 }
+
+void AstDeclareVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	// TODO check if already exists
+	ScopeManager *scopeManager = semanticAnalyzer->GetScopeManager();
+	SymbolTableEntry* entry = new SymbolTableEntry(this->name, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR);
+	scopeManager->InsertEntry(entry);
+}

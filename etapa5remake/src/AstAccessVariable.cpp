@@ -2,6 +2,7 @@
 
 #include "../include/AstAccessVariable.h"
 #include "../include/LexicalValue.h"
+#include "../include/ScopeManager.h"
 
 using namespace std;
 
@@ -15,4 +16,9 @@ AstAccessVariable::AstAccessVariable(LexicalValue *identifier)
 AstAccessVariable::~AstAccessVariable()
 {
 
+}
+
+void AstAccessVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
 }

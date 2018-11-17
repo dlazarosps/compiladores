@@ -18,4 +18,5 @@ class AstFunctionCall : public AbstractSyntaxTree
     public:
         AstFunctionCall(LexicalValue *identifier, vector<AbstractSyntaxTree*> *params); // Constructor
         ~AstFunctionCall(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

@@ -16,3 +16,8 @@ AstLiteral::~AstLiteral()
 {
 
 }
+
+void AstLiteral::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}

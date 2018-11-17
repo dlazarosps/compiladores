@@ -16,4 +16,5 @@ class AstProgram : public AbstractSyntaxTree
         ~AstProgram(); // Destructor
         void addElement(AbstractSyntaxTree* element);
         void addElements(vector<AbstractSyntaxTree*> *listOfElements);
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

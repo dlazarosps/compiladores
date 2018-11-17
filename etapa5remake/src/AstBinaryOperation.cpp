@@ -19,3 +19,8 @@ AstBinaryOperation::~AstBinaryOperation()
 {
 
 }
+
+void AstBinaryOperation::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}

@@ -22,3 +22,13 @@ AstFunctionCall::~AstFunctionCall()
 {
 
 }
+
+void AstFunctionCall::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	// TODO check if declared
+
+	for (unsigned int i = 0; i < this->parameters.size(); i++)
+	{
+		this->parameters.at(i)->SemanticAnalysis(semanticAnalyzer);
+	}
+}

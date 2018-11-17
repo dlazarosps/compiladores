@@ -15,4 +15,5 @@ class AstAccessVariable : public AbstractSyntaxTree
     public:
         AstAccessVariable(LexicalValue *identifier); // Constructor
         ~AstAccessVariable(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

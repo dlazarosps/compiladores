@@ -2,6 +2,8 @@
 
 #include "../include/AstAssignVariable.h"
 #include "../include/LexicalValue.h"
+#include "../include/ScopeManager.h"
+#include "../include/SymbolTableEntry.h"
 
 using namespace std;
 
@@ -16,4 +18,9 @@ AstAssignVariable::AstAssignVariable(LexicalValue *identifier, AbstractSyntaxTre
 AstAssignVariable::~AstAssignVariable()
 {
 
+}
+
+void AstAssignVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
 }

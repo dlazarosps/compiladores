@@ -18,3 +18,8 @@ AstUnaryOperation::~AstUnaryOperation()
 {
 
 }
+
+void AstUnaryOperation::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}

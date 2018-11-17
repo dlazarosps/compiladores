@@ -103,3 +103,15 @@ void ScopeManager::InsertEntry(SymbolTableEntry *entry)
 {
     this->currentScope->Insert(entry);
 }
+
+void ScopeManager::Print()
+{
+    cout << "ScopeManager output:\n";
+
+    this->globalScope->Print();
+
+    for (std::map<string, SymbolTable*>::iterator it = this->functionScopes.begin(); it != this->functionScopes.end(); ++it)
+    {
+        it->second->Print();
+    }
+}

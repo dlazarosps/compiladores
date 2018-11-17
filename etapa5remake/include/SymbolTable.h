@@ -20,4 +20,5 @@ class SymbolTable
         void Update(SymbolTableEntry *entry);
         int GetSize();
         string GetName();
+        void Print();
 };

@@ -17,13 +17,14 @@ class SymbolTableEntry
         int size; //(derivado do tipo)
         int memPosition;
     public:
-        SymbolTableEntry(string name, int type, int size, int natureza, int memPosition); // Constructor
+        SymbolTableEntry(string name, int type, int size, int natureza); // Constructor
         ~SymbolTableEntry(); // Destructor
         string GetName();
         int GetSize();
         int GetNature();
         int GetMemPosition();
         void SetMemPosition(int position);
+        void Print();
 };
 
 /*

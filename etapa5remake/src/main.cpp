@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../include/LexicalValue.h"
 #include "../include/AbstractSyntaxTree.h"
-#include "../include/SymbolTable.h"
+#include "../include/SemanticAnalyzer.h"
 #include "../include/parser.tab.h" //arquivo gerado com bison -d parser.y
 
 using namespace std;
@@ -17,6 +17,10 @@ int main(int argc, char **argv)
 {
     int ret = yyparse();
     //descompila(arvore);
+
+    SemanticAnalyzer *semantic = new SemanticAnalyzer(arvore);
+    semantic->Analyze();
+    semantic->GetScopeManager()->Print();
 
     libera(arvore);
     arvore = NULL;

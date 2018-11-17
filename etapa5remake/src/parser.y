@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <iostream>
 #include "../include/LexicalValue.h"
+#include "../include/SemanticAnalyzer.h"
 #include "../include/AbstractSyntaxTree.h"
 #include "../include/AstProgram.h"
 #include "../include/AstDeclareGlobalVariable.h"
@@ -198,7 +200,7 @@ decFunc: tipo TK_IDENTIFICADOR '(' decFuncParamsList ')' bloco
     }
     | tipo TK_IDENTIFICADOR '(' ')' bloco
     {
-        vector<AbstractSyntaxTree*> *emptyList;
+        vector<AbstractSyntaxTree*> *emptyList = new vector<AbstractSyntaxTree*>();
         AstDeclareFunction *decFunc = new AstDeclareFunction($2, emptyList, $5);
         AbstractSyntaxTree *node = decFunc;
         $$ = node;

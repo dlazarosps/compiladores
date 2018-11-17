@@ -16,4 +16,5 @@ class AstDeclareParameter : public AbstractSyntaxTree
     public:
         AstDeclareParameter(LexicalValue *identifier); // Constructor
         ~AstDeclareParameter(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

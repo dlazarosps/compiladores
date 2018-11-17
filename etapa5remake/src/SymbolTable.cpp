@@ -49,3 +49,15 @@ string SymbolTable::GetName()
 {
     return this->name;
 }
+
+void SymbolTable::Print()
+{
+    cout << "\n> SymbolTable " + this->name + ":\n";
+
+    for (std::map<string, SymbolTableEntry*>::iterator it = this->entries.begin(); it != this->entries.end(); ++it)
+    {
+        it->second->Print();
+    }
+
+    cout << "\n";
+}

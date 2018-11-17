@@ -19,4 +19,5 @@ class AstDeclareFunction : public AbstractSyntaxTree
     public:
         AstDeclareFunction(LexicalValue *identifier, vector<AbstractSyntaxTree*> *params, vector<AbstractSyntaxTree*> *cmds); // Constructor
         ~AstDeclareFunction(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };

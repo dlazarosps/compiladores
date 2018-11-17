@@ -15,6 +15,7 @@ class AstBinaryOperation : public AbstractSyntaxTree
     public:
         AstBinaryOperation(AbstractSyntaxTree* leftExpression, int operationType, AbstractSyntaxTree* rightExpression); // Constructor
         ~AstBinaryOperation(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };
 
 #define BINARY_OPERATION_TYPE_UNDEFINED -1

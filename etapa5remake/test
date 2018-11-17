@@ -1,4 +1,12 @@
+x int;
+y int;
+
 int main(){
     int x;
     x = 34;
+}
+
+int anotherFunction(){
+    int c;
+    c = 34;
 }

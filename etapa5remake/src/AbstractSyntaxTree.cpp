@@ -18,3 +18,8 @@ int AbstractSyntaxTree::GetAstType()
 {
 	return this->astType;
 }
+
+void AbstractSyntaxTree::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+
+}

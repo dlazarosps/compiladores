@@ -7,12 +7,12 @@
 // TODO: develop fixtures for the data
 
 TEST(ScopeManager, AddAndLookupCorrect) {
-    SymbolTableEntry* entry1 = new SymbolTableEntry("1",0,0,0,0);
-    SymbolTableEntry* entry2 = new SymbolTableEntry("2",0,0,0,0);
-    SymbolTableEntry* entry3 = new SymbolTableEntry("3",0,0,0,0);
-    SymbolTableEntry* entry4 = new SymbolTableEntry("1",0,0,0,0);
-    SymbolTableEntry* entry5 = new SymbolTableEntry("2",0,0,0,0);
-    SymbolTableEntry* entry6 = new SymbolTableEntry("3",0,0,0,0);
+    SymbolTableEntry* entry1 = new SymbolTableEntry("1",0,0,0);
+    SymbolTableEntry* entry2 = new SymbolTableEntry("2",0,0,0);
+    SymbolTableEntry* entry3 = new SymbolTableEntry("3",0,0,0);
+    SymbolTableEntry* entry4 = new SymbolTableEntry("1",0,0,0);
+    SymbolTableEntry* entry5 = new SymbolTableEntry("2",0,0,0);
+    SymbolTableEntry* entry6 = new SymbolTableEntry("3",0,0,0);
 
     // Creates the scope manager, which starts in the global scope
     ScopeManager *scopeManager = new ScopeManager();

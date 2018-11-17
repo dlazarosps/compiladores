@@ -17,6 +17,7 @@ class AstUnaryOperation : public AbstractSyntaxTree
     public:
         AstUnaryOperation(int operationType, AbstractSyntaxTree* expr); // Constructor
         ~AstUnaryOperation(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };
 
 #define UNARY_OPERATION_TYPE_UNDEFINED -1

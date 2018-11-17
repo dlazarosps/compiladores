@@ -17,4 +17,5 @@ class AstAssignVariable : public AbstractSyntaxTree
     public:
         AstAssignVariable(LexicalValue *identifier, AbstractSyntaxTree* val); // Constructor
         ~AstAssignVariable(); // Destructor
+        virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
 };
