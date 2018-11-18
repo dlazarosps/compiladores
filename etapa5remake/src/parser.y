@@ -19,6 +19,9 @@
 #include "../include/AstLiteral.h"
 #include "../include/AstUnaryOperation.h"
 #include "../include/AstBinaryOperation.h"
+#include "../include/AstReturn.h"
+#include "../include/AstIfElse.h"
+#include "../include/AstDoWhile.h"
 int yylex(void);
 int yyerror (char const *s);
 extern int get_line_number();
@@ -112,7 +115,7 @@ extern void libera (AbstractSyntaxTree *arvore) {
 %type<expr> exprFuncCall
 %type<astNode> cmdReturn
 %type<astNode> cmdIfElse
-%type<astNode> stmt
+%type<listOfAst> stmt
 %type<astNode> cmdWhile
 %type<astNode> cmdDoWhile
 %type<integer> unOp
@@ -343,7 +346,9 @@ cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')'
 
 cmdReturn: TK_PR_RETURN expr
     {
-        $$ = NULL; //TODO
+        AstReturn *ret = new AstReturn($2);
+        AbstractSyntaxTree *node = ret;
+        $$ = node;
     }
     ;
 
@@ -353,21 +358,28 @@ cmdReturn: TK_PR_RETURN expr
 
 cmdIfElse: TK_PR_IF '(' expr ')' TK_PR_THEN stmt %prec TK_PR_THEN
     {
-        $$ = NULL; //TODO
+        vector<AbstractSyntaxTree*> *emptyList = new vector<AbstractSyntaxTree*>();
+        AstIfElse *ifElse = new AstIfElse($3, $6, emptyList);
+        AbstractSyntaxTree *node = ifElse;
+        $$ = node;
     }
 	| TK_PR_IF '(' expr ')' TK_PR_THEN stmt TK_PR_ELSE stmt
     {
-        $$ = NULL; //TODO
+        AstIfElse *ifElse = new AstIfElse($3, $6, $8);
+        AbstractSyntaxTree *node = ifElse;
+        $$ = node;
     }
     ;
 
 stmt: bloco
     {
-        $$ = NULL; //TODO
+        $$ = $1;
     }
 	| cmdIfElse
     {
-        $$ = NULL; //TODO
+        vector<AbstractSyntaxTree*> *commands = new vector<AbstractSyntaxTree*>();
+        commands->push_back($1);
+        $$ = commands;
     }
     ;
 
@@ -377,13 +389,17 @@ stmt: bloco
 
 cmdWhile: TK_PR_WHILE '(' expr ')' TK_PR_DO bloco
     {
-        $$ = NULL; //TODO
+        AstDoWhile *doWhile = new AstDoWhile(true, $3, $6);
+        AbstractSyntaxTree *node = doWhile;
+        $$ = node;
     }
     ;
 
 cmdDoWhile: TK_PR_DO bloco TK_PR_WHILE '(' expr ')'
     {
-        $$ = NULL; //TODO
+        AstDoWhile *doWhile = new AstDoWhile(false, $5, $2);
+        AbstractSyntaxTree *node = doWhile;
+        $$ = node;
     }
     ;
 

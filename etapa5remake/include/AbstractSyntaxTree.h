@@ -35,3 +35,6 @@ class AbstractSyntaxTree
 #define AST_TYPE_LITERAL 7
 #define AST_TYPE_UNARY_OPERATION 8
 #define AST_TYPE_BINARY_OPERATION 9
+#define AST_TYPE_RETURN 10
+#define AST_TYPE_IF_ELSE 11
+#define AST_TYPE_DO_WHILE 12

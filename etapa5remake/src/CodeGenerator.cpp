@@ -26,7 +26,7 @@ void CodeGenerator::Generate()
 {
     this->AddInstruction(new InstructionILOC("", "loadI", "1024", "", "rfp"));
     this->AddInstruction(new InstructionILOC("", "loadI", "1024", "", "rsp"));
-    this->AddInstruction(new InstructionILOC("", "loadI", "0", "", "rbss"));
+    this->AddInstruction(new InstructionILOC("", "loadI", "512", "", "rbss"));
     //this->AddInstruction(new InstructionILOC("", "jumpI", ENDERECO_DA_MAIN, "", ""));
 
     root->GenerateCode(this);
