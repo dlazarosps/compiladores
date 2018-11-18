@@ -1,0 +1,4 @@
+loadI 1024 => rfp
+loadI 1024 => rsp
+loadI 0 => rbss
+halt
