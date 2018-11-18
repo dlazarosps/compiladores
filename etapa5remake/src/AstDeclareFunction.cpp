@@ -80,6 +80,11 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	{
 		this->commands.at(i)->GenerateCode(codeGenerator);
 	}
+
+	// Se for a função main, deve encerrar o programa ao final dela
+	if(this->name.compare("main") == 0) {
+		codeGenerator->AddInstruction(new InstructionILOC("", "halt", "", "", ""));
+	}
 	// Switches back to the global static scope
 	scopeManager->SetCurrentScopeToGlobal();
 }

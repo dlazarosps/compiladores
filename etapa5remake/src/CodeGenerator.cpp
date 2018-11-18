@@ -24,14 +24,27 @@ CodeGenerator::~CodeGenerator()
 
 void CodeGenerator::Generate()
 {
-    this->AddInstruction(new InstructionILOC("", "loadI", "1024", "", "rfp"));
-    this->AddInstruction(new InstructionILOC("", "loadI", "1024", "", "rsp"));
-    this->AddInstruction(new InstructionILOC("", "loadI", "512", "", "rbss"));
-    //this->AddInstruction(new InstructionILOC("", "jumpI", ENDERECO_DA_MAIN, "", ""));
-
+    // Generate the code for the program
     root->GenerateCode(this);
 
-    this->AddInstruction(new InstructionILOC("", "halt", "","",""));
+    // Make the first line of code jump to the beginning of the 'main' function
+    SymbolTable *mainTable = this->scopeManager->GetScopeByName("main");
+    string mainLabel;
+    if(mainTable != NULL) {
+        mainLabel = mainTable->GetLabel();
+        this->instructions.insert(this->instructions.begin(), new InstructionILOC("", "jumpI", "", "", mainLabel));
+    }
+    else {
+        cout << "\nErro! Main não encontrada!\n"; // TODO tratar melhor isso
+    }
+
+    // Position the pointers nicely according to the sizes of the segments
+    int sizeOfCodeSegment = this->instructions.size() + 3; // +3 because o the 3 instructions below
+    int sizeOfDataSegment = this->scopeManager->GetScopeByName("_GLOBAL_")->GetSize();
+
+    this->instructions.insert(this->instructions.begin(), new InstructionILOC("", "loadI", to_string(sizeOfCodeSegment+1+sizeOfDataSegment+1), "", "rfp"));
+    this->instructions.insert(this->instructions.begin(), new InstructionILOC("", "loadI", to_string(sizeOfCodeSegment+1+sizeOfDataSegment+1), "", "rsp"));
+    this->instructions.insert(this->instructions.begin(), new InstructionILOC("", "loadI", to_string(sizeOfCodeSegment+1), "", "rbss"));
 }
 
 string CodeGenerator::CreateRegister()
