@@ -29,5 +29,5 @@ void AstDeclareParameter::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstDeclareParameter::GenerateCode(CodeGenerator* codeGenerator)
 {
-	//TODO
+	// Does nothing
 }

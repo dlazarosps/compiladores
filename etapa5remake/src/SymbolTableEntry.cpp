@@ -13,7 +13,7 @@ SymbolTableEntry::SymbolTableEntry(string name, int type, int size, int nature)
     this->type = type;
     this->size = size;
     this->nature = nature;
-    this->memPosition = 0;
+    this->memoryOffset = 0;
 
     /*switch (type)
     {
@@ -60,14 +60,14 @@ int SymbolTableEntry::GetNature()
     return this->nature;
 }
 
-int SymbolTableEntry::GetMemPosition()
+int SymbolTableEntry::GetMemoryOffset()
 {
-    return this->memPosition;
+    return this->memoryOffset;
 }
 
-void SymbolTableEntry::SetMemPosition(int position)
+void SymbolTableEntry::SetMemoryOffset(int offset)
 {
-    this->memPosition = position;
+    this->memoryOffset = offset;
 }
 
 void SymbolTableEntry::Print()

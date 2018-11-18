@@ -4,6 +4,7 @@
 
 #include <string>
 #include "AbstractSyntaxTree.h"
+#include "AstExpression.h"
 #include "LexicalValue.h"
 #include "CodeGenerator.h"
 
@@ -14,9 +15,9 @@ class AstDeclareVariable : public AbstractSyntaxTree
     protected:
         string name;
         string type;
-        AbstractSyntaxTree* valueContainer;
+        AstExpression* valueContainer;
     public:
-        AstDeclareVariable(LexicalValue *identifier, AbstractSyntaxTree* val); // Constructor
+        AstDeclareVariable(LexicalValue *identifier, AstExpression* val); // Constructor
         ~AstDeclareVariable(); // Destructor
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
         virtual void GenerateCode(CodeGenerator* codeGenerator);

@@ -20,6 +20,9 @@ tests/CMakeCache.txt
 tests/Makefile
 tests/runTests
 
+# Ignore the output folder
+scripts/output
+
 # Ignore Mac specific files
 .DS_Store
 

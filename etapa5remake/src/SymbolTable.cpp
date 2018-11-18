@@ -10,6 +10,8 @@
 SymbolTable::SymbolTable(string name)
 {
     this->name = name;
+    this->label = "";
+    this->size = 0;
 }
 
 SymbolTable::~SymbolTable()
@@ -19,6 +21,8 @@ SymbolTable::~SymbolTable()
 
 void SymbolTable::Insert(SymbolTableEntry *entry)
 {
+    entry->SetMemoryOffset(this->size);
+    this->size += entry->GetSize();
     this->entries.insert(pair<string, SymbolTableEntry*>(entry->GetName(),entry));
 }
 
@@ -40,7 +44,7 @@ void SymbolTable::Update(SymbolTableEntry *entry)
     this->entries[entry->GetName()] = entry;
 }
 
-int SymbolTable::GetSize()
+int SymbolTable::GetEntriesSize()
 {
     return this->entries.size();
 }
@@ -60,4 +64,19 @@ void SymbolTable::Print()
     }
 
     cout << "\n";
+}
+
+void SymbolTable::SetLabel(string label)
+{
+    this->label = label;
+}
+
+string SymbolTable::GetLabel()
+{
+    return this->label;
+}
+
+int SymbolTable::GetSize()
+{
+    return this->size;
 }

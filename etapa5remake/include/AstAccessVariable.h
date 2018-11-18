@@ -3,13 +3,12 @@
 #pragma once
 
 #include <string>
-#include "AbstractSyntaxTree.h"
+#include "AstExpression.h"
 #include "LexicalValue.h"
-#include "CodeGenerator.h"
 
 using namespace std;
 
-class AstAccessVariable : public AbstractSyntaxTree
+class AstAccessVariable : public AstExpression
 {
     protected:
         string name;

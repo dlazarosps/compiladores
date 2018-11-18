@@ -4,6 +4,7 @@
 #include <iostream>
 #include "../include/LexicalValue.h"
 #include "../include/AbstractSyntaxTree.h"
+#include "../include/AstExpression.h"
 #include "../include/SemanticAnalyzer.h"
 #include "../include/CodeGenerator.h"
 #include "../include/parser.tab.h" //arquivo gerado com bison -d parser.y

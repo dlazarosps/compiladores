@@ -30,5 +30,5 @@ void AstDeclareGlobalVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyz
 
 void AstDeclareGlobalVariable::GenerateCode(CodeGenerator* codeGenerator)
 {
-	//TODO
+	// Does nothing
 }

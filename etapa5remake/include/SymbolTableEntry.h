@@ -15,15 +15,15 @@ class SymbolTableEntry
         int nature; // natureza (literal, variável, função, etc)
         int type; // (qual o tipo de dado deste símbolo)
         int size; //(derivado do tipo)
-        int memPosition;
+        int memoryOffset;
     public:
         SymbolTableEntry(string name, int type, int size, int natureza); // Constructor
         ~SymbolTableEntry(); // Destructor
         string GetName();
         int GetSize();
         int GetNature();
-        int GetMemPosition();
-        void SetMemPosition(int position);
+        int GetMemoryOffset();
+        void SetMemoryOffset(int offset);
         void Print();
 };
 

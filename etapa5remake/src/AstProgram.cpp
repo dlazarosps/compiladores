@@ -1,6 +1,5 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
-#include <iostream>
 #include "../include/AstProgram.h"
 #include "../include/CodeGenerator.h"
 

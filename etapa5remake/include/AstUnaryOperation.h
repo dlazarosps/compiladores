@@ -4,13 +4,13 @@
 
 #include <vector>
 #include <string>
-#include "AbstractSyntaxTree.h"
+#include "AstExpression.h"
 #include "LexicalValue.h"
 #include "CodeGenerator.h"
 
 using namespace std;
 
-class AstUnaryOperation : public AbstractSyntaxTree
+class AstUnaryOperation : public AstExpression
 {
     protected:
         int operationType;

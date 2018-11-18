@@ -7,6 +7,7 @@
 #include "../include/LexicalValue.h"
 #include "../include/SemanticAnalyzer.h"
 #include "../include/AbstractSyntaxTree.h"
+#include "../include/AstExpression.h"
 #include "../include/AstProgram.h"
 #include "../include/AstDeclareGlobalVariable.h"
 #include "../include/AstDeclareFunction.h"
@@ -39,7 +40,10 @@ extern void libera (AbstractSyntaxTree *arvore) {
     LexicalValue *lex;
 	AbstractSyntaxTree *astNode;
     vector<AbstractSyntaxTree*> *listOfAst;
+    AstExpression *expr;
+    vector<AstExpression*> *listOfExpr;
     int integer;
+
 }
 
 %token <lex> TK_PR_INT
@@ -99,22 +103,22 @@ extern void libera (AbstractSyntaxTree *arvore) {
 %type<listOfAst> listaComandos
 %type<astNode> comandos
 %type<astNode> cmdDecVar
-%type<astNode> expr
-%type<listOfAst> listaExpr
+%type<expr> expr
+%type<listOfExpr> listaExpr
 %type<astNode> cmdAtr
 %type<astNode> cmdFuncCall
-%type<astNode> variable
-%type<astNode> literal
-%type<astNode> exprFuncCall
+%type<expr> variable
+%type<expr> literal
+%type<expr> exprFuncCall
 %type<astNode> cmdReturn
 %type<astNode> cmdIfElse
 %type<astNode> stmt
 %type<astNode> cmdWhile
 %type<astNode> cmdDoWhile
 %type<integer> unOp
-%type<astNode> unario
+%type<expr> unario
 %type<integer> biOp
-%type<astNode> binario
+%type<expr> binario
 
 // precedencia de operadores
 %left '&' '?' '%' '|' '^'
@@ -326,7 +330,7 @@ cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')'
     }
     | TK_IDENTIFICADOR '(' ')'
     {
-        vector<AbstractSyntaxTree*> *params = new vector<AbstractSyntaxTree*>;
+        vector<AstExpression*> *params = new vector<AstExpression*>;
         AstFunctionCall *funcCall = new AstFunctionCall($1, params);
         AbstractSyntaxTree *node = funcCall;
         $$ = node;
@@ -419,13 +423,13 @@ expr: variable
 
 listaExpr: expr
     {
-        vector<AbstractSyntaxTree*> *expressions = new vector<AbstractSyntaxTree*>();
+        vector<AstExpression*> *expressions = new vector<AstExpression*>();
         expressions->push_back($1);
         $$ = expressions;
     }
 	| listaExpr ',' expr
     {
-        vector<AbstractSyntaxTree*> *expressions = $1;
+        vector<AstExpression*> *expressions = $1;
         expressions->push_back($3);
         $$ = expressions;
     }
@@ -438,7 +442,7 @@ listaExpr: expr
 variable: TK_IDENTIFICADOR
     {
         AstAccessVariable *access = new AstAccessVariable($1);
-        AbstractSyntaxTree *node = access;
+        AstExpression *node = access;
         $$ = node;
     }
     ;
@@ -450,19 +454,19 @@ variable: TK_IDENTIFICADOR
 literal: TK_LIT_INT
     {
         AstLiteral *lit = new AstLiteral($1);
-        AbstractSyntaxTree *node = lit;
+        AstExpression *node = lit;
         $$ = node;
     }
     | TK_LIT_FALSE
     {
         AstLiteral *lit = new AstLiteral($1);
-        AbstractSyntaxTree *node = lit;
+        AstExpression *node = lit;
         $$ = node;
     }
     | TK_LIT_TRUE
     {
         AstLiteral *lit = new AstLiteral($1);
-        AbstractSyntaxTree *node = lit;
+        AstExpression *node = lit;
         $$ = node;
     }
     ;
@@ -498,7 +502,7 @@ unOp: '+'
 unario: unOp expr %prec UNARY_OP
     {
         AstUnaryOperation *un = new AstUnaryOperation($1,$2);
-        AbstractSyntaxTree *node = un;
+        AstExpression *node = un;
         $$ = node;
     }
     ;
@@ -560,7 +564,7 @@ biOp: '+'
 binario: expr biOp expr %prec BINARY_OP
     {
         AstBinaryOperation *bi = new AstBinaryOperation($1,$2,$3);
-        AbstractSyntaxTree *node = bi;
+        AstExpression *node = bi;
         $$ = node;
     }
     ;

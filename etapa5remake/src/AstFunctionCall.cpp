@@ -6,7 +6,7 @@
 
 using namespace std;
 
-AstFunctionCall::AstFunctionCall(LexicalValue *identifier, vector<AbstractSyntaxTree*> *params)
+AstFunctionCall::AstFunctionCall(LexicalValue *identifier, vector<AstExpression*> *params)
 {
 	this->astType = AST_TYPE_DECLARE_FUNCTION;
 

@@ -24,7 +24,7 @@ ScopeManager::~ScopeManager()
     // TODO: clean up
 }
 
-int ScopeManager::HasScope(string name)
+bool ScopeManager::HasScope(string name)
 {
     map<string, SymbolTable*>::const_iterator iter;
 
@@ -41,7 +41,7 @@ int ScopeManager::HasScope(string name)
     }
 }
 
-int ScopeManager::SetCurrentScope(string name)
+bool ScopeManager::SetCurrentScopeByName(string name)
 {
     map<string, SymbolTable*>::const_iterator iter;
 
@@ -65,12 +65,34 @@ void ScopeManager::SetCurrentScopeToGlobal()
     this->currentScope = this->globalScope;
 }
 
-string ScopeManager::GetCurrentScope()
+string ScopeManager::GetCurrentScopeName()
 {
     return this->currentScope->GetName();
 }
 
-int ScopeManager::AddFunctionScope(SymbolTable *functionTable)
+SymbolTable* ScopeManager::GetCurrentScope()
+{
+    return this->currentScope;
+}
+
+SymbolTable* ScopeManager::GetScopeByName(string name)
+{
+    map<string, SymbolTable*>::const_iterator iter;
+
+    if(this->globalScope->GetName().compare(name) == 0) {
+        return this->globalScope;
+    }
+
+    iter = this->functionScopes.find(name);
+    if (iter != this->functionScopes.end()) {
+        return iter->second;
+    }
+    else {
+        return NULL;
+    }
+}
+
+bool ScopeManager::AddFunctionScope(SymbolTable *functionTable)
 {
     string functionName = functionTable->GetName();
     if(this->HasScope(functionName) == 0) {

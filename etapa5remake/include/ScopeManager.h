@@ -19,11 +19,13 @@ class ScopeManager
     public:
         ScopeManager(); // Constructor
         ~ScopeManager(); // Destructor
-        int AddFunctionScope(SymbolTable *functionTable); // Retorna 0 se inseriu certo, retorna -1 se já existe
+        bool AddFunctionScope(SymbolTable *functionTable);
         SymbolTableEntry *LookUp(string name); // Searches inside the current scope and then in the global scope
-        int HasScope(string name); // Returns 0 if OK, -1 if scope does not exist
-        int SetCurrentScope(string name); // Returns 0 if OK, -1 if scope does not exist
-        string GetCurrentScope();
+        bool HasScope(string name);
+        bool SetCurrentScopeByName(string name);
+        string GetCurrentScopeName();
+        SymbolTable* GetCurrentScope();
+        SymbolTable* GetScopeByName(string name);
         void SetCurrentScopeToGlobal();
         void InsertEntry(SymbolTableEntry *entry);
         void Print();

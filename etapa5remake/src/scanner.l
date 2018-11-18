@@ -4,6 +4,7 @@
 	#include <vector>
 	#include "../include/LexicalValue.h"
 	#include "../include/AbstractSyntaxTree.h"
+	#include "../include/AstExpression.h"
 	#include "../include/parser.tab.h"
 	int lineNumber = 1;
 	extern int get_line_number();

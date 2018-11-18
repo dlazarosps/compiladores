@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "AbstractSyntaxTree.h"
+#include "AstExpression.h"
 #include "CodeGenerator.h"
 
 using namespace std;
 
-class AstBinaryOperation : public AbstractSyntaxTree
+class AstBinaryOperation : public AstExpression
 {
     protected:
         int operationType;

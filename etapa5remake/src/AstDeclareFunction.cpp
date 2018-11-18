@@ -43,7 +43,7 @@ void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 	// TODO check if already exists
 	scopeManager->AddFunctionScope(new SymbolTable(this->name));
-	scopeManager->SetCurrentScope(this->name);
+	scopeManager->SetCurrentScopeByName(this->name);
 
 	for (unsigned int i = 0; i < this->parameters.size(); i++)
 	{
@@ -60,5 +60,26 @@ void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 {
-	//TODO
+	// Fetches the scope manager
+	ScopeManager *scopeManager = codeGenerator->GetScopeManager();
+	// Switches to this functions static scope
+	scopeManager->SetCurrentScopeByName(this->name);
+	// Generates a new label for this function
+	string label = codeGenerator->CreateLabel();
+	// Adds an instruction just to hold the label
+	codeGenerator->AddInstruction(new InstructionILOC(label, "nop", "", "", ""));
+	// Sets the label in the symbol table for future reference
+	scopeManager->GetCurrentScope()->SetLabel(label);
+	// Calls parameter declarations
+	for (unsigned int i = 0; i < this->parameters.size(); i++)
+	{
+		this->parameters.at(i)->GenerateCode(codeGenerator);
+	}
+	// Calls commands
+	for (unsigned int i = 0; i < this->commands.size(); i++)
+	{
+		this->commands.at(i)->GenerateCode(codeGenerator);
+	}
+	// Switches back to the global static scope
+	scopeManager->SetCurrentScopeToGlobal();
 }

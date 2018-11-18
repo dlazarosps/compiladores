@@ -11,6 +11,8 @@
 
 using namespace std;
 
+class AbstractSyntaxTree;
+
 class CodeGenerator
 {
     private:
