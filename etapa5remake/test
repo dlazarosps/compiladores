@@ -1,18 +1,36 @@
 x int;
 y int;
 
-int main(){
-    int x;
-    if (1 == 1) then {
-        x = 393;
-    }else{
-        x = 432;
-    };
-    
-    y = 1;
+int main()
+{
+  int a;
+  int b;
+  a = 10;
+
+/*
+  if (a > 0) then {
+    b = 393;
+  }else{
+    b = 432;
+  };
+*/
+
+/*
+  while (a > 5) do {
+    a = a - 1;
+  };
+*/
+
+  do {
+    a = a - 1;
+  } while (a > 5);
+
+  int x <= 34;
 }
 
+/*
 int anotherFunction(){
     int c <= 30;
     c = 34;
 }
+*/
