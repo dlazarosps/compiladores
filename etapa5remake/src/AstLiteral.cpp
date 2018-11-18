@@ -2,6 +2,7 @@
 
 #include "../include/AstLiteral.h"
 #include "../include/LexicalValue.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -18,6 +19,11 @@ AstLiteral::~AstLiteral()
 }
 
 void AstLiteral::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}
+
+void AstLiteral::GenerateCode(CodeGenerator* codeGenerator)
 {
 	//TODO
 }

@@ -6,6 +6,7 @@
 #include <string>
 #include "AbstractSyntaxTree.h"
 #include "LexicalValue.h"
+#include "CodeGenerator.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ class AstUnaryOperation : public AbstractSyntaxTree
         AstUnaryOperation(int operationType, AbstractSyntaxTree* expr); // Constructor
         ~AstUnaryOperation(); // Destructor
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
+        virtual void GenerateCode(CodeGenerator* codeGenerator);
 };
 
 #define UNARY_OPERATION_TYPE_UNDEFINED -1

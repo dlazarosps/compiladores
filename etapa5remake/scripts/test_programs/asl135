@@ -1,4 +1,0 @@
-//ERROR: operador * é sempre binário
-int main() {
-  x = (1 * ) 3;
-}

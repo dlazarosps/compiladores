@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "../include/AstProgram.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -36,5 +37,13 @@ void AstProgram::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 	for (unsigned int i = 0; i < this->elements.size(); i++)
 	{
 		this->elements.at(i)->SemanticAnalysis(semanticAnalyzer);
+	}
+}
+
+void AstProgram::GenerateCode(CodeGenerator* codeGenerator)
+{
+	for (unsigned int i = 0; i < this->elements.size(); i++)
+	{
+		this->elements.at(i)->GenerateCode(codeGenerator);
 	}
 }

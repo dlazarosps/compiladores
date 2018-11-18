@@ -3,6 +3,7 @@
 #include "../include/AstAccessVariable.h"
 #include "../include/LexicalValue.h"
 #include "../include/ScopeManager.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -19,6 +20,11 @@ AstAccessVariable::~AstAccessVariable()
 }
 
 void AstAccessVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}
+
+void AstAccessVariable::GenerateCode(CodeGenerator* codeGenerator)
 {
 	//TODO
 }

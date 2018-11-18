@@ -2,6 +2,7 @@
 
 #include "../include/AstUnaryOperation.h"
 #include "../include/LexicalValue.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -20,6 +21,11 @@ AstUnaryOperation::~AstUnaryOperation()
 }
 
 void AstUnaryOperation::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}
+
+void AstUnaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 {
 	//TODO
 }

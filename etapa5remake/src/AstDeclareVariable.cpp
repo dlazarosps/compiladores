@@ -2,6 +2,7 @@
 
 #include "../include/AstDeclareVariable.h"
 #include "../include/LexicalValue.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -25,4 +26,9 @@ void AstDeclareVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 	ScopeManager *scopeManager = semanticAnalyzer->GetScopeManager();
 	SymbolTableEntry* entry = new SymbolTableEntry(this->name, SYMBOL_TYPE_INT, QUATRO_BYTE, NATUREZA_VAR);
 	scopeManager->InsertEntry(entry);
+}
+
+void AstDeclareVariable::GenerateCode(CodeGenerator* codeGenerator)
+{
+	//TODO
 }

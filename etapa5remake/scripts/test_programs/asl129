@@ -1,7 +1,0 @@
-//ERROR: falta do then após expressão
-int main()
-{
-  if (true) {
-    int x;
-  };
-}

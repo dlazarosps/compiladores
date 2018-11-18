@@ -4,6 +4,7 @@
 #include "../include/LexicalValue.h"
 #include "../include/ScopeManager.h"
 #include "../include/SymbolTableEntry.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -21,6 +22,11 @@ AstAssignVariable::~AstAssignVariable()
 }
 
 void AstAssignVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+	//TODO
+}
+
+void AstAssignVariable::GenerateCode(CodeGenerator* codeGenerator)
 {
 	//TODO
 }

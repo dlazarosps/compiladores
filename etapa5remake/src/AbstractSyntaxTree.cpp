@@ -1,6 +1,7 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
 #include "../include/AbstractSyntaxTree.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -20,6 +21,11 @@ int AbstractSyntaxTree::GetAstType()
 }
 
 void AbstractSyntaxTree::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+{
+
+}
+
+void AbstractSyntaxTree::GenerateCode(CodeGenerator* codeGenerator)
 {
 
 }

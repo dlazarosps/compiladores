@@ -5,6 +5,7 @@
 #include "../include/LexicalValue.h"
 #include "../include/AbstractSyntaxTree.h"
 #include "../include/SemanticAnalyzer.h"
+#include "../include/CodeGenerator.h"
 #include "../include/parser.tab.h" //arquivo gerado com bison -d parser.y
 
 using namespace std;
@@ -20,7 +21,11 @@ int main(int argc, char **argv)
 
     SemanticAnalyzer *semantic = new SemanticAnalyzer(arvore);
     semantic->Analyze();
-    semantic->GetScopeManager()->Print();
+    //semantic->GetScopeManager()->Print();
+
+    CodeGenerator *codeGenerator = new CodeGenerator(arvore, semantic->GetScopeManager());
+    codeGenerator->Generate();
+    codeGenerator->Print();
 
     libera(arvore);
     arvore = NULL;

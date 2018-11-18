@@ -5,6 +5,7 @@
 #include <string>
 #include "AbstractSyntaxTree.h"
 #include "LexicalValue.h"
+#include "CodeGenerator.h"
 
 using namespace std;
 
@@ -16,4 +17,5 @@ class AstLiteral : public AbstractSyntaxTree
         AstLiteral(LexicalValue *lex); // Constructor
         ~AstLiteral(); // Destructor
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
+        virtual void GenerateCode(CodeGenerator* codeGenerator);
 };

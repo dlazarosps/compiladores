@@ -6,6 +6,7 @@
 #include "../include/ScopeManager.h"
 #include "../include/SymbolTable.h"
 #include "../include/SymbolTableEntry.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -55,4 +56,9 @@ void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 	}
 
 	scopeManager->SetCurrentScopeToGlobal();
+}
+
+void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
+{
+	//TODO
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "SemanticAnalyzer.h"
+#include "CodeGenerator.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ class AbstractSyntaxTree
         virtual ~AbstractSyntaxTree(); // Destructor
         int GetAstType();
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
+        virtual void GenerateCode(CodeGenerator* codeGenerator);
 };
 
 /*

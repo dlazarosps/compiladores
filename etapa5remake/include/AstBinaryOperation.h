@@ -3,6 +3,7 @@
 #pragma once
 
 #include "AbstractSyntaxTree.h"
+#include "CodeGenerator.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ class AstBinaryOperation : public AbstractSyntaxTree
         AstBinaryOperation(AbstractSyntaxTree* leftExpression, int operationType, AbstractSyntaxTree* rightExpression); // Constructor
         ~AstBinaryOperation(); // Destructor
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
+        virtual void GenerateCode(CodeGenerator* codeGenerator);
 };
 
 #define BINARY_OPERATION_TYPE_UNDEFINED -1

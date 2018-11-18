@@ -2,6 +2,7 @@
 
 #include "../include/AstFunctionCall.h"
 #include "../include/LexicalValue.h"
+#include "../include/CodeGenerator.h"
 
 using namespace std;
 
@@ -31,4 +32,9 @@ void AstFunctionCall::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 	{
 		this->parameters.at(i)->SemanticAnalysis(semanticAnalyzer);
 	}
+}
+
+void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
+{
+	//TODO
 }
