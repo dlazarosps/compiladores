@@ -551,6 +551,14 @@ biOp: '+'
     {
         $$ = BINARY_OPERATION_TYPE_GREATER_THAN;
     }
+    | '|'
+    {
+        $$ = BINARY_OPERATION_TYPE_BIT_OR;
+    }
+    | '&'
+    {
+        $$ = BINARY_OPERATION_TYPE_BIT_AND;
+    }
     | TK_OC_LE
     {
         $$ = BINARY_OPERATION_TYPE_LE;
