@@ -34,10 +34,51 @@ AstIfElse::~AstIfElse()
 
 void AstIfElse::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 {
-	// TODO
+	this->expression->SemanticAnalysis(semanticAnalyzer);
+
+	for (unsigned int i = 0; i < this->ifCommands.size(); i++)
+	{
+		this->ifCommands.at(i)->SemanticAnalysis(semanticAnalyzer);
+	}
+
+	for (unsigned int i = 0; i < this->elseCommands.size(); i++)
+	{
+		this->elseCommands.at(i)->SemanticAnalysis(semanticAnalyzer);
+	}
+
 }
 
 void AstIfElse::GenerateCode(CodeGenerator* codeGenerator)
 {
-	// TODO
+	this->expression->GenerateCode(codeGenerator);
+	string expressionRegister = this->expression->GetResultRegister();
+	
+	string labelBeTrue = codeGenerator->CreateLabel();
+	string labelBeFalse = codeGenerator->CreateLabel();
+	string labelEnd = codeGenerator->CreateLabel();
+
+	codeGenerator->AddInstruction(new InstructionILOC("", "cbr", expressionRegister, labelBeTrue, labelBeFalse));
+
+	// IF
+	codeGenerator->AddInstruction(new InstructionILOC(labelBeTrue, "nop", "", "", ""));
+	
+	// Loop if commands
+	for (unsigned int i = 0; i < this->ifCommands.size(); i++)
+	{
+		this->ifCommands.at(i)->GenerateCode(codeGenerator);
+	}
+	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelEnd, "", ""));
+
+
+	// ELSE
+	codeGenerator->AddInstruction(new InstructionILOC(labelBeFalse, "nop", "", "", ""));
+	
+	// Loop else commands
+	for (unsigned int i = 0; i < this->elseCommands.size(); i++)
+	{
+		this->elseCommands.at(i)->GenerateCode(codeGenerator);
+	}
+	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelEnd, "", ""));
+
+	codeGenerator->AddInstruction(new InstructionILOC(labelEnd, "nop", "", "", ""));
 }
