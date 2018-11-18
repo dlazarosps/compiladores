@@ -1,5 +1,6 @@
 /* ETAPA 4 - TRABALHO DE COMPILADORES - Grupo Rho */
 
+#include <string>
 #include "../include/AstAccessVariable.h"
 #include "../include/LexicalValue.h"
 #include "../include/ScopeManager.h"
@@ -26,5 +27,22 @@ void AstAccessVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstAccessVariable::GenerateCode(CodeGenerator* codeGenerator)
 {
-	//TODO
+	// Find the entry for this variable
+	SymbolTableEntry *entry = codeGenerator->GetScopeManager()->LookUp(this->name);
+
+	// Get the memory offset of this variable
+	int offset = entry->GetMemoryOffset();
+
+	// Get the correct base register (frame pointer or data segment)
+	string base;
+	if(entry->GetNature() == NATUREZA_GLOBAL)
+		base = "rbss";
+	else
+		base = "rfp";
+
+	// Creates a new register and sets the result register to it
+	this->resultRegister = codeGenerator->CreateRegister();
+
+	// Loadss the literal into the register
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", base, to_string(offset), this->resultRegister));
 }

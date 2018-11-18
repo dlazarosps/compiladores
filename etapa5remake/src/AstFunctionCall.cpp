@@ -36,5 +36,5 @@ void AstFunctionCall::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 {
-	//TODO
+	//TODO Etapa 6
 }

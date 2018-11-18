@@ -14,9 +14,9 @@ class AstUnaryOperation : public AstExpression
 {
     protected:
         int operationType;
-        AbstractSyntaxTree* expression;
+        AstExpression* expression;
     public:
-        AstUnaryOperation(int operationType, AbstractSyntaxTree* expr); // Constructor
+        AstUnaryOperation(int operationType, AstExpression* expr); // Constructor
         ~AstUnaryOperation(); // Destructor
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
         virtual void GenerateCode(CodeGenerator* codeGenerator);

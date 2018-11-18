@@ -11,10 +11,10 @@ class AstBinaryOperation : public AstExpression
 {
     protected:
         int operationType;
-        AbstractSyntaxTree* leftExpression;
-        AbstractSyntaxTree* rightExpression;
+        AstExpression* leftExpression;
+        AstExpression* rightExpression;
     public:
-        AstBinaryOperation(AbstractSyntaxTree* leftExpression, int operationType, AbstractSyntaxTree* rightExpression); // Constructor
+        AstBinaryOperation(AstExpression* leftExpression, int operationType, AstExpression* rightExpression); // Constructor
         ~AstBinaryOperation(); // Destructor
         virtual void SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer);
         virtual void GenerateCode(CodeGenerator* codeGenerator);
