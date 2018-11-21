@@ -32,7 +32,7 @@ void CodeGenerator::Generate()
     string mainLabel;
     if(mainTable != NULL) {
         mainLabel = mainTable->GetLabel();
-        this->instructions.insert(this->instructions.begin(), new InstructionILOC("", "jumpI", "", "", mainLabel));
+        this->instructions.insert(this->instructions.begin(), new InstructionILOC("", "jumpI", mainLabel, "", ""));
     }
     else {
         cout << "\nErro! Main não encontrada!\n"; // TODO tratar melhor isso

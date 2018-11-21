@@ -20,7 +20,7 @@ AstAccessVariable::~AstAccessVariable()
 
 }
 
-void AstAccessVariable::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
+void AstAccessVariable::SemanticAnalysis(SemanticAnalyzer *semanticAnalyzer)
 {
 	//TODO
 }
