@@ -21,8 +21,11 @@ SymbolTable::~SymbolTable()
 
 void SymbolTable::Insert(SymbolTableEntry *entry)
 {
-    entry->SetMemoryOffset(this->size);
-    this->size += entry->GetSize();
+    int nature = entry->GetNature();
+    if(nature == NATUREZA_GLOBAL || nature == NATUREZA_VAR) {
+        entry->SetMemoryOffset(this->size);
+        this->size += entry->GetSize();
+    }
     this->entries.insert(pair<string, SymbolTableEntry*>(entry->GetName(),entry));
 }
 
