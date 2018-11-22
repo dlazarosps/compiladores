@@ -154,6 +154,8 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 			codeGenerator->AddInstruction(new InstructionILOC(labelEnd, "i2i", rightExpressionRegister, this->resultRegister, ""));
 		}
 
+		codeGenerator->AddInstruction(new InstructionILOC(labelEndEnd, "nop", "", "", ""));
+
 	}
 
 }
