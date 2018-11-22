@@ -26,4 +26,5 @@ for file in $source_folder/*; do
     filename=${file##*/}
     mkdir -p $output_folder
     $binary_location < $source_folder/$filename > $output_folder/$filename
+    python ./ilocsim.py -x -t -s --data 500 --stack 1000 $output_folder/$filename > $output_folder/"r_$filename" 
 done

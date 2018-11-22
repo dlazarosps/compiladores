@@ -22,6 +22,7 @@ tests/runTests
 
 # Ignore the output folder
 scripts/output
+scripts/env
 
 # Ignore Mac specific files
 .DS_Store
