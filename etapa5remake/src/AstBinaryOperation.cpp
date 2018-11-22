@@ -87,18 +87,19 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 			codeGenerator->AddInstruction(new InstructionILOC("", "or", leftExpressionRegister, rightExpressionRegister, this->resultRegister));
 			break;
 		}
-	} 
-	else 
+	}
+	else
 	{
 		// AND & OR Short Circuit
 
-		// Generates a new label for this 
+		// Generates a new label for this
 		string labelLeft = codeGenerator->CreateLabel();
 		string labelCompare = codeGenerator->CreateLabel();
 		string labelRight = codeGenerator->CreateLabel();
 		string labelBeTrue = codeGenerator->CreateLabel();
 		string labelBeFalse = codeGenerator->CreateLabel();
 		string labelEnd = codeGenerator->CreateLabel();
+		string labelEndEnd = codeGenerator->CreateLabel();
 
 		// Generate code to evaluate the expressions
 		// Adds an instruction just to hold the label
@@ -122,12 +123,14 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 			// AND
 			// leftRegister ? beTrue : beFalse
 			codeGenerator->AddInstruction(new InstructionILOC(labelCompare, "cbr", leftExpressionRegister, labelBeTrue, labelBeFalse));
-			
+
 			//beTrue :: jump Right
 			codeGenerator->AddInstruction(new InstructionILOC(labelBeTrue, "jumpI", labelRight, "", ""));
 
 			//beFalse ::  resultRegister == Left
 			codeGenerator->AddInstruction(new InstructionILOC(labelBeFalse, "i2i", leftExpressionRegister, this->resultRegister, ""));
+
+			codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelEndEnd, "", ""));
 
 			//RightReturn ::  resultRegister == Right
 			codeGenerator->AddInstruction(new InstructionILOC(labelEnd, "i2i", rightExpressionRegister, this->resultRegister, ""));
@@ -145,10 +148,12 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 			//beTrue ::  resultRegister == Left
 			codeGenerator->AddInstruction(new InstructionILOC(labelBeTrue, "i2i", leftExpressionRegister, this->resultRegister, ""));
 
+			codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelEndEnd, "", ""));
+
 			//RightReturn ::  resultRegister == Right
 			codeGenerator->AddInstruction(new InstructionILOC(labelEnd, "i2i", rightExpressionRegister, this->resultRegister, ""));
 		}
-		
+
 	}
-	
+
 }
