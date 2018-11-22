@@ -127,12 +127,12 @@ extern void libera (AbstractSyntaxTree *arvore) {
 %left '&' '?' '%' '|' '^'
 %left '<' '>' '!' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '+' '-'
-%left '*' '/' TK_OC_SL TK_OC_SR
 %right '[' ']'
 %right '(' ')'
 %left UNARY_OP
 %left BINARY_OP
 %left TERNARY_OP
+%left '/' '*' TK_OC_SL TK_OC_SR
 
 //ambiguidade IF ELSE
 %nonassoc TK_PR_THEN
