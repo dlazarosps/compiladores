@@ -533,11 +533,11 @@ biOp: '+'
     }
     | '*'
     {
-        $$ = BINARY_OPERATION_TYPE_DIVIDE;
+        $$ = BINARY_OPERATION_TYPE_MULTIPLY;
     }
     | '/'
     {
-        $$ = BINARY_OPERATION_TYPE_MULTIPLY;
+        $$ = BINARY_OPERATION_TYPE_DIVIDE;
     }
     | '^'
     {
