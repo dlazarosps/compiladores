@@ -99,6 +99,7 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 		string labelBeTrue = codeGenerator->CreateLabel();
 		string labelBeFalse = codeGenerator->CreateLabel();
 		string labelEnd = codeGenerator->CreateLabel();
+		string labelFinal = codeGenerator->CreateLabel();
 
 		// Generate code to evaluate the expressions
 		// Adds an instruction just to hold the label
@@ -128,6 +129,7 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 
 			//beFalse ::  resultRegister == Left
 			codeGenerator->AddInstruction(new InstructionILOC(labelBeFalse, "i2i", leftExpressionRegister, this->resultRegister, ""));
+			codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelFinal, "", ""));
 
 			//RightReturn ::  resultRegister == Right
 			codeGenerator->AddInstruction(new InstructionILOC(labelEnd, "i2i", rightExpressionRegister, this->resultRegister, ""));
@@ -144,10 +146,14 @@ void AstBinaryOperation::GenerateCode(CodeGenerator* codeGenerator)
 
 			//beTrue ::  resultRegister == Left
 			codeGenerator->AddInstruction(new InstructionILOC(labelBeTrue, "i2i", leftExpressionRegister, this->resultRegister, ""));
+			codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelFinal, "", ""));
 
 			//RightReturn ::  resultRegister == Right
 			codeGenerator->AddInstruction(new InstructionILOC(labelEnd, "i2i", rightExpressionRegister, this->resultRegister, ""));
 		}
+
+			codeGenerator->AddInstruction(new InstructionILOC(labelFinal, "nop", "", "", ""));
+
 
 	}
 
