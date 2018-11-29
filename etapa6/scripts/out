@@ -1,0 +1,31 @@
+0 ['loadI', 1024, 'rfp']
+Change of rfp ignored (strict mode)
+1 ['loadI', 1024, 'rsp']
+Change of rsp ignored (strict mode)
+2 ['loadI', 9, 'rbss']
+Change of rbss ignored (strict mode)
+3 ['jumpI', 4]
+4 ['addI', 'rsp', 4, 'rsp']
+5 ['loadI', 34, 'r0']
+6 ['storeAI', 'r0', 'rfp', 0]
+7 ['halt']
+count	instruction
+    4	loadI
+    1	halt
+    1	addI
+    1	jumpI
+    1	storeAI
+
+instructions executed:    8
+register         read:    3 write:   10
+memory           read:    0 write:    1
+
+  register    value
+        r0       34
+      rbss      500
+       rfp     1024
+       rpc        7
+       rsp        4
+
+    memory    value
+00001024       34

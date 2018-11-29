@@ -1,0 +1,13 @@
+x int;
+y int;
+
+int main(){
+    int x;
+    x = 34;
+}
+
+int anotherFunction(){
+    int c <= 30;
+    c = (!34);
+    int d <= c;
+}
