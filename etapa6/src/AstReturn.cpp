@@ -30,7 +30,7 @@ void AstReturn::GenerateCode(CodeGenerator* codeGenerator)
 	this->expression->GenerateCode(codeGenerator);
 
 	// Pega o registrador com o resultado da expressão de retorno
-	string returnRegister = this->expression->GetResultRegister();
+	string returnValueRegister = this->expression->GetResultRegister();
 
 	// Registradores para guardar os ponteiros da RA
 	string returnAddressRegister = codeGenerator->CreateRegister();
@@ -39,8 +39,9 @@ void AstReturn::GenerateCode(CodeGenerator* codeGenerator)
 
 	// Recupera os ponteiros do RA
 	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "0", returnAddressRegister));
-	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "4", rspRegister));
-	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rfpRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "4", returnValueRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rspRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "12", rfpRegister));
 
 	// Atualiza os valores dos registradores do Stack Pointer e do Frame Pointer
 	codeGenerator->AddInstruction(new InstructionILOC("", "i2i", rspRegister, "rsp", ""));

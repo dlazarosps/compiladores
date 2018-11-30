@@ -63,8 +63,8 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	/* ETAPA 6
 		[OK]	atualiza registrador RFP com RSP (i2i rsp => rfp)
 
-		[OK]		atualiza registrador RSP com VALOR DESLOCAMENTO 
-				proxima posição de de memória pós RA  
+		[OK]		atualiza registrador RSP com VALOR DESLOCAMENTO
+				proxima posição de de memória pós RA
 				(addI rsp, CONST => rsp)
 
 		[OK]	gera código para os parametros
@@ -74,11 +74,11 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 
 		[?]		salva retorno => ASTreturn
 				na ASTReturn rfp + 4
-		
-		[OK]	carrega RSP e RFP antigos
-				
 
-		[OK]	pula para registrador retorno CALLFUN 
+		[OK]	carrega RSP e RFP antigos
+
+
+		[OK]	pula para registrador retorno CALLFUN
 				final jump rfp + 0
 	*/
 
@@ -117,15 +117,15 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 
 	//config RA
 	if(this->name.compare("main") != 0) {
-		
+
 		//atualiza RFP com valor do RSP
 		codeGenerator->AddInstruction(new InstructionILOC("", "i2i", "rsp", "rfp", ""));
-		
+
 		//adiciona deslocamento no RSP
 		deslocRA += this->parameters.size() * 4;
 		// deslocRA += this->commands.size() * 4; //TODO contar variaveis locais
 		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(deslocRA), "rsp"));
-		
+
 	}
 
 	// Calls parameter declarations
@@ -143,7 +143,7 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	if(this->name.compare("main") == 0) {
 		codeGenerator->AddInstruction(new InstructionILOC("", "halt", "", "", ""));
 	}
-	else{
+	/*else{
 
 		//carrega RSP e RFP antigos
 		codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "0", returnRegister));
@@ -156,7 +156,7 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 		//pula para o endereço de retorno
 		codeGenerator->AddInstruction(new InstructionILOC("", "jump", returnRegister, "", ""));
 
-	}
+	}*/
 	// Switches back to the global static scope
 	scopeManager->SetCurrentScopeToGlobal();
 }

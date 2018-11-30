@@ -83,3 +83,8 @@ int SymbolTable::GetSize()
 {
     return this->size;
 }
+
+int SymbolTable::SetSize(int value)
+{
+    this->size = value;
+}
