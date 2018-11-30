@@ -26,5 +26,26 @@ void AstReturn::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstReturn::GenerateCode(CodeGenerator* codeGenerator)
 {
-	// TODO Etapa 6
+	// Avalia a expressão de retorno
+	this->expression->GenerateCode(codeGenerator);
+
+	// Pega o registrador com o resultado da expressão de retorno
+	string returnRegister = this->expression->GetResultRegister();
+
+	// Registradores para guardar os ponteiros da RA
+	string returnAddressRegister = codeGenerator->CreateRegister();
+	string rspRegister = codeGenerator->CreateRegister();
+	string rfpRegister = codeGenerator->CreateRegister();
+
+	// Recupera os ponteiros do RA
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "0", returnAddressRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "4", rspRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rfpRegister));
+
+	// Atualiza os valores dos registradores do Stack Pointer e do Frame Pointer
+	codeGenerator->AddInstruction(new InstructionILOC("", "i2i", rspRegister, "rsp", ""));
+	codeGenerator->AddInstruction(new InstructionILOC("", "i2i", rfpRegister, "rfp", ""));
+
+	// Salta para o endereço de retorno
+	codeGenerator->AddInstruction(new InstructionILOC("", "jump", returnAddressRegister, "", ""));
 }
