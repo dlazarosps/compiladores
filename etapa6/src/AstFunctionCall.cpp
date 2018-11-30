@@ -60,7 +60,7 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	*/
 
 	int endReturn = 1;
-	string labelFun; //TODO get label from hash
+	string labelFun;
 	string returnRegister = codeGenerator->CreateRegister();
 
 	//TODO empilha parametros no RA
@@ -79,6 +79,9 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", "rsp", "rsp", "12"));
 
 	//pula para o label da função
+	ScopeManager* scopeManager = codeGenerator->GetScopeManager();
+	SymbolTable *funTable = scopeManager->GetScopeByName(this->name);
+	labelFun = funTable->GetLabel();
 	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelFun, "", ""));
 
 	//ponto de retorno

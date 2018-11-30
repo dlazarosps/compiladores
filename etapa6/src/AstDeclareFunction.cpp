@@ -82,7 +82,24 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 				final jump rfp + 0
 	*/
 
-	int deslocRA = 16;
+	/*
+	 * RA
+	 * 0 	: Endereço de retorno
+	 * 4 	: Valor de retorno
+	 * 8 	: RFP Origem
+	 * 12 	: RSP Origem
+	 * 16 	: Vínculo Estático
+	 * 20 	: Vínculo Dinâmico
+	 * 24 	: Estado da Máquina
+	 * 28 	: Parâmetro 0
+	 * ...
+	 * X 	: (28 + (n-1) * 4) Parâmetro n
+	 * Y+4 	: Local 0
+	 * ...
+	 * Y 	: (Y + (n-1) * 4) Local n
+	 */
+
+	int deslocRA = 24;
 	string returnRegister = codeGenerator->CreateRegister();
 	string rfpRegister = codeGenerator->CreateRegister();
 	string rspRegister = codeGenerator->CreateRegister();
