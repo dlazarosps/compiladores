@@ -123,7 +123,7 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 		
 		//adiciona deslocamento no RSP
 		deslocRA += this->parameters.size() * 4;
-		deslocRA += this->commands.size() * 4; //TODO contar variaveis locais
+		// deslocRA += this->commands.size() * 4; //TODO contar variaveis locais
 		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(deslocRA), "rsp"));
 		
 	}

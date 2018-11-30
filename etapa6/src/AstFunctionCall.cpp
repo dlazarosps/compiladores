@@ -39,17 +39,17 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	/* ETAPA 6
 		[OK]	Salva RSP e RFP da função chamadora
 
-		[TODO]	Empilha parametros
+		[OK]	Empilha parametros
 				PREENCHE dados do RA
 				1 load + 1 store para cada parametro
 
-		[?]		calcula o endereço de retorno
+		[OK]		calcula o endereço de retorno
 				precisa avaliar todos os parametros
 				e somar com as instruções de controle
 
 		[OK]	salva endereço de retorno em REGISTRADOR
 
-		[TODO]	JUMP label function
+		[OK]	JUMP label function
 				esse label precisa ficar salvo na HASH para poder carregar em qualquer chamada de função
 				ele é gerado na DECFUN
 
@@ -59,24 +59,30 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 		[?]		carrega valor de retorno 
 	*/
 
-	int endReturn = 1;
+	int endReturn = 2;
+	int deslocRA = 28;
 	string labelFun;
+	string exprRegister;
 	string returnRegister = codeGenerator->CreateRegister();
 
 	//TODO empilha parametros no RA
 	for (unsigned int i = 0; i < this->parameters.size(); i++)
 	{
+		//gera código para o parametro
 		this->parameters.at(i)->GenerateCode(codeGenerator);
+		
+		//empilha parametro no RA
+		exprRegister = this->parameters.at(i)->GetResultRegister();
+		codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", exprRegister, "rsp", to_string(deslocRA + (i * 4))));
 	}
 
-	// calcula endereço de retorno
-	//TODO CALCULO
-	codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rpc", to_string(endReturn), returnRegister));
-	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", returnRegister, "rfp", "0"));
-	
 	//salva RSP e RFP em registradores
 	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", "rfp", "rsp", "8"));
 	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", "rsp", "rsp", "12"));
+
+	// calcula endereço de retorno
+	codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rpc", to_string(endReturn), returnRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", returnRegister, "rsp", "0"));
 
 	//pula para o label da função
 	ScopeManager* scopeManager = codeGenerator->GetScopeManager();
