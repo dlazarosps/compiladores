@@ -7,13 +7,12 @@ int main()
   int b;
   a = 10;
 
+/*
   if (a < 11 && a > 1) then {
     b = 393;
   }else{
     b = 432;
   };
-
-/*
 
 */
 
@@ -26,13 +25,14 @@ int main()
     a = a - 1;
   } while (a > 5);
 
-  int x <= 34;
 */
+  int x <= 34;
 }
 
-/*
 int anotherFunction(){
     int c <= 30;
-    c = 34;
+    int d;
+    d = c;
 }
+/*
 */

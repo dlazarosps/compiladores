@@ -37,20 +37,52 @@ void AstFunctionCall::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 {
 	/* ETAPA 6
-		[?]		calcula o endereço de retorno
+		[OK]	Salva RSP e RFP da função chamadora
 
-		[]		salva endereço de retorno em REGISTRADOR
-
-		[]		Salva RSP e RFP da função chamadora
-
-		[]		Empilha parametros
+		[TODO]	Empilha parametros
 				PREENCHE dados do RA
+				1 load + 1 store para cada parametro
 
-		[]		JUMP label function
+		[?]		calcula o endereço de retorno
+				precisa avaliar todos os parametros
+				e somar com as instruções de controle
 
-		[]		retorna para depois do JUMP
+		[OK]	salva endereço de retorno em REGISTRADOR
+
+		[TODO]	JUMP label function
+				esse label precisa ficar salvo na HASH para poder carregar em qualquer chamada de função
+				ele é gerado na DECFUN
+
+		[OK]	retorna para depois do JUMP
 				valor calculado
 
-		[]		carrega valor de retorno 
+		[?]		carrega valor de retorno 
 	*/
+
+	int endReturn = 1;
+	string labelFun; //TODO get label from hash
+	string returnRegister = codeGenerator->CreateRegister();
+
+	//TODO empilha parametros no RA
+	for (unsigned int i = 0; i < this->parameters.size(); i++)
+	{
+		this->parameters.at(i)->GenerateCode(codeGenerator);
+	}
+
+	// calcula endereço de retorno
+	//TODO CALCULO
+	codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rpc", to_string(endReturn), returnRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", returnRegister, "rfp", "0"));
+	
+	//salva RSP e RFP em registradores
+	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", "rfp", "rsp", "8"));
+	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", "rsp", "rsp", "12"));
+
+	//pula para o label da função
+	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelFun, "", ""));
+
+	//ponto de retorno
+	codeGenerator->AddInstruction(new InstructionILOC("", "nop", "", "", ""));
+
+	//o valor de retorno tem q ser salvo em algum lugar ?
 }

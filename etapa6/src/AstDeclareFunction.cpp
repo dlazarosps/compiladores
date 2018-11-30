@@ -61,24 +61,32 @@ void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 {
 	/* ETAPA 6
-		[]		atualiza registrador RFP com RSP (i2i rsp => rfp)
+		[OK]	atualiza registrador RFP com RSP (i2i rsp => rfp)
 
-		[]		atualiza registrador RSP com VALOR DESLOCAMENTO 
+		[OK]		atualiza registrador RSP com VALOR DESLOCAMENTO 
 				proxima posição de de memória pós RA  
 				(addI rsp, CONST => rsp)
 
-		[?]		gera código para os parametros
+		[OK]	gera código para os parametros
 				aloca deslocamento
 
 		[OK]	gera código do bloco da função
 
 		[?]		salva retorno => ASTreturn
+				na ASTReturn rfp + 4
 		
-		[]		carrega RSP e RFP antigos
-				função chamadora
+		[OK]	carrega RSP e RFP antigos
+				
 
-		[]		pula para registrador retorno CALLFUN 
+		[OK]	pula para registrador retorno CALLFUN 
+				final jump rfp + 0
 	*/
+
+	int deslocRA = 16;
+	string returnRegister = codeGenerator->CreateRegister();
+	string rfpRegister = codeGenerator->CreateRegister();
+	string rspRegister = codeGenerator->CreateRegister();
+
 	// Fetches the scope manager
 	ScopeManager *scopeManager = codeGenerator->GetScopeManager();
 	// Switches to this functions static scope
@@ -89,6 +97,20 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	codeGenerator->AddInstruction(new InstructionILOC(label, "nop", "", "", ""));
 	// Sets the label in the symbol table for future reference
 	scopeManager->GetCurrentScope()->SetLabel(label);
+
+	//config RA
+	if(this->name.compare("main") != 0) {
+		
+		//atualiza RFP com valor do RSP
+		codeGenerator->AddInstruction(new InstructionILOC("", "i2i", "rsp", "rfp", ""));
+		
+		//adiciona deslocamento no RSP
+		deslocRA += this->parameters.size() * 4;
+		deslocRA += this->commands.size() * 4; //TODO contar variaveis locais
+		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(deslocRA), "rsp"));
+		
+	}
+
 	// Calls parameter declarations
 	for (unsigned int i = 0; i < this->parameters.size(); i++)
 	{
@@ -103,6 +125,20 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	// Se for a função main, deve encerrar o programa ao final dela
 	if(this->name.compare("main") == 0) {
 		codeGenerator->AddInstruction(new InstructionILOC("", "halt", "", "", ""));
+	}
+	else{
+
+		//carrega RSP e RFP antigos
+		codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "0", returnRegister));
+		codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rfpRegister));
+		codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "12", rspRegister));
+
+		codeGenerator->AddInstruction(new InstructionILOC("", "i2i", rfpRegister, "rfp", ""));
+		codeGenerator->AddInstruction(new InstructionILOC("", "i2i", rspRegister, "rsp", ""));
+
+		//pula para o endereço de retorno
+		codeGenerator->AddInstruction(new InstructionILOC("", "jump", returnRegister, "", ""));
+
 	}
 	// Switches back to the global static scope
 	scopeManager->SetCurrentScopeToGlobal();
