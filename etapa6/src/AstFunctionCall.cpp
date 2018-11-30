@@ -36,5 +36,21 @@ void AstFunctionCall::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 {
-	//TODO Etapa 6
+	/* ETAPA 6
+		[?]		calcula o endereço de retorno
+
+		[]		salva endereço de retorno em REGISTRADOR
+
+		[]		Salva RSP e RFP da função chamadora
+
+		[]		Empilha parametros
+				PREENCHE dados do RA
+
+		[]		JUMP label function
+
+		[]		retorna para depois do JUMP
+				valor calculado
+
+		[]		carrega valor de retorno 
+	*/
 }

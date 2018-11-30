@@ -60,6 +60,25 @@ void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 {
+	/* ETAPA 6
+		[]		atualiza registrador RFP com RSP (i2i rsp => rfp)
+
+		[]		atualiza registrador RSP com VALOR DESLOCAMENTO 
+				proxima posição de de memória pós RA  
+				(addI rsp, CONST => rsp)
+
+		[?]		gera código para os parametros
+				aloca deslocamento
+
+		[OK]	gera código do bloco da função
+
+		[?]		salva retorno => ASTreturn
+		
+		[]		carrega RSP e RFP antigos
+				função chamadora
+
+		[]		pula para registrador retorno CALLFUN 
+	*/
 	// Fetches the scope manager
 	ScopeManager *scopeManager = codeGenerator->GetScopeManager();
 	// Switches to this functions static scope
