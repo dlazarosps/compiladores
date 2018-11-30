@@ -25,5 +25,6 @@ class SymbolTable
         void SetLabel(string label);
         string GetLabel();
         int GetSize();
+        void SetSize(int value);
         void Print();
 };

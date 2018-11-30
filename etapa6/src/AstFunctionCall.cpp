@@ -56,21 +56,19 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 		[OK]	retorna para depois do JUMP
 				valor calculado
 
-		[?]		carrega valor de retorno 
+		[?]		carrega valor de retorno
 	*/
 
-	int endReturn = 2;
 	int deslocRA = 28;
-	string labelFun;
+	string targetFunctionLabel;
 	string exprRegister;
 	string returnRegister = codeGenerator->CreateRegister();
 
-	//TODO empilha parametros no RA
 	for (unsigned int i = 0; i < this->parameters.size(); i++)
 	{
 		//gera código para o parametro
 		this->parameters.at(i)->GenerateCode(codeGenerator);
-		
+
 		//empilha parametro no RA
 		exprRegister = this->parameters.at(i)->GetResultRegister();
 		codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", exprRegister, "rsp", to_string(deslocRA + (i * 4))));
@@ -81,14 +79,14 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", "rsp", "rsp", "12"));
 
 	// calcula endereço de retorno
-	codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rpc", to_string(endReturn), returnRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rpc", "3", returnRegister));
 	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", returnRegister, "rsp", "0"));
 
 	//pula para o label da função
 	ScopeManager* scopeManager = codeGenerator->GetScopeManager();
 	SymbolTable *funTable = scopeManager->GetScopeByName(this->name);
-	labelFun = funTable->GetLabel();
-	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", labelFun, "", ""));
+	targetFunctionLabel = funTable->GetLabel();
+	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", targetFunctionLabel, "", ""));
 
 	//ponto de retorno
 	codeGenerator->AddInstruction(new InstructionILOC("", "nop", "", "", ""));
