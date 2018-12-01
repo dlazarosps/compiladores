@@ -40,8 +40,8 @@ void AstReturn::GenerateCode(CodeGenerator* codeGenerator)
 	// Recupera os ponteiros do RA
 	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "0", returnAddressRegister));
 	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", returnValueRegister, "rfp", "4"));
-	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rspRegister));
-	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "12", rfpRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rfpRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "12", rspRegister));
 
 	// Atualiza os valores dos registradores do Stack Pointer e do Frame Pointer
 	codeGenerator->AddInstruction(new InstructionILOC("", "i2i", rspRegister, "rsp", ""));

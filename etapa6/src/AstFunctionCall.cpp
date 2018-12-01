@@ -67,7 +67,7 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", targetFunctionLabel, "", ""));
 
 	//ponto de retorno, pega o valor de retorno e bota no result register
-	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "4", resultRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rsp", "4", resultRegister));
 
 	this->resultRegister = resultRegister;
 }

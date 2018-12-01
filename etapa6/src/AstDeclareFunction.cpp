@@ -77,7 +77,6 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	 * Y 	: (Y + (n-1) * 4) Local n
 	 */
 
-	int deslocRA = 28;
 	string returnRegister = codeGenerator->CreateRegister();
 	string rfpRegister = codeGenerator->CreateRegister();
 	string rspRegister = codeGenerator->CreateRegister();
@@ -94,17 +93,14 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	scopeManager->GetCurrentScope()->SetLabel(label);
 
 	//config RA
-	if(this->name.compare("main") != 0) {
+	//if(this->name.compare("main") != 0) {
 
 		//atualiza RFP com valor do RSP
 		codeGenerator->AddInstruction(new InstructionILOC("", "i2i", "rsp", "rfp", ""));
 
-		// conta número de parâmetros
-		deslocRA += this->parameters.size() * 4;
-
 		//adiciona deslocamento no RSP
-		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(deslocRA), "rsp"));
-	}
+		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(scopeManager->GetCurrentScope()->GetSize()), "rsp"));
+	//}
 
 	// Calls parameter declarations
 	for (unsigned int i = 0; i < this->parameters.size(); i++)
