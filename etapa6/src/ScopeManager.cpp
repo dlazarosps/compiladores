@@ -99,7 +99,7 @@ bool ScopeManager::AddFunctionScope(SymbolTable *functionTable)
         return -1;
     }
 
-    functionTable->SetSize(24);
+    functionTable->SetSize(28);
     this->functionScopes.insert(pair<string, SymbolTable*>(functionName, functionTable));
 
     return 0;

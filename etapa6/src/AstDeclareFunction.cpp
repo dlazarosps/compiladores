@@ -77,7 +77,7 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	 * Y 	: (Y + (n-1) * 4) Local n
 	 */
 
-	int deslocRA = 24;
+	int deslocRA = 28;
 	string returnRegister = codeGenerator->CreateRegister();
 	string rfpRegister = codeGenerator->CreateRegister();
 	string rspRegister = codeGenerator->CreateRegister();
@@ -99,11 +99,11 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 		//atualiza RFP com valor do RSP
 		codeGenerator->AddInstruction(new InstructionILOC("", "i2i", "rsp", "rfp", ""));
 
-		//adiciona deslocamento no RSP
+		// conta número de parâmetros
 		deslocRA += this->parameters.size() * 4;
-		// deslocRA += this->commands.size() * 4; //TODO contar variaveis locais
-		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(deslocRA), "rsp"));
 
+		//adiciona deslocamento no RSP
+		codeGenerator->AddInstruction(new InstructionILOC("", "addI", "rsp", to_string(deslocRA), "rsp"));
 	}
 
 	// Calls parameter declarations
@@ -116,6 +116,8 @@ void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 	{
 		this->commands.at(i)->GenerateCode(codeGenerator);
 	}
+
+
 
 	// Se for a função main, deve encerrar o programa ao final dela
 	if(this->name.compare("main") == 0) {

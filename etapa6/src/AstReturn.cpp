@@ -39,7 +39,7 @@ void AstReturn::GenerateCode(CodeGenerator* codeGenerator)
 
 	// Recupera os ponteiros do RA
 	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "0", returnAddressRegister));
-	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "4", returnValueRegister));
+	codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", returnValueRegister, "rfp", "4"));
 	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "8", rspRegister));
 	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "12", rfpRegister));
 
