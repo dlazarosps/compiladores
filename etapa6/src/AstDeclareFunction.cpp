@@ -60,28 +60,6 @@ void AstDeclareFunction::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstDeclareFunction::GenerateCode(CodeGenerator* codeGenerator)
 {
-	/* ETAPA 6
-		[OK]	atualiza registrador RFP com RSP (i2i rsp => rfp)
-
-		[OK]		atualiza registrador RSP com VALOR DESLOCAMENTO
-				proxima posição de de memória pós RA
-				(addI rsp, CONST => rsp)
-
-		[OK]	gera código para os parametros
-				aloca deslocamento
-
-		[OK]	gera código do bloco da função
-
-		[?]		salva retorno => ASTreturn
-				na ASTReturn rfp + 4
-
-		[OK]	carrega RSP e RFP antigos
-
-
-		[OK]	pula para registrador retorno CALLFUN
-				final jump rfp + 0
-	*/
-
 	/*
 	 * RA
 	 * 0 	: Endereço de retorno

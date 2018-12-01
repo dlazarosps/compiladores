@@ -1,1 +1,1 @@
-int f(int y) { return y; } int main() { int x; x = f(x); }
+int f(int y) { return y * y; } int main() { int x; int y; x = f(x); y = f(y); }

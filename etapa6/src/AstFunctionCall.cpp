@@ -36,33 +36,11 @@ void AstFunctionCall::SemanticAnalysis(SemanticAnalyzer* semanticAnalyzer)
 
 void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 {
-	/* ETAPA 6
-		[OK]	Salva RSP e RFP da função chamadora
-
-		[OK]	Empilha parametros
-				PREENCHE dados do RA
-				1 load + 1 store para cada parametro
-
-		[OK]		calcula o endereço de retorno
-				precisa avaliar todos os parametros
-				e somar com as instruções de controle
-
-		[OK]	salva endereço de retorno em REGISTRADOR
-
-		[OK]	JUMP label function
-				esse label precisa ficar salvo na HASH para poder carregar em qualquer chamada de função
-				ele é gerado na DECFUN
-
-		[OK]	retorna para depois do JUMP
-				valor calculado
-
-		[?]		carrega valor de retorno
-	*/
-
 	int deslocRA = 28;
 	string targetFunctionLabel;
 	string exprRegister;
 	string returnRegister = codeGenerator->CreateRegister();
+	string resultRegister = codeGenerator->CreateRegister();
 
 	for (unsigned int i = 0; i < this->parameters.size(); i++)
 	{
@@ -88,8 +66,8 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	targetFunctionLabel = funTable->GetLabel();
 	codeGenerator->AddInstruction(new InstructionILOC("", "jumpI", targetFunctionLabel, "", ""));
 
-	//ponto de retorno
-	codeGenerator->AddInstruction(new InstructionILOC("", "nop", "", "", ""));
+	//ponto de retorno, pega o valor de retorno e bota no result register
+	codeGenerator->AddInstruction(new InstructionILOC("", "loadAI", "rfp", "4", resultRegister));
 
-	//o valor de retorno tem q ser salvo em algum lugar ?
+	this->resultRegister = resultRegister;
 }
