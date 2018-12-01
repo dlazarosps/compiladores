@@ -46,7 +46,10 @@ void AstFunctionCall::GenerateCode(CodeGenerator* codeGenerator)
 	{
 		//gera código para o parametro
 		this->parameters.at(i)->GenerateCode(codeGenerator);
+	}
 
+	for (unsigned int i = 0; i < this->parameters.size(); i++)
+	{
 		//empilha parametro no RA
 		exprRegister = this->parameters.at(i)->GetResultRegister();
 		codeGenerator->AddInstruction(new InstructionILOC("", "storeAI", exprRegister, "rsp", to_string(deslocRA + (i * 4))));

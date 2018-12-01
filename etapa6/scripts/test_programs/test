@@ -1,1 +1,14 @@
-int f(int x, int y) { return x * y; } int main() { int x <= 2; int y <= 3; x = f(x,x); y = f(y,y); }
+int abc(int x, int y)
+{
+    return x * y;
+}
+
+int main()
+{
+    int x <= 2;
+    int y <= 3;
+    int z <= 0;
+    x = abc(x,x);
+    y = abc(y,y);
+    z = abc(y, abc(x,x));
+}
