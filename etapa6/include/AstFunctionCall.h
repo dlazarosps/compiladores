@@ -11,7 +11,7 @@
 
 using namespace std;
 
-class AstFunctionCall : public AbstractSyntaxTree
+class AstFunctionCall : public AstExpression
 {
     protected:
         string name;

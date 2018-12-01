@@ -109,7 +109,7 @@ extern void libera (AbstractSyntaxTree *arvore) {
 %type<expr> expr
 %type<listOfExpr> listaExpr
 %type<astNode> cmdAtr
-%type<astNode> cmdFuncCall
+%type<expr> cmdFuncCall
 %type<expr> variable
 %type<expr> literal
 %type<expr> exprFuncCall
@@ -328,14 +328,14 @@ cmdAtr: TK_IDENTIFICADOR '=' expr
 cmdFuncCall: TK_IDENTIFICADOR '(' listaExpr ')'
     {
         AstFunctionCall *funcCall = new AstFunctionCall($1, $3);
-        AbstractSyntaxTree *node = funcCall;
+        AstExpression *node = funcCall;
         $$ = node;
     }
     | TK_IDENTIFICADOR '(' ')'
     {
         vector<AstExpression*> *params = new vector<AstExpression*>;
         AstFunctionCall *funcCall = new AstFunctionCall($1, params);
-        AbstractSyntaxTree *node = funcCall;
+        AstExpression *node = funcCall;
         $$ = node;
     }
     ;
@@ -493,7 +493,7 @@ literal: TK_LIT_INT
 
 exprFuncCall: cmdFuncCall
     {
-        $$ = NULL; //TODO
+        $$ = $1;
     }
     ;
 
